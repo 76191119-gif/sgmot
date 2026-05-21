@@ -1,0 +1,147 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&family=JetBrains+Mono:wght@400;500;700&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* =========================================================
+   PALETA MATRIX + SCI-FI  (#00FF41 verde Matrix neón)
+   ========================================================= */
+@layer base {
+  :root {
+    /* Backgrounds (todo MUY oscuro) */
+    --background:        0 0% 0%;       /* #000 negro profundo */
+    --foreground:        120 100% 90%;  /* #CCFFCC verde claro texto */
+    --card:              0 0% 7%;       /* #111 negro grafito */
+    --card-foreground:   120 100% 90%;
+    --popover:           0 0% 7%;
+    --popover-foreground:120 100% 90%;
+
+    /* Primario (verde Matrix #00FF41) */
+    --primary:           135 100% 50%;
+    --primary-foreground:0 0% 0%;
+
+    /* Secundario / accent (verde oscuro) */
+    --secondary:         0 0% 10%;
+    --secondary-foreground: 120 100% 90%;
+    --accent:            0 0% 12%;
+    --accent-foreground: 120 100% 90%;
+    --muted:             0 0% 10%;
+    --muted-foreground:  120 11% 55%;   /* #7C9A7C gris verdoso */
+
+    /* Estados */
+    --destructive:       0 100% 64%;    /* #FF4444 rojo terminal */
+    --destructive-foreground: 0 0% 100%;
+    --warning:           40 100% 67%;   /* #FFC857 ámbar */
+
+    /* Bordes (verde muy tenue) */
+    --border:            135 100% 25%;
+    --input:             135 100% 18%;
+    --ring:              135 100% 50%;
+
+    --radius: 0.625rem;
+
+    /* Sidebar */
+    --sidebar-background:        0 0% 3%;
+    --sidebar-foreground:        120 100% 88%;
+    --sidebar-primary:           135 100% 50%;
+    --sidebar-primary-foreground:0 0% 0%;
+    --sidebar-accent:            135 100% 8%;
+    --sidebar-accent-foreground: 120 100% 90%;
+    --sidebar-border:            135 50% 15%;
+    --sidebar-ring:              135 100% 50%;
+
+    /* Custom Matrix tokens */
+    --matrix-primary:   #00FF41;
+    --matrix-hover:     #39FF14;
+    --matrix-cyan:      #00FFFF;
+    --matrix-text:      #CCFFCC;
+    --matrix-muted:     #7C9A7C;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  html, body, #root { min-height: 100%; background: #000; }
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Rajdhani', 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    background-color: #000;
+  }
+  h1, h2, h3 { letter-spacing: 0.02em; }
+  /* Brand font para títulos importantes */
+  .font-brand { font-family: 'Orbitron', sans-serif; letter-spacing: 0.08em; }
+  .font-mono, code, kbd { font-family: 'JetBrains Mono', 'Share Tech Mono', monospace; }
+  /* Inputs en modo oscuro deben contrastar */
+  input, select, textarea {
+    background-color: #0a0a0a !important;
+    color: var(--matrix-text);
+  }
+  input::placeholder, textarea::placeholder { color: #4a6a4a; }
+  select option { background: #0a0a0a; color: var(--matrix-text); }
+}
+
+/* =========================================================
+   GLOW UTILITIES (efectos neón)
+   ========================================================= */
+@layer utilities {
+  .glow-green {
+    box-shadow:
+      0 0 5px #00FF41,
+      0 0 10px rgba(0,255,65,0.6),
+      0 0 20px rgba(0,255,65,0.3);
+  }
+  .glow-green-sm {
+    box-shadow: 0 0 4px rgba(0,255,65,0.6), 0 0 8px rgba(0,255,65,0.3);
+  }
+  .glow-cyan {
+    box-shadow:
+      0 0 8px #00FFFF,
+      0 0 16px rgba(0,255,255,0.5);
+  }
+  .glow-red {
+    box-shadow: 0 0 8px rgba(255,68,68,0.7);
+  }
+  .text-glow-green {
+    text-shadow: 0 0 8px rgba(0,255,65,0.7), 0 0 16px rgba(0,255,65,0.3);
+  }
+  .text-glow-cyan {
+    text-shadow: 0 0 8px rgba(0,255,255,0.6);
+  }
+  .border-glow-green {
+    border-color: #00FF41;
+    box-shadow: inset 0 0 8px rgba(0,255,65,0.15), 0 0 8px rgba(0,255,65,0.25);
+  }
+
+  /* Animación matriz cayendo (sutil) */
+  @keyframes matrix-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.85; }
+  }
+  .animate-matrix-pulse { animation: matrix-pulse 2s ease-in-out infinite; }
+
+  @keyframes glow-pulse {
+    0%, 100% { box-shadow: 0 0 5px rgba(0,255,65,0.5), 0 0 10px rgba(0,255,65,0.3); }
+    50%      { box-shadow: 0 0 10px rgba(0,255,65,0.8), 0 0 20px rgba(0,255,65,0.5); }
+  }
+  .animate-glow-pulse { animation: glow-pulse 2.5s ease-in-out infinite; }
+
+  /* Grid background tipo sci-fi */
+  .bg-matrix-grid {
+    background-image:
+      linear-gradient(rgba(0,255,65,0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,255,65,0.05) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+}
+
+/* Scrollbar tema Matrix */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: #000; }
+::-webkit-scrollbar-thumb { background: rgba(0,255,65,0.25); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(0,255,65,0.55); }
+
+/* Selección de texto */
+::selection { background: rgba(0,255,65,0.35); color: #fff; }
