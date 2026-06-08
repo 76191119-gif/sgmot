@@ -1,8 +1,16 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import {
-  Shield, Search, Filter, CheckCircle2, XCircle, AlertTriangle,
-  Monitor, Smartphone, Users as UsersIcon, Globe,
+  AlertTriangle,
+  CheckCircle2,
+  Filter,
+  Globe,
+  Monitor,
+  Search,
+  Shield,
+  Smartphone,
+  Users as UsersIcon,
+  XCircle,
 } from 'lucide-react';
 import { api } from '@/api/localClient';
 import { usePermissions } from '@/lib/usePermissions';
@@ -13,16 +21,16 @@ import EmptyState from '@/components/shared/EmptyState';
 import { formatDateTime } from '@/lib/utils';
 
 const ACTION_LABELS = {
-  login: 'Inicio de sesión',
-  logout: 'Cierre de sesión',
+  login: 'Inicio de sesion',
+  logout: 'Cierre de sesion',
   login_failed: 'Login fallido',
-  change_password: 'Cambio de contraseña',
+  change_password: 'Cambio de contrasena',
   create_client: 'Crear cliente',
   update_client: 'Editar cliente',
   delete_client: 'Eliminar cliente',
-  create_technician: 'Crear técnico',
-  update_technician: 'Editar técnico',
-  delete_technician: 'Eliminar técnico',
+  create_technician: 'Crear tecnico',
+  update_technician: 'Editar tecnico',
+  delete_technician: 'Eliminar tecnico',
   create_work_order: 'Crear orden',
   update_work_order: 'Editar orden',
   delete_work_order: 'Eliminar orden',
@@ -31,238 +39,196 @@ const ACTION_LABELS = {
   delete_incident: 'Eliminar incidencia',
   create_user: 'Crear usuario',
   update_user: 'Editar usuario',
-  update_user_password: 'Reset contraseña',
+  update_user_password: 'Reset contrasena',
   delete_user: 'Eliminar usuario',
   purge_logs: 'Purgar logs',
+  register: 'Registro de cliente',
 };
 
 const STATUS_CFG = {
-  success: { Icon: CheckCircle2, cls: 'text-matrix-primary',cls2: 'bg-matrix-primary/15 border-matrix-primary/40',label: 'Éxito' },
-  failed:  { Icon: XCircle,      cls: 'text-red-400',       cls2: 'bg-red-500/15 border-red-500/40',              label: 'Fallido' },
-  warning: { Icon: AlertTriangle,cls: 'text-amber-300',     cls2: 'bg-amber-500/15 border-amber-500/40',          label: 'Atención' },
+  success: { Icon: CheckCircle2, cls: 'text-matrix-primary', cls2: 'bg-matrix-primary/15 border-matrix-primary/40', label: 'Exito' },
+  failed: { Icon: XCircle, cls: 'text-red-400', cls2: 'bg-red-500/15 border-red-500/40', label: 'Fallido' },
+  warning: { Icon: AlertTriangle, cls: 'text-amber-300', cls2: 'bg-amber-500/15 border-amber-500/40', label: 'Atencion' },
 };
 
 const ROLE_CFG = {
-  admin:   'bg-matrix-primary/15 text-matrix-primary border border-matrix-primary/30',
+  admin: 'bg-matrix-primary/15 text-matrix-primary border border-matrix-primary/30',
   tecnico: 'bg-matrix-primary/15 text-matrix-primary border border-matrix-primary/30',
   cliente: 'bg-cyan-500/15 text-cyan-300 border border-cyan-500/30',
 };
 
-const INPUT = "px-3 py-2 text-sm border border-input rounded-md bg-background focus:outline-none focus:ring-1 focus:ring-ring";
+const INPUT = 'px-3 py-2 text-sm border border-matrix-primary/25 rounded-md bg-black/60 text-matrix-text focus:outline-none focus:border-matrix-primary transition';
+const DEFAULT_FILTERS = { search: '', action: '', role: '', status: '', from: '', to: '', limit: 500 };
 
 export default function AuditLogs() {
   const perms = usePermissions();
-  const [search, setSearch] = useState('');
-  const [actionFilter, setActionFilter] = useState('');
-  const [roleFilter, setRoleFilter] = useState('');
-  const [statusFilter, setStatusFilter] = useState('');
-  const [from, setFrom] = useState('');
-  const [to, setTo] = useState('');
-  const [limit, setLimit] = useState(500);
+  const [draft, setDraft] = useState(DEFAULT_FILTERS);
+  const [appliedFilters, setAppliedFilters] = useState(DEFAULT_FILTERS);
   const [autoRefresh, setAutoRefresh] = useState(false);
-  const [appliedFilters, setAppliedFilters] = useState({
-    search: '', action: '', role: '', status: '', from: '', to: '', limit: 500,
-  });
 
-  const { data, isLoading, refetch } = useQuery({
+  const { data, isLoading, refetch, isFetching } = useQuery({
     queryKey: ['audit_logs', appliedFilters],
-    queryFn: () => api.auditLogs.list({
-      search: appliedFilters.search || undefined,
-      action: appliedFilters.action || undefined,
-      role:   appliedFilters.role || undefined,
-      status: appliedFilters.status || undefined,
-      from:   appliedFilters.from || undefined,
-      to:     appliedFilters.to || undefined,
-      limit:  appliedFilters.limit || undefined,
-    }),
+    queryFn: () => api.auditLogs.list(appliedFilters),
     enabled: perms.canViewAuditLogs,
     refetchInterval: autoRefresh ? 5000 : false,
   });
 
-  const logs  = data?.logs  || [];
-  const stats = data?.stats || {};
+  if (!perms.canViewAuditLogs) return <AccessDenied />;
 
+  const logs = Array.isArray(data) ? data : Array.isArray(data?.logs) ? data.logs : [];
+  const stats = data?.stats || {};
   const isMobile = (os) => /Android|iPhone|iPad/i.test(os || '');
 
-  if (!perms.canViewAuditLogs) return <AccessDenied />;
+  const setField = (field, value) => setDraft((current) => ({ ...current, [field]: value }));
+  const applyFilters = () => setAppliedFilters(draft);
+  const clearFilters = () => {
+    setDraft(DEFAULT_FILTERS);
+    setAppliedFilters(DEFAULT_FILTERS);
+  };
+  const applyStatus = (status) => {
+    const next = { ...draft, status };
+    setDraft(next);
+    setAppliedFilters(next);
+  };
 
   return (
     <div>
-      <PageHeader
-        title="Auditoría del Sistema"
-        subtitle="Registro de seguridad: accesos, cambios y eventos críticos"
-      />
+      <PageHeader title="Auditoria del Sistema" subtitle="Registro de seguridad: accesos, cambios y eventos criticos" />
 
-      {/* KPIs */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-5">
-        <StatCard label="Total eventos"     value={stats.total || 0}           icon={Shield}        color="primary" />
-        <StatCard label="Logins fallidos"   value={stats.failed_logins || 0}   icon={XCircle}       color="red"     subtitle="Intentos sospechosos" />
-        <StatCard label="Usuarios únicos"   value={stats.unique_users || 0}    icon={UsersIcon}     color="blue" />
-        <StatCard label="IPs distintas"     value={stats.unique_ips || 0}      icon={Globe}         color="purple" />
+      <div className="mb-5 grid grid-cols-2 gap-3 lg:grid-cols-4">
+        <StatCard label="Total eventos" value={stats.total || 0} icon={Shield} color="primary" />
+        <StatCard label="Logins fallidos" value={stats.failed_logins || 0} icon={XCircle} color="red" subtitle="Intentos sospechosos" />
+        <StatCard label="Usuarios unicos" value={stats.unique_users || 0} icon={UsersIcon} color="blue" />
+        <StatCard label="IPs distintas" value={stats.unique_ips || 0} icon={Globe} color="purple" />
       </div>
 
-      {/* Filtros */}
-      <div className="bg-card border border-border rounded-xl p-4 mb-4">
-        <div className="flex items-center gap-2 mb-3 text-sm font-medium">
-          <Filter className="w-4 h-4 text-primary" /> Filtros
+      <div className="mb-4 rounded-xl border border-matrix-primary/20 bg-black/60 p-4">
+        <div className="mb-4 flex items-center gap-2 text-sm font-medium text-matrix-text">
+          <Filter className="h-4 w-4 text-matrix-primary" /> Filtros
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3">
-          <div className="relative lg:col-span-2">
-            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-[minmax(300px,1.5fr)_160px_150px_150px]">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-matrix-muted" />
             <input
-              value={search} onChange={(e) => setSearch(e.target.value)}
-              placeholder="Buscar email, IP o descripción..."
-              className={`${INPUT} pl-9 w-full`}
+              value={draft.search}
+              onChange={(e) => setField('search', e.target.value)}
+              placeholder="Buscar email, IP o descripcion..."
+              className={`${INPUT} h-11 w-full pl-9 placeholder:text-matrix-muted/40`}
             />
           </div>
-          <select value={actionFilter} onChange={(e) => setActionFilter(e.target.value)} className={INPUT}>
-            <option value="">Toda acción</option>
-            <option value="login">Login</option>
-            <option value="login_failed">Login fallido</option>
-            <option value="change_password">Cambio password</option>
-            <option value="create_client">Crear cliente</option>
-            <option value="delete_client">Eliminar cliente</option>
-            <option value="create_work_order">Crear orden</option>
-            <option value="update_work_order">Editar orden</option>
-            <option value="delete_work_order">Eliminar orden</option>
-            <option value="create_incident">Crear incidencia</option>
-            <option value="delete_user">Eliminar usuario</option>
-          </select>
-          <select value={roleFilter} onChange={(e) => setRoleFilter(e.target.value)} className={INPUT}>
+          <select value={draft.role} onChange={(e) => setField('role', e.target.value)} className={`${INPUT} h-11 w-full`}>
             <option value="">Todo rol</option>
             <option value="admin">Admin</option>
-            <option value="tecnico">Técnico</option>
+            <option value="tecnico">Tecnico</option>
             <option value="cliente">Cliente</option>
           </select>
-          <input type="date" value={from} onChange={(e) => setFrom(e.target.value)} className={INPUT} title="Desde" />
-          <input type="date" value={to}   onChange={(e) => setTo(e.target.value)}   className={INPUT} title="Hasta" />
+          <input type="date" value={draft.from} onChange={(e) => setField('from', e.target.value)} className={`${INPUT} h-11 w-full`} title="Desde" />
+          <input type="date" value={draft.to} onChange={(e) => setField('to', e.target.value)} className={`${INPUT} h-11 w-full`} title="Hasta" />
         </div>
-        <div className="flex items-center gap-2 mt-3">
-          <button onClick={() => setStatusFilter('')}        className={`px-3 py-1 text-xs rounded-md border ${!statusFilter ? 'bg-primary text-primary-foreground border-primary' : 'border-input hover:bg-muted'}`}>Todos</button>
-          <button onClick={() => setStatusFilter('success')} className={`px-3 py-1 text-xs rounded-md border ${statusFilter === 'success' ? 'bg-emerald-600 text-white border-emerald-600' : 'border-input hover:bg-muted'}`}>Éxito</button>
-          <button onClick={() => setStatusFilter('failed')}  className={`px-3 py-1 text-xs rounded-md border ${statusFilter === 'failed' ? 'bg-red-600 text-white border-red-600' : 'border-input hover:bg-muted'}`}>Fallidos</button>
-          <button onClick={() => setStatusFilter('warning')} className={`px-3 py-1 text-xs rounded-md border ${statusFilter === 'warning' ? 'bg-amber-600 text-white border-amber-600' : 'border-input hover:bg-muted'}`}>Atención</button>
 
-          <select value={limit} onChange={(e) => setLimit(Number(e.target.value))} className="px-3 py-1 text-xs rounded-md border border-input ml-2">
-            <option value={50}>50</option>
-            <option value={100}>100</option>
-            <option value={200}>200</option>
-            <option value={500}>500 (máx)</option>
-          </select>
+        <div className="mt-4 grid gap-4 border-t border-matrix-primary/10 pt-4 xl:grid-cols-[1fr_auto] xl:items-end">
+          <div className="min-w-0">
+            <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-matrix-muted">Estado</p>
+            <div className="inline-flex max-w-full flex-wrap gap-2 rounded-lg border border-matrix-primary/15 bg-black/35 p-1.5">
+            {[
+              { key: '', label: 'Todos', active: 'bg-matrix-primary text-black border-matrix-primary' },
+              { key: 'success', label: 'Exito', active: 'bg-emerald-600 text-white border-emerald-600' },
+              { key: 'failed', label: 'Fallidos', active: 'bg-red-600 text-white border-red-600' },
+              { key: 'warning', label: 'Atencion', active: 'bg-amber-600 text-white border-amber-600' },
+            ].map(({ key, label, active }) => (
+              <button
+                key={key || 'all'}
+                type="button"
+                onClick={() => applyStatus(key)}
+                className={`h-8 min-w-[78px] rounded-md border px-3 text-xs font-medium transition ${
+                  draft.status === key ? active : 'border-matrix-primary/25 text-matrix-muted hover:bg-matrix-primary/5 hover:text-matrix-text'
+                }`}
+              >
+                {label}
+            </button>
+          ))}
+            </div>
+          </div>
 
-          <button onClick={() => refetch()} className="px-3 py-1 text-xs rounded-md border border-input ml-2 hover:bg-muted">Refrescar</button>
-          <button
-            onClick={() => {
-              setAppliedFilters({
-                search: search || '',
-                action: actionFilter || '',
-                role: roleFilter || '',
-                status: statusFilter || '',
-                from: from || '',
-                to: to || '',
-                limit: limit || 500,
-              });
-              setTimeout(() => refetch(), 100);
-            }}
-            className="px-3 py-1 text-xs rounded-md border ml-2 border-input hover:bg-muted"
-          >
-            Aplicar filtros
-          </button>
-
-          <button
-            onClick={() => setAutoRefresh(a => !a)}
-            className={`px-3 py-1 text-xs rounded-md border ml-2 ${autoRefresh ? 'bg-emerald-600 text-white border-emerald-600' : 'border-input hover:bg-muted'}`}
-          >
-            {autoRefresh ? 'Auto ON' : 'Auto OFF'}
-          </button>
-          <button
-            onClick={() => {
-              setSearch(''); setActionFilter(''); setRoleFilter(''); setStatusFilter(''); setFrom(''); setTo(''); setLimit(500);
-              setAppliedFilters({ search: '', action: '', role: '', status: '', from: '', to: '', limit: 500 });
-              setTimeout(() => refetch(), 150);
-            }}
-            className="ml-auto px-3 py-1 text-xs rounded-md border border-input hover:bg-muted"
-          >
-            Limpiar
-          </button>
+          <div className="min-w-0">
+            <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-matrix-muted xl:text-right">Acciones</p>
+            <div className="flex flex-wrap gap-2 xl:justify-end">
+              <button type="button" onClick={() => refetch()} className="h-10 min-w-[110px] rounded-md border border-matrix-primary/25 px-4 text-xs font-medium text-matrix-muted transition hover:bg-matrix-primary/5 hover:text-matrix-text">
+                {isFetching ? 'Actualizando' : 'Refrescar'}
+              </button>
+              <button type="button" onClick={applyFilters} className="h-10 min-w-[140px] rounded-md border border-matrix-primary bg-matrix-primary px-4 text-xs font-bold text-black transition hover:bg-matrix-hover">
+                Aplicar filtros
+              </button>
+              <button type="button" onClick={clearFilters} className="h-10 min-w-[96px] rounded-md border border-matrix-primary/25 px-4 text-xs font-medium text-matrix-muted transition hover:bg-matrix-primary/5 hover:text-matrix-text">
+                Limpiar
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Indicador de total */}
       <div className="mb-3 flex items-center justify-between">
-        <div className="text-sm text-muted-foreground">Total eventos: <span className="font-semibold text-white">{stats.total || 0}</span></div>
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => {
-              const newLimit = Math.min(stats.total || 500, 500);
-              setSearch(''); setActionFilter(''); setRoleFilter(''); setStatusFilter(''); setFrom(''); setTo('');
-              setLimit(newLimit);
-              setTimeout(() => refetch(), 150);
-            }}
-            className="px-3 py-1 text-xs rounded-md border border-input hover:bg-muted"
-          >
-            Mostrar en tabla
-          </button>
+        <div className="text-sm text-matrix-muted">
+          Eventos encontrados: <span className="font-semibold text-matrix-text">{stats.total || 0}</span>
         </div>
       </div>
 
-      {/* Tabla */}
-      <div className="bg-card border border-border rounded-xl overflow-hidden">
+      <div className="overflow-hidden rounded-xl border border-matrix-primary/20 bg-black/60">
         {isLoading ? (
-          <div className="p-12 text-center text-sm text-muted-foreground">Cargando...</div>
+          <div className="p-12 text-center text-sm text-matrix-muted">Cargando...</div>
         ) : logs.length === 0 ? (
           <EmptyState icon={Shield} title="Sin registros" description="No hay eventos que coincidan con los filtros." />
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
-              <thead className="bg-muted/50 text-xs uppercase text-muted-foreground">
-                <tr>
-                  <th className="text-left px-4 py-3 font-semibold">Fecha</th>
-                  <th className="text-left px-4 py-3 font-semibold">Usuario</th>
-                  <th className="text-left px-4 py-3 font-semibold">Acción</th>
-                  <th className="text-left px-4 py-3 font-semibold">Descripción</th>
-                  <th className="text-left px-4 py-3 font-semibold">IP</th>
-                  <th className="text-left px-4 py-3 font-semibold">Dispositivo</th>
-                  <th className="text-left px-4 py-3 font-semibold">Estado</th>
+              <thead className="border-b border-matrix-primary/20">
+                <tr className="text-[11px] uppercase tracking-wider text-matrix-muted">
+                  <th className="px-4 py-3 text-left font-semibold">Fecha</th>
+                  <th className="px-4 py-3 text-left font-semibold">Usuario</th>
+                  <th className="px-4 py-3 text-left font-semibold">Accion</th>
+                  <th className="px-4 py-3 text-left font-semibold">Descripcion</th>
+                  <th className="px-4 py-3 text-left font-semibold">IP</th>
+                  <th className="px-4 py-3 text-left font-semibold">Dispositivo</th>
+                  <th className="px-4 py-3 text-left font-semibold">Estado</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-border">
-                {logs.map((l) => {
-                  const sCfg = STATUS_CFG[l.status] || STATUS_CFG.success;
+              <tbody className="divide-y divide-matrix-primary/[0.08]">
+                {logs.map((log) => {
+                  const sCfg = STATUS_CFG[log.status] || STATUS_CFG.success;
                   const SIcon = sCfg.Icon;
-                  const Device = isMobile(l.os) ? Smartphone : Monitor;
+                  const Device = isMobile(log.os) ? Smartphone : Monitor;
                   return (
-                    <tr key={l.id} className="hover:bg-muted/30">
-                      <td className="px-4 py-3 text-xs text-muted-foreground whitespace-nowrap">{formatDateTime(l.created_date)}</td>
+                    <tr key={log.id} className="transition hover:bg-matrix-primary/[0.03]">
+                      <td className="whitespace-nowrap px-4 py-3 text-xs text-matrix-muted">{formatDateTime(log.created_date)}</td>
                       <td className="px-4 py-3">
-                        {l.user_email ? (
-                          <div className="flex items-center gap-2 min-w-0">
-                            <span className="font-medium text-xs truncate">{l.user_email}</span>
-                            {l.user_role && (
-                              <span className={`text-[10px] px-1.5 py-0.5 rounded font-semibold uppercase ${ROLE_CFG[l.user_role] || ''}`}>
-                                {l.user_role}
+                        {log.user_email ? (
+                          <div className="flex min-w-0 items-center gap-2">
+                            <span className="truncate text-xs font-medium text-matrix-text">{log.user_email}</span>
+                            {log.user_role && (
+                              <span className={`rounded px-1.5 py-0.5 text-[10px] font-semibold uppercase ${ROLE_CFG[log.user_role] || ''}`}>
+                                {log.user_role}
                               </span>
                             )}
                           </div>
                         ) : (
-                          <span className="text-xs text-muted-foreground italic">anónimo</span>
+                          <span className="text-xs italic text-matrix-muted">anonimo</span>
                         )}
                       </td>
-                      <td className="px-4 py-3 text-xs font-medium">{ACTION_LABELS[l.action] || l.action}</td>
-                      <td className="px-4 py-3 text-xs text-muted-foreground max-w-[300px] truncate" title={l.description}>{l.description}</td>
-                      <td className="px-4 py-3 text-xs font-mono text-muted-foreground">{l.ip_address}</td>
+                      <td className="px-4 py-3 text-xs font-medium text-matrix-text">{ACTION_LABELS[log.action] || log.action}</td>
+                      <td className="max-w-[300px] truncate px-4 py-3 text-xs text-matrix-muted" title={log.description}>{log.description}</td>
+                      <td className="px-4 py-3 font-mono text-xs text-matrix-muted">{log.ip_address}</td>
                       <td className="px-4 py-3">
-                        <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                          <Device className="w-3.5 h-3.5" />
+                        <div className="flex items-center gap-1.5 text-xs text-matrix-muted">
+                          <Device className="h-3.5 w-3.5" />
                           <div>
-                            <p>{l.browser}</p>
-                            <p className="text-[10px]">{l.os}</p>
+                            <p>{log.browser}</p>
+                            <p className="text-[10px]">{log.os}</p>
                           </div>
                         </div>
                       </td>
                       <td className="px-4 py-3">
-                        <span className={`inline-flex items-center gap-1 px-2 py-0.5 text-[11px] font-medium rounded-md border uppercase tracking-wider ${sCfg.cls2} ${sCfg.cls}`}>
-                          <SIcon className="w-3 h-3" /> {sCfg.label}
+                        <span className={`inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-[11px] font-medium uppercase tracking-wider ${sCfg.cls2} ${sCfg.cls}`}>
+                          <SIcon className="h-3 w-3" /> {sCfg.label}
                         </span>
                       </td>
                     </tr>
@@ -275,8 +241,8 @@ export default function AuditLogs() {
       </div>
 
       {logs.length > 0 && (
-        <p className="text-xs text-muted-foreground text-center mt-3">
-          Mostrando {logs.length} eventos. Para ver más, ajusta los filtros de fecha.
+        <p className="mt-3 text-center text-xs text-matrix-muted">
+          Mostrando {logs.length} eventos. Para ver mas, ajusta los filtros o aumenta el limite.
         </p>
       )}
     </div>

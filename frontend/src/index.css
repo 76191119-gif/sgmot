@@ -81,6 +81,22 @@
   }
   input::placeholder, textarea::placeholder { color: #4a6a4a; }
   select option { background: #0a0a0a; color: var(--matrix-text); }
+  input[type="date"] {
+    color-scheme: dark;
+    padding-right: 0.75rem;
+  }
+  input[type="date"]::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    opacity: 1;
+    width: 1rem;
+    height: 1rem;
+    border-radius: 0.375rem;
+    filter: invert(78%) sepia(98%) saturate(1512%) hue-rotate(78deg) brightness(105%) contrast(105%);
+  }
+  input[type="date"]::-webkit-calendar-picker-indicator:hover {
+    background-color: rgba(0, 255, 65, 0.14);
+    box-shadow: 0 0 10px rgba(0, 255, 65, 0.35);
+  }
 }
 
 /* =========================================================

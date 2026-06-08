@@ -1,5 +1,5 @@
 -- =============================================================
--- SGMOT v3.2 - INPE CABLE - BD PRODUCCIÓN
+-- SGMOT - INPE CABLE - BD PRODUCCIÓN
 -- - Admins y técnicos pre-cargados
 -- - Tabla clients VACÍA (registro mediante /register o desde admin)
 -- - Coordenadas GPS en clients
@@ -20,6 +20,7 @@ CREATE TABLE users (
   id INT AUTO_INCREMENT PRIMARY KEY,
   full_name VARCHAR(100) NOT NULL,
   email VARCHAR(150) NOT NULL UNIQUE,
+  photo_url LONGTEXT NULL,
   password VARCHAR(255) NOT NULL,
   role ENUM('admin','tecnico','cliente') DEFAULT 'cliente',
   provider VARCHAR(20) DEFAULT 'local',          -- local | google
@@ -31,6 +32,7 @@ CREATE TABLE users (
 
 CREATE TABLE clients (
   id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NULL,
   full_name VARCHAR(100) NOT NULL,
   dni VARCHAR(20) NOT NULL UNIQUE,
   phone VARCHAR(20) NOT NULL,
@@ -44,6 +46,8 @@ CREATE TABLE clients (
   notes TEXT,
   created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL,
+  UNIQUE KEY uq_clients_user_id (user_id),
   INDEX idx_clients_email (email)
 );
 
@@ -66,7 +70,7 @@ CREATE TABLE technicians (
 CREATE TABLE work_orders (
   id INT AUTO_INCREMENT PRIMARY KEY,
   order_number VARCHAR(30) UNIQUE,
-  type ENUM('instalacion','soporte','mantenimiento','retiro') NOT NULL,
+  type ENUM('nueva_instalacion','instalacion','soporte','mantenimiento','retiro') NOT NULL,
   client_id INT NOT NULL,
   client_name VARCHAR(100),
   client_address TEXT,
@@ -93,6 +97,8 @@ CREATE TABLE incidents (
   client_name VARCHAR(100),
   category ENUM('sin_servicio','lentitud','corte_fibra','equipo_danado','configuracion','otro') NOT NULL,
   priority ENUM('baja','media','alta','critica') DEFAULT 'media',
+  technician_id INT NULL,
+  technician_name VARCHAR(100),
   status ENUM('abierta','en_atencion','resuelta','cerrada') DEFAULT 'abierta',
   description TEXT,
   resolution TEXT,
@@ -100,8 +106,10 @@ CREATE TABLE incidents (
   created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   FOREIGN KEY (client_id) REFERENCES clients(id),
+  FOREIGN KEY (technician_id) REFERENCES technicians(id) ON DELETE SET NULL,
   FOREIGN KEY (work_order_id) REFERENCES work_orders(id) ON DELETE SET NULL,
-  INDEX idx_incidents_date (created_date)
+  INDEX idx_incidents_date (created_date),
+  INDEX idx_incidents_technician (technician_id)
 );
 
 CREATE TABLE audit_logs (
@@ -143,16 +151,15 @@ CREATE TABLE notifications (
 
 -- =============================================================
 -- USUARIOS PRE-CARGADOS (1 admin + 4 técnicos)
--- IMPORTANTE: las contraseñas reales se aplican ejecutando
---             api/setup_passwords.php DESPUÉS de importar este SQL.
--- Por defecto quedan con hash de "password" como placeholder.
+-- IMPORTANTE: no requiere scripts auxiliares despues de importar este SQL.
+-- Los hashes iniciales ya corresponden a las credenciales documentadas.
 -- =============================================================
 INSERT INTO users (full_name, email, password, role, profile_complete) VALUES
-('Administrador SGMOT', 'admin@sgmot.com',   '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi','admin',  1),
-('Carlos Mendoza',      'carlos@sgmot.com',  '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi','tecnico',1),
-('Ana Torres',          'ana@sgmot.com',     '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi','tecnico',1),
-('Luis Ramos',          'luis@sgmot.com',    '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi','tecnico',1),
-('Pedro Castillo',      'pedro.t@sgmot.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi','tecnico',1);
+('Administrador SGMOT', 'admin@sgmot.com',   '$2y$10$G9fDUcf9wzhIQIpmNk2RQOg8uMvtHQNrhlj647lHYtYkicQkbDPhm','admin',  1),
+('Carlos Mendoza',      'carlos@sgmot.com',  '$2y$10$bEWD8xnXbkGLWFlvfmF49e5QSW2xVAHamuZfMvLHQyr8Do2AAOU.G','tecnico',1),
+('Ana Torres',          'ana@sgmot.com',     '$2y$10$4O.VdBd0cRlna9PC.7AbGeI0Va9SQdJaRc6ebCujJmKFELwEHQMIW','tecnico',1),
+('Luis Ramos',          'luis@sgmot.com',    '$2y$10$bTq4bnYACKPUSk71WGBR0uhu0s7r0NEyY/l9s.fGdtsbx10COcSDW','tecnico',1),
+('Pedro Castillo',      'pedro.t@sgmot.com', '$2y$10$UpypNg46kvjCeLFiypkyxObnugdk6wmkPDO51aDk0VR7ASOqD57/y','tecnico',1);
 
 -- TÉCNICOS (fichas operativas)
 INSERT INTO technicians (full_name, dni, phone, email, specialty, status, zone, user_id) VALUES
@@ -163,4 +170,4 @@ INSERT INTO technicians (full_name, dni, phone, email, specialty, status, zone, 
 
 -- Notificación de bienvenida al admin
 INSERT INTO notifications (user_id, type, title, message, action_url) VALUES
-(1,'system','✅ Sistema SGMOT inicializado','Recuerda ejecutar setup_passwords.php para aplicar las contraseñas reales.','/profile');
+(1,'system','Sistema SGMOT inicializado','Contrasenas iniciales aplicadas desde el script SQL. Cambia las claves luego del primer ingreso.','/profile');

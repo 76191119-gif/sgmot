@@ -8,13 +8,37 @@ export function AuthProvider({ children }) {
   const [isLoadingAuth, setIsLoadingAuth] = useState(true);
 
   useEffect(() => {
+    let alive = true;
+
     const stored = localStorage.getItem('sgmot_user');
     const token = localStorage.getItem('sgmot_token');
     if (stored && token) {
-      try { setUser(JSON.parse(stored)); }
-      catch { /* ignore */ }
+      try {
+        const cached = JSON.parse(stored);
+        setUser(cached);
+        api.auth.me()
+          .then((fresh) => {
+            if (!alive) return;
+            localStorage.setItem('sgmot_user', JSON.stringify(fresh));
+            setUser(fresh);
+          })
+          .catch(() => {
+            if (!alive) return;
+            localStorage.removeItem('sgmot_token');
+            localStorage.removeItem('sgmot_user');
+            setUser(null);
+          })
+          .finally(() => {
+            if (alive) setIsLoadingAuth(false);
+          });
+        return () => { alive = false; };
+      } catch {
+        localStorage.removeItem('sgmot_token');
+        localStorage.removeItem('sgmot_user');
+      }
     }
     setIsLoadingAuth(false);
+    return () => { alive = false; };
   }, []);
 
   const login = async (email, password) => {

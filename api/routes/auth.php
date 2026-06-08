@@ -1,10 +1,24 @@
 <?php
 $b = getBody();
-$email    = trim($b['email'] ?? '');
+$email = strtolower(trim($b['email'] ?? ''));
 $password = $b['password'] ?? '';
 
 if (!$email || !$password) {
-    sendResponse(['error' => 'Email y contraseña requeridos'], 400);
+    sendResponse(['error' => 'Email y contrasena requeridos'], 400);
+}
+
+$ip = function_exists('get_client_ip') ? get_client_ip() : ($_SERVER['REMOTE_ADDR'] ?? '');
+$limit = $db->prepare("
+    SELECT COUNT(*)
+    FROM audit_logs
+    WHERE action = 'login_failed'
+      AND status = 'failed'
+      AND created_date >= (NOW() - INTERVAL 15 MINUTE)
+      AND (user_email = ? OR ip_address = ?)
+");
+$limit->execute([$email, $ip]);
+if ((int)$limit->fetchColumn() >= 5) {
+    sendResponse(['error' => 'Demasiados intentos fallidos. Intenta nuevamente en 15 minutos.'], 429);
 }
 
 $stmt = $db->prepare("SELECT * FROM users WHERE email = ?");
@@ -17,19 +31,18 @@ if (!$user) {
 }
 
 if (!password_verify($password, $user['password'])) {
-    audit_log($db, 'login_failed', null, null, "Contraseña incorrecta para $email", 'failed', $user);
+    audit_log($db, 'login_failed', null, null, "Contrasena incorrecta para $email", 'failed', $user);
     sendResponse(['error' => 'Credenciales incorrectas'], 401);
 }
 
-// Login exitoso
-audit_log($db, 'login', null, null, 'Inicio de sesión exitoso', 'success', $user);
+audit_log($db, 'login', null, null, 'Inicio de sesion exitoso', 'success', $user);
 
 sendResponse([
     'token' => generateToken($user),
-    'user'  => [
-        'id'        => (int)$user['id'],
+    'user' => [
+        'id' => (int)$user['id'],
         'full_name' => $user['full_name'],
-        'email'     => $user['email'],
-        'role'      => $user['role'],
-    ]
+        'email' => $user['email'],
+        'role' => $user['role'],
+    ],
 ]);

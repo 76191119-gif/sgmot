@@ -14,7 +14,8 @@ export const planLabels = {
 };
 
 export const typeLabels = {
-  instalacion: 'Instalación',
+  nueva_instalacion: 'Nueva Instalación',
+  instalacion: 'Instalación / Reinstalación',
   soporte: 'Soporte Técnico',
   mantenimiento: 'Mantenimiento',
   retiro: 'Retiro de Equipo',

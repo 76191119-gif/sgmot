@@ -73,28 +73,28 @@ export default function Clients() {
         }
       />
 
-      <div className="bg-card border border-border rounded-xl overflow-hidden">
-        <div className="p-4 border-b border-border">
+      <div className="bg-black/60 border border-matrix-primary/20 rounded-xl overflow-hidden">
+        <div className="p-4 border-b border-matrix-primary/15">
           <div className="relative max-w-md">
-            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-matrix-muted" />
             <input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Buscar por nombre, DNI o teléfono..."
-              className="w-full pl-9 pr-3 py-2 text-sm border border-input rounded-md bg-background focus:outline-none focus:ring-1 focus:ring-ring"
+              className="w-full pl-9 pr-3 py-2 text-sm border border-matrix-primary/25 rounded-md bg-black/60 text-matrix-text focus:outline-none focus:border-matrix-primary transition placeholder:text-matrix-muted/40"
             />
           </div>
         </div>
 
         {isLoading ? (
-          <div className="p-12 text-center text-sm text-muted-foreground">Cargando...</div>
+          <div className="p-12 text-center text-sm text-matrix-muted">Cargando...</div>
         ) : filtered.length === 0 ? (
           <EmptyState icon={Users} title="Sin clientes" description="No hay clientes que coincidan con tu búsqueda." />
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
-              <thead className="bg-muted/50 text-xs uppercase text-muted-foreground">
-                <tr>
+              <thead className="border-b border-matrix-primary/15">
+                <tr className="text-[11px] uppercase text-matrix-muted tracking-wider">
                   <th className="text-left px-4 py-3 font-semibold">Nombre</th>
                   <th className="text-left px-4 py-3 font-semibold">DNI</th>
                   <th className="text-left px-4 py-3 font-semibold">Teléfono</th>
@@ -104,30 +104,26 @@ export default function Clients() {
                   <th className="text-right px-4 py-3 font-semibold w-24">Acciones</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-border">
+              <tbody className="divide-y divide-matrix-primary/[0.08]">
                 {filtered.map((c) => (
-                  <tr key={c.id} className="hover:bg-muted/30">
-                    <td className="px-4 py-3 font-medium">{c.full_name}</td>
-                    <td className="px-4 py-3 text-muted-foreground">{c.dni}</td>
-                    <td className="px-4 py-3 text-muted-foreground">{c.phone}</td>
-                    <td className="px-4 py-3 text-muted-foreground max-w-[200px] truncate">{c.address}</td>
-                    <td className="px-4 py-3">{planLabels[c.plan] || c.plan}</td>
+                  <tr key={c.id} className="hover:bg-matrix-primary/[0.03] transition">
+                    <td className="px-4 py-3 font-medium text-matrix-text">{c.full_name}</td>
+                    <td className="px-4 py-3 text-matrix-muted font-mono text-xs">{c.dni}</td>
+                    <td className="px-4 py-3 text-matrix-muted">{c.phone}</td>
+                    <td className="px-4 py-3 text-matrix-muted max-w-[200px] truncate text-xs">{c.address}</td>
+                    <td className="px-4 py-3 text-xs text-matrix-text/80">{planLabels[c.plan] || c.plan}</td>
                     <td className="px-4 py-3"><StatusBadge status={c.status} /></td>
                     <td className="px-4 py-3">
                       <div className="flex justify-end gap-1">
                         {perms.canEdit && (
-                          <button
-                            onClick={() => { setEditing(c); setModalOpen(true); }}
-                            className="p-1.5 rounded-md hover:bg-muted text-muted-foreground" title="Editar"
-                          >
+                          <button onClick={() => { setEditing(c); setModalOpen(true); }}
+                            className="p-1.5 rounded-md hover:bg-matrix-primary/10 text-matrix-muted hover:text-matrix-primary transition" title="Editar">
                             <Pencil className="w-3.5 h-3.5" />
                           </button>
                         )}
                         {perms.canDelete && (
-                          <button
-                            onClick={() => setConfirm(c)}
-                            className="p-1.5 rounded-md hover:bg-red-50 text-red-600" title="Eliminar"
-                          >
+                          <button onClick={() => setConfirm(c)}
+                            className="p-1.5 rounded-md hover:bg-red-500/10 text-matrix-muted hover:text-red-400 transition" title="Eliminar">
                             <Trash2 className="w-3.5 h-3.5" />
                           </button>
                         )}

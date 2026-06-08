@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/lib/AuthContext';
 import { Loader2, Lock, Mail, AlertCircle, UserPlus, Eye, EyeOff } from 'lucide-react';
@@ -27,7 +27,7 @@ export default function Login() {
     }
   };
 
-  const handleGoogle = async (idToken) => {
+  const handleGoogle = useCallback(async (idToken) => {
     setError('');
     setLoading(true);
     try {
@@ -43,7 +43,7 @@ export default function Login() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [loginWithGoogle, navigate]);
 
   return (
     <div
@@ -140,7 +140,11 @@ export default function Login() {
           </div>
 
           {/* Google Sign-In */}
-          <GoogleSignInButton onCredential={handleGoogle} text="signin_with" />
+          <GoogleSignInButton
+            onCredential={handleGoogle}
+            onError={setError}
+            text="signin_with"
+          />
 
           {/* Link a registro */}
           <div className="mt-6 pt-4 border-t border-matrix-primary/20 text-center">

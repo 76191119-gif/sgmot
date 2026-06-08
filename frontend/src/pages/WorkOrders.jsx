@@ -68,30 +68,31 @@ export default function WorkOrders() {
         title="Órdenes de Trabajo"
         subtitle={`${orders.length} orden${orders.length !== 1 ? 'es' : ''} total${orders.length !== 1 ? 'es' : ''}`}
         actions={
-          perms.canCreate && (
+          /* Admin crea órdenes completas; cliente puede solicitar servicio */
+          (perms.canCreate || perms.isCliente) && (
             <button
               onClick={() => { setEditing(null); setModalOpen(true); }}
-              className="inline-flex items-center gap-2 bg-primary text-primary-foreground rounded-md px-3 py-2 text-sm font-medium hover:bg-primary/90 transition"
+              className="inline-flex items-center gap-2 bg-matrix-primary text-black rounded-md px-3 py-2 text-sm font-bold hover:bg-matrix-hover transition uppercase tracking-wider"
             >
-              <Plus className="w-4 h-4" /> Nueva Orden
+              <Plus className="w-4 h-4" /> {perms.isCliente ? 'Solicitar Servicio' : 'Nueva Orden'}
             </button>
           )
         }
       />
 
-      <div className="bg-card border border-border rounded-xl p-4 mb-4 flex flex-col md:flex-row gap-3">
+      <div className="bg-black/60 border border-matrix-primary/20 rounded-xl p-4 mb-4 flex flex-col md:flex-row gap-3">
         <div className="relative flex-1">
-          <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+          <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-matrix-muted" />
           <input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Buscar por cliente, número de orden o técnico..."
-            className="w-full pl-9 pr-3 py-2 text-sm border border-input rounded-md bg-background focus:outline-none focus:ring-1 focus:ring-ring"
+            className="w-full pl-9 pr-3 py-2 text-sm border border-matrix-primary/25 rounded-md bg-black/60 text-matrix-text focus:outline-none focus:border-matrix-primary transition placeholder:text-matrix-muted/40"
           />
         </div>
         <select
           value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}
-          className="px-3 py-2 text-sm border border-input rounded-md bg-background"
+          className="px-3 py-2 text-sm border border-matrix-primary/25 rounded-md bg-black/60 text-matrix-text focus:outline-none focus:border-matrix-primary transition cursor-pointer"
         >
           <option value="todos">Todos los estados</option>
           <option value="pendiente">Pendiente</option>
@@ -101,10 +102,11 @@ export default function WorkOrders() {
         </select>
         <select
           value={typeFilter} onChange={(e) => setTypeFilter(e.target.value)}
-          className="px-3 py-2 text-sm border border-input rounded-md bg-background"
+          className="px-3 py-2 text-sm border border-matrix-primary/25 rounded-md bg-black/60 text-matrix-text focus:outline-none focus:border-matrix-primary transition cursor-pointer"
         >
           <option value="todos">Todos los tipos</option>
-          <option value="instalacion">Instalación</option>
+          <option value="nueva_instalacion">Nueva Instalación</option>
+          <option value="instalacion">Instalación / Reinstalación</option>
           <option value="soporte">Soporte</option>
           <option value="mantenimiento">Mantenimiento</option>
           <option value="retiro">Retiro</option>
@@ -112,7 +114,7 @@ export default function WorkOrders() {
       </div>
 
       {isLoading ? (
-        <div className="text-center py-12 text-sm text-muted-foreground">Cargando...</div>
+        <div className="text-center py-12 text-sm text-matrix-muted">Cargando...</div>
       ) : filtered.length === 0 ? (
         <EmptyState icon={ClipboardList} title="Sin órdenes" description="No hay órdenes que coincidan con los filtros." />
       ) : (

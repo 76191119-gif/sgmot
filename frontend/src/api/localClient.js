@@ -30,6 +30,14 @@ async function request(method, path, body = null) {
   return data;
 }
 
+function queryString(params = {}) {
+  const clean = {};
+  Object.entries(params).forEach(([key, value]) => {
+    if (value !== undefined && value !== null && value !== '') clean[key] = value;
+  });
+  return new URLSearchParams(clean).toString();
+}
+
 export const api = {
   auth: {
     login: (email, password) => request('POST', '/auth/login', { email, password }),
@@ -52,7 +60,7 @@ export const api = {
     get:    (id)     => request('GET',    `/users/${id}`),
     create: (data)   => request('POST',   '/users', data),
     update: (id, d)  => request('PUT',    `/users/${id}`, d),
-    delete: (id)     => request('DELETE', `/users/${id}`),
+    delete: (id, admin_password) => request('DELETE', `/users/${id}`, { admin_password }),
   },
   clients: {
     list:   ()       => request('GET',    '/clients'),
@@ -84,7 +92,7 @@ export const api = {
   },
   auditLogs: {
     list: (params = {}) => {
-      const q = new URLSearchParams(params).toString();
+      const q = queryString(params);
       return request('GET', `/audit_logs${q ? '?' + q : ''}`);
     },
     purge: (before) => request('DELETE', `/audit_logs?purge_before=${before}`),
@@ -97,12 +105,12 @@ export const api = {
     clearRead:   ()   => request('DELETE', '/notifications/clear-read'),
   },
   reports: {
-    summary:           (params = {}) => request('GET', `/reports/summary?${new URLSearchParams(params)}`),
-    ordersTimeline:    (params = {}) => request('GET', `/reports/orders-timeline?${new URLSearchParams(params)}`),
-    incidentsTimeline: (params = {}) => request('GET', `/reports/incidents-timeline?${new URLSearchParams(params)}`),
-    ordersByType:      (params = {}) => request('GET', `/reports/orders-by-type?${new URLSearchParams(params)}`),
-    incidentsByCategory: (params = {}) => request('GET', `/reports/incidents-by-category?${new URLSearchParams(params)}`),
-    technicianPerformance: (params = {}) => request('GET', `/reports/technician-performance?${new URLSearchParams(params)}`),
+    summary:           (params = {}) => request('GET', `/reports/summary?${queryString(params)}`),
+    ordersTimeline:    (params = {}) => request('GET', `/reports/orders-timeline?${queryString(params)}`),
+    incidentsTimeline: (params = {}) => request('GET', `/reports/incidents-timeline?${queryString(params)}`),
+    ordersByType:      (params = {}) => request('GET', `/reports/orders-by-type?${queryString(params)}`),
+    incidentsByCategory: (params = {}) => request('GET', `/reports/incidents-by-category?${queryString(params)}`),
+    technicianPerformance: (params = {}) => request('GET', `/reports/technician-performance?${queryString(params)}`),
     clientsByPlan:     () => request('GET', '/reports/clients-by-plan'),
   },
 };

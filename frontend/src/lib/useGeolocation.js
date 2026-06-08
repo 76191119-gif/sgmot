@@ -22,14 +22,35 @@ export function useGeolocation() {
       );
       if (!r.ok) throw new Error('Reverse geocode failed');
       const data = await r.json();
-      // Construir dirección legible
       const a = data.address || {};
-      const road    = a.road || a.pedestrian || '';
-      const houseNo = a.house_number ? ` ${a.house_number}` : '';
-      const district = a.suburb || a.neighbourhood || a.city_district || a.town || '';
-      const formatted = (road + houseNo).trim() || data.display_name || '';
-      setAddress({ formatted, district, display_name: data.display_name });
-      return { formatted, district, display_name: data.display_name };
+
+      // --- Dirección ---
+      // Prioridad: calle con número > urbanización/barrio > vía principal
+      const road     = a.road || a.pedestrian || a.path || a.footway || '';
+      const houseNo  = a.house_number ? ` ${a.house_number}` : '';
+      const suburb   = a.suburb || a.neighbourhood || a.residential || '';
+      let formatted  = (road + houseNo).trim();
+      // Si la calle es una carretera genérica y hay urbanización, preferir la urb.
+      if (suburb && (!formatted || /carretera|autopista|av\. principal/i.test(formatted))) {
+        formatted = suburb + (formatted ? `, ${formatted}` : '');
+      }
+      if (!formatted) formatted = data.display_name || '';
+
+      // --- Distrito (para Perú: city_district > suburb > city > town > county) ---
+      // Nominatim en Perú suele poner el distrito en city_district o suburb,
+      // y la provincia/ciudad en city o town.
+      const district =
+        a.city_district ||   // Ej: "Wanchaq", "San Jerónimo"
+        a.suburb       ||   // barrio/urbanización a veces coincide con distrito
+        a.neighbourhood||
+        a.city         ||   // ciudad principal (Cusco, Lima...)
+        a.town         ||
+        a.municipality ||
+        a.county       ||
+        '';
+
+      setAddress({ formatted, district, display_name: data.display_name, raw: a });
+      return { formatted, district, display_name: data.display_name, raw: a };
     } catch (e) {
       console.warn('Reverse geocode:', e);
       return null;

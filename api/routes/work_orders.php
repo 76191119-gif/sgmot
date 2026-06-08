@@ -1,6 +1,38 @@
 <?php
 $user = requireAuth();
 
+function getCurrentTechnician($db, $user) {
+    static $tech = null;
+    if ($tech !== null) return $tech ?: null;
+    $tech = findCurrentTechnician($db, $user) ?: false;
+    return $tech ?: null;
+}
+
+function getCurrentClient($db, $user) {
+    static $client = null;
+    if ($client !== null) return $client ?: null;
+    $client = findCurrentClient($db, $user) ?: false;
+    return $client ?: null;
+}
+
+function canAccessWorkOrder($db, $user, $order) {
+    if ($user['role'] === 'admin') return true;
+
+    if ($user['role'] === 'tecnico') {
+        $tech = getCurrentTechnician($db, $user);
+        return $tech
+            && (int)$order['technician_id'] === (int)$tech['id'];
+    }
+
+    if ($user['role'] === 'cliente') {
+        $client = getCurrentClient($db, $user);
+        return $client
+            && (int)$order['client_id'] === (int)$client['id'];
+    }
+
+    return false;
+}
+
 // =================== LISTADO FILTRADO POR ROL ===================
 if ($method === 'GET' && !$id) {
     if ($user['role'] === 'admin') {
@@ -8,21 +40,17 @@ if ($method === 'GET' && !$id) {
         sendResponse($stmt->fetchAll(PDO::FETCH_ASSOC));
     }
     if ($user['role'] === 'tecnico') {
-        $t = $db->prepare("SELECT id, full_name FROM technicians WHERE email = ?");
-        $t->execute([$user['email']]);
-        $tech = $t->fetch(PDO::FETCH_ASSOC);
+        $tech = getCurrentTechnician($db, $user);
         if (!$tech) sendResponse([]);
-        $stmt = $db->prepare("SELECT * FROM work_orders WHERE technician_id = ? OR technician_name = ? ORDER BY created_date DESC");
-        $stmt->execute([$tech['id'], $tech['full_name']]);
+        $stmt = $db->prepare("SELECT * FROM work_orders WHERE technician_id = ? ORDER BY created_date DESC");
+        $stmt->execute([$tech['id']]);
         sendResponse($stmt->fetchAll(PDO::FETCH_ASSOC));
     }
     // cliente
-    $cl = $db->prepare("SELECT id, full_name FROM clients WHERE email = ?");
-    $cl->execute([$user['email']]);
-    $client = $cl->fetch(PDO::FETCH_ASSOC);
+    $client = getCurrentClient($db, $user);
     if (!$client) sendResponse([]);
-    $stmt = $db->prepare("SELECT * FROM work_orders WHERE client_id = ? OR client_name = ? ORDER BY created_date DESC");
-    $stmt->execute([$client['id'], $client['full_name']]);
+    $stmt = $db->prepare("SELECT * FROM work_orders WHERE client_id = ? ORDER BY created_date DESC");
+    $stmt->execute([$client['id']]);
     sendResponse($stmt->fetchAll(PDO::FETCH_ASSOC));
 }
 
@@ -30,7 +58,11 @@ if ($method === 'GET' && $id) {
     $stmt = $db->prepare("SELECT * FROM work_orders WHERE id = ?");
     $stmt->execute([$id]);
     $row = $stmt->fetch(PDO::FETCH_ASSOC);
-    sendResponse($row ?: ['error' => 'No encontrado'], $row ? 200 : 404);
+    if (!$row) sendResponse(['error' => 'No encontrado'], 404);
+    if (!canAccessWorkOrder($db, $user, $row)) {
+        sendResponse(['error' => 'Acceso denegado'], 403);
+    }
+    sendResponse($row);
 }
 
 // =================== CREAR ===================
@@ -41,9 +73,7 @@ if ($method === 'POST') {
     $b = getBody();
 
     if ($user['role'] === 'cliente') {
-        $cl = $db->prepare("SELECT id, full_name, address FROM clients WHERE email = ?");
-        $cl->execute([$user['email']]);
-        $client = $cl->fetch(PDO::FETCH_ASSOC);
+        $client = getCurrentClient($db, $user);
         if ($client) {
             $b['client_id']      = $client['id'];
             $b['client_name']    = $client['full_name'];
@@ -54,6 +84,10 @@ if ($method === 'POST') {
 
     if (empty($b['type']) || empty($b['client_id'])) {
         sendResponse(['error' => 'Tipo y cliente son obligatorios'], 400);
+    }
+    $tiposValidos = ['nueva_instalacion','instalacion','soporte','mantenimiento','retiro'];
+    if (!in_array($b['type'], $tiposValidos)) {
+        sendResponse(['error' => 'Tipo de orden no válido'], 400);
     }
 
     $orderNum = $b['order_number'] ?? ('OT-' . date('ymd') . '-' . rand(100, 999));
@@ -124,15 +158,24 @@ if ($method === 'PUT' && $id) {
     $prev->execute([$id]);
     $previous = $prev->fetch(PDO::FETCH_ASSOC);
     if (!$previous) sendResponse(['error' => 'No encontrado'], 404);
+    if (!canAccessWorkOrder($db, $user, $previous)) {
+        sendResponse(['error' => 'Acceso denegado'], 403);
+    }
 
     if ($user['role'] === 'tecnico') {
+        $validTechStatuses = ['pendiente', 'en_proceso', 'completado', 'cancelado'];
+        $techStatus = $b['status'] ?? $previous['status'];
+        if (!in_array($techStatus, $validTechStatuses, true)) {
+            sendResponse(['error' => 'Estado de orden no valido'], 400);
+        }
+
         $completedDate = ($b['status'] ?? '') === 'completado'
             ? ($b['completed_date'] ?? date('Y-m-d')) : null;
         $stmt = $db->prepare("UPDATE work_orders
                               SET status=?, resolution_notes=?, completed_date=?, updated_date=NOW()
                               WHERE id=?");
         $stmt->execute([
-            $b['status'] ?? 'pendiente',
+            $techStatus,
             $b['resolution_notes'] ?? '',
             $completedDate, $id
         ]);
@@ -172,6 +215,13 @@ if ($method === 'PUT' && $id) {
     if ($previous['status'] !== $newStatus) {
         $statusLabels = ['pendiente'=>'Pendiente','en_proceso'=>'En Proceso','completado'=>'Completado','cancelado'=>'Cancelado'];
         $label = $statusLabels[$newStatus] ?? $newStatus;
+
+        if ($user['role'] === 'tecnico') {
+            notify_role($db, 'admin', 'order_status',
+                'Tecnico actualizo una orden',
+                "{$user['full_name']} cambio la orden {$previous['order_number']} ({$previous['client_name']}) a: $label",
+                '/work-orders', 'work_order', (int)$id);
+        }
 
         // Notificar al cliente
         $cl = $db->prepare("SELECT email FROM clients WHERE id = ?");

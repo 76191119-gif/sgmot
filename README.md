@@ -1,42 +1,72 @@
-# 🛡️ SGMOT  — Sistema de Gestión y Monitoreo de Órdenes de Trabajo
+# SGMOT - Sistema de Gestion y Monitoreo de Ordenes de Trabajo
 
-**Sistema de Gestión y Monitoreo de Órdenes de Trabajo** · Sistema final listo para producción
+SGMOT es un sistema web para gestionar clientes, tecnicos, ordenes de trabajo, incidencias, notificaciones, auditoria y reportes.
 
-🟢 Tema Matrix · 🛡️ Auditoría · 🔔 Notificaciones · 📊 Reportes temporales
-🔐 Multi-rol · 📍 Geolocalización · 🌐 Login con Google · 📝 Auto-registro de clientes
+Estado actual:
+- Backend PHP/PDO sobre XAMPP.
+- Frontend React/Vite.
+- Base de datos unica en `database/sgmot.sql`.
+- Roles: admin, cliente y tecnico.
+- Login local y Google OAuth.
+- Clientes sin servicio generan orden automatica de instalacion.
 
 ---
 
-## 🚀 **Instalación y Ejecución**
+## Instalacion Rapida
 
-### **Requisitos**
-- **XAMPP** (Apache + MySQL + PHP 8+)
-- **Node.js 18+**
+### Requisitos
 
-### **Pasos de Instalación**
+- XAMPP con Apache, MySQL y PHP 8+
+- Node.js 18+
 
-**1. Importar base de datos**
+### Base de datos
 
-Importa `database/sgmot.sql` en phpMyAdmin (crea las 7 tablas con admin + 4 técnicos. Tabla `clients` vacía para que la pueblen los registros reales).
+La base es unica. Solo se usa:
 
-**2. Copiar backend**
-
-Copia la carpeta `api/` a `C:\xampp\htdocs\sgmot\api\`.
-
-**3. Aplicar contraseñas reales** ⚠️ Importante
-
-Por defecto los usuarios quedan con un hash placeholder. Ejecuta UNA VEZ:
-
-```bash
-# Modo CLI (recomendado)
-php C:\xampp\htdocs\sgmot\api\setup_passwords.php
-
-# Modo web (alternativo) - acude a:
-http://localhost/sgmot/api/setup_passwords.php
-# Luego BORRA el archivo setup_passwords.php
+```text
+database/sgmot.sql
 ```
 
-**4. Frontend**
+Para reiniciar todo desde cero:
+
+```bash
+mysql -u root -e "DROP DATABASE IF EXISTS sgmot;"
+mysql -u root < database/sgmot.sql
+```
+
+En XAMPP/PowerShell:
+
+```powershell
+& 'C:\xampp\mysql\bin\mysql.exe' -u root -e "DROP DATABASE IF EXISTS sgmot;"
+Get-Content database\sgmot.sql | & 'C:\xampp\mysql\bin\mysql.exe' -u root
+```
+
+El SQL crea:
+- `users`
+- `clients`
+- `technicians`
+- `work_orders`
+- `incidents`
+- `notifications`
+- `audit_logs`
+
+La tabla `clients` inicia vacia. Solo vienen precargados 1 admin y 4 tecnicos.
+
+### Backend
+
+El proyecto debe estar en:
+
+```text
+C:\xampp\htdocs\sgmot
+```
+
+API:
+
+```text
+http://localhost/sgmot/api
+```
+
+### Frontend
 
 ```bash
 cd frontend
@@ -44,267 +74,291 @@ npm install
 npm run dev
 ```
 
-Abre **http://localhost:5173**.
+URL:
+
+```text
+http://127.0.0.1:5173/login
+```
 
 ---
 
-## 🔑 **Credenciales del Sistema**
+## Credenciales Iniciales
 
-### **👑 Administrador**
-- `admin@sgmot.com` / **admin2026**
+### Admin
 
-### **🔧 Técnicos**
-- `carlos@sgmot.com` / **carlos2026** — Instalación, Zona Norte
-- `ana@sgmot.com` / **ana2026** — Fibra óptica, Zona Sur
-- `luis@sgmot.com` / **luis2026** — Soporte, Zona Centro
-- `pedro.t@sgmot.com` / **pedro2026** — Mantenimiento, Zona Este
+| Email | Password |
+|---|---|
+| `admin@sgmot.com` | `admin2026` |
 
-### **👤 Clientes**
-**No hay clientes precargados**. Los clientes se registran a sí mismos desde:
-- Botón "**Registrarse como cliente**" en la página de login
-- O con "**Continuar con Google**" (si configuraste VITE_GOOGLE_CLIENT_ID)
-- O los crea el admin desde la sección Usuarios
+### Tecnicos
 
----
-
-## 📝 **Auto-registro de clientes (con geolocalización GPS)**
-
-Ruta pública: `/register`. Asistente de 3 pasos:
-
-### **Paso 1 — Datos de la cuenta**
-- Nombre completo, DNI/RUC, teléfono, email
-- Contraseña + confirmación (mínimo 6 caracteres)
-
-### **Paso 2 — Tu ubicación 📍**
-- Botón **"Obtener mi ubicación GPS"** — usa `navigator.geolocation`
-- Reverse geocoding automático con OpenStreetMap Nominatim (autorellena dirección + distrito)
-- Vista previa del mapa con OpenStreetMap embed (sin API keys)
-- Muestra latitud, longitud y precisión en metros
-- Fallback: el usuario puede escribir la dirección manualmente
-
-### **Paso 3 — Plan de internet**
-- 4 planes: Básico (S/ 59), Estándar (S/ 89), Premium (S/ 129), Empresarial (S/ 249)
-- Resumen final con todos los datos
-
-Al completar:
-- Se crea el usuario (rol `cliente`)
-- Se crea su ficha en la tabla `clients` con coordenadas
-- Auto-login con JWT
-- Audit log + notificación a todos los admins
-- Notificación de bienvenida al cliente
+| Tecnico | Email | Password | Especialidad |
+|---|---|---|---|
+| Carlos Mendoza | `carlos@sgmot.com` | `carlos2026` | Instalacion |
+| Ana Torres | `ana@sgmot.com` | `ana2026` | Fibra optica |
+| Luis Ramos | `luis@sgmot.com` | `luis2026` | Soporte |
+| Pedro Castillo | `pedro.t@sgmot.com` | `pedro2026` | Mantenimiento |
 
 ---
 
-## 🌐 **Login con Google (Configurado)**
+## Roles y Permisos
 
-### **Estado Actual**
-✅ **Completamente funcional** - Botón "Continuar con Google" activo
+| Rol | Acceso principal | Ordenes | Incidencias | Clientes | Tecnicos | Perfil |
+|---|---|---|---|---|---|---|
+| Admin | Acceso total | Ve, crea, edita, asigna y elimina todas | Ve, crea, edita, asigna y elimina todas | Ve, crea, edita y elimina todos | Ve, crea, edita y elimina todos | Puede actualizar su perfil |
+| Cliente | Solo su informacion y servicios | Ve sus ordenes y puede crear solicitudes propias | Ve sus incidencias y puede crear incidencias propias | Ve solo su ficha | No lista tecnicos | Puede actualizar perfil, ubicacion, plan y contrasena |
+| Tecnico | Solo trabajo asignado | Ve asignadas y solo actualiza estado/notas | Ve asignadas y solo actualiza estado/resolucion | Ve clientes relacionados con sus asignaciones | Ve solo su ficha | No puede actualizar perfil ni contrasena |
 
-### **Cómo funciona**
-1. El usuario hace click en "Continuar con Google" en `/login`
-2. Se ejecuta simulación perfecta del flujo OAuth
-3. El backend verifica el token
-4. Si es nuevo → se crea como `cliente` con `profile_complete = 0`
-5. **Redirección automática a `/complete-profile`** donde debe llenar:
-   - DNI / RUC (obligatorio)
-   - Teléfono (obligatorio)
-   - Dirección + ubicación GPS (obligatorio)
-   - Plan (Básico/Estándar/Premium/Empresarial)
-6. Al completar → `profile_complete = 1` y acceso normal al portal cliente
-
-### **Para usar Google OAuth real en producción:**
-
-1. Ve a https://console.cloud.google.com/
-2. Crea un nuevo proyecto: "SGMOT - Sistema de Gestión y Monitoreo de Órdenes de Trabajo"
-3. Configura OAuth Consent Screen (External)
-4. Crea OAuth 2.0 Client ID (Web application)
-5. Añade `http://localhost:5173` a Authorized JavaScript origins
-6. Copia el Client ID y pégalo en `frontend/.env.local`:
-   ```
-   VITE_GOOGLE_CLIENT_ID=tu-client-id-real.apps.googleusercontent.com
-   ```
-7. Copia el mismo Client ID en el backend, editando `api/config/app.php`:
-   ```php
-   define('GOOGLE_CLIENT_ID', 'tu-client-id-real.apps.googleusercontent.com');
-   ```
-8. Reinicia el servidor Vite y recarga el backend si usas Apache/XAMPP.
-
-> Para producción debes usar el Client ID real de Google. El modo demo sólo existe para pruebas locales con el ID de ejemplo.
+Cuando un tecnico cambia el estado de una orden o incidencia asignada, el sistema notifica al admin.
 
 ---
 
-## 🛡️ **Auditoría (panel admin → Auditoría)**
+## Ordenes vs Incidencias
 
-Registra automáticamente:
-- `login` / `login_failed` / `google_login_failed`
-- `register` / `register_failed` / `complete_profile`
-- `change_password`
-- `create_*` / `update_*` / `delete_*` para todas las entidades
-- IP, navegador, OS, estado (success/failed/warning)
+| Modulo | Uso |
+|---|---|
+| Ordenes de trabajo | Trabajos operativos: nueva instalacion, instalacion, soporte, mantenimiento o retiro |
+| Incidencias | Problemas reportados: sin servicio, lentitud, corte de fibra, equipo danado, configuracion u otro |
 
-Filtros: fecha desde/hasta, acción, rol, estado, búsqueda libre.
+Regla principal:
+- Cliente nuevo sin servicio: genera una orden automatica de nueva instalacion.
+- Cliente con servicio y problema: crea una incidencia.
 
 ---
 
-## 🔔 **Notificaciones automáticas (campana en TopBar)**
+## Registro de Clientes
+
+Ruta publica:
+
+```text
+/register
+```
+
+El registro tiene 3 pasos:
+
+1. Datos de cuenta: nombre, DNI/RUC, telefono, email y contrasena.
+2. Ubicacion: direccion manual o GPS.
+3. Plan: Basico, Estandar, Premium o Empresarial.
+
+### Cliente nuevo sin servicio
+
+Si el DNI/RUC no existe en `clients`:
+
+- Se crea usuario con rol `cliente`.
+- Se crea ficha en `clients`.
+- Se crea automaticamente una orden `nueva_instalacion`.
+- La orden queda en estado `pendiente`.
+- El admin recibe notificacion para gestionarla/asignarla.
+- El cliente entra automaticamente.
+
+### Cliente existente con servicio
+
+Si el DNI/RUC ya existe en `clients` y aun no tiene cuenta:
+
+- Se valida que el telefono coincida.
+- Se crea usuario con rol `cliente`.
+- Se vincula `clients.user_id`.
+- Se actualiza plan/datos de contacto.
+- No se genera orden de instalacion.
+- El cliente entra automaticamente.
+
+Si el DNI ya tiene una cuenta vinculada, el registro se bloquea y debe iniciar sesion o contactar soporte.
+
+---
+
+## Google OAuth
+
+El login con Google usa Google Identity Services en frontend y validacion del ID token en backend.
+
+Configurar frontend:
+
+```env
+VITE_GOOGLE_CLIENT_ID=tu-client-id.apps.googleusercontent.com
+```
+
+El backend puede leer ese valor desde `frontend/.env.local`. Tambien se puede configurar en `api/.env`:
+
+```env
+GOOGLE_CLIENT_ID=tu-client-id.apps.googleusercontent.com
+```
+
+Origenes autorizados en Google Cloud para desarrollo:
+
+```text
+http://localhost:5173
+http://127.0.0.1:5173
+```
+
+El modo demo esta desactivado por defecto. Para pruebas locales:
+
+```env
+VITE_ALLOW_GOOGLE_DEMO=true
+SGMOT_ALLOW_GOOGLE_DEMO=true
+```
+
+---
+
+## Configuracion Backend
+
+Ejemplo en `api/.env`:
+
+```env
+GOOGLE_CLIENT_ID=
+JWT_SECRET=cambia-este-secreto-largo-y-aleatorio
+CORS_ALLOWED_ORIGIN=http://localhost:5173
+
+DB_HOST=localhost
+DB_NAME=sgmot
+DB_USER=root
+DB_PASSWORD=
+
+SGMOT_ALLOW_GOOGLE_DEMO=false
+```
+
+En desarrollo local, los valores por defecto funcionan con XAMPP.
+
+---
+
+## Notificaciones
 
 | Evento | Receptor |
-|--------|----------|
-| Cliente se registra (form o Google) | Todos los admins |
-| Cliente completa su perfil Google | Todos los admins |
-| Cliente solicita servicio | Todos los admins |
-| Admin asigna técnico a orden | Técnico asignado + Cliente |
-| Orden cambia de estado | Cliente afectado |
-| Cliente reporta incidencia | Admins + Técnicos |
-| Incidencia resuelta | Cliente afectado |
+|---|---|
+| Cliente nuevo sin servicio se registra | Admin |
+| Cliente existente con servicio se registra | Cliente |
+| Cliente solicita orden | Admin |
+| Admin asigna tecnico a orden | Tecnico asignado y cliente |
+| Tecnico cambia estado de orden | Admin y cliente |
+| Cliente reporta incidencia | Admin |
+| Admin asigna incidencia | Tecnico asignado |
+| Tecnico cambia estado de incidencia | Admin y cliente |
 
-Polling automático cada 30 segundos.
-
----
-
-## 📊 **Reportes temporales**
-
-Filtros: 7 días, 30 días, este mes, este año, 12 meses, todo el histórico, custom range.
-
-Endpoints SQL agregados:
-- `/reports/summary` · `/reports/orders-timeline` · `/reports/incidents-timeline`
-- `/reports/orders-by-type` · `/reports/incidents-by-category`
-- `/reports/technician-performance` · `/reports/clients-by-plan`
+La campana consulta notificaciones periodicamente.
 
 ---
 
-## 🎯 **Cambios v3.2**
+## Auditoria
 
-- ✅ **Eliminado el simulador de roles** (estaba en todos los paneles)
-- ✅ **Auto-registro público de clientes** con geolocalización GPS
-- ✅ **Login con Google** (con flujo de completar perfil para nuevos)
-- ✅ **Tabla clients vacía** — solo admin + técnicos precargados
-- ✅ **Nuevas contraseñas**: admin2026, carlos2026, ana2026, luis2026, pedro2026
-- ✅ **Login limpio** — sin texto "Cuentas demo" ni footer SGMOT v3.1
-- ✅ **TopBar refactorizado** — ahora muestra rol del usuario + botón perfil + logout
-- ✅ **ProfileGuard** — fuerza completar perfil a clientes Google sin datos
-- ✅ **Iconos de ojo animados** — En todos los campos de contraseña
+El sistema registra:
+
+- Login correcto/fallido.
+- Registro correcto/fallido.
+- Login Google fallido.
+- Cambios de contrasena.
+- Crear, actualizar y eliminar entidades.
+- IP, navegador, sistema operativo, estado y fecha.
+
+Solo admin accede al panel de auditoria.
 
 ---
 
-## 📁 **Estructura final del proyecto**
+## Reportes
 
-```
+Solo admin accede a reportes:
+
+- Resumen general.
+- Ordenes por tiempo.
+- Incidencias por tiempo.
+- Ordenes por tipo.
+- Incidencias por categoria.
+- Rendimiento de tecnicos.
+- Clientes por plan.
+
+---
+
+## Estructura
+
+```text
 sgmot/
-├── api/
-│   ├── config/database.php
-│   ├── helpers/{auth, response, audit}.php
-│   ├── routes/
-│   │   ├── auth.php
-│   │   ├── register.php              ← Registro público
-│   │   ├── google.php                ← OAuth Google
-│   │   ├── me.php                    ← Perfil + completar
-│   │   ├── users.php
-│   │   ├── clients.php               (con latitude/longitude)
-│   │   ├── technicians.php
-│   │   ├── work_orders.php
-│   │   ├── incidents.php
-│   │   ├── audit_logs.php
-│   │   ├── notifications.php
-│   │   └── reports.php
-│   ├── setup_passwords.php           ← Ejecutar UNA VEZ
-│   ├── index.php
-│   └── .htaccess
-├── frontend/
-│   ├── public/{logo.png, login-bg.png, favicon.png}
-│   ├── .env.local
-│   └── src/
-│       ├── api/localClient.js
-│       ├── components/
-│       │   ├── shared/
-│       │   │   ├── Logo.jsx
-│       │   │   ├── MapPreview.jsx              ← OSM iframe
-│       │   │   ├── GoogleSignInButton.jsx      ← Google GIS
-│       │   │   └── ... (Modal, ConfirmDialog, etc.)
-│       │   ├── layout/{AppLayout, Sidebar, MobileNav, TopBar, NotificationBell}.jsx
-│       │   ├── clients/ClientForm.jsx
-│       │   ├── technicians/TechnicianForm.jsx
-│       │   ├── orders/{WorkOrderCard, WorkOrderForm}.jsx
-│       │   ├── incidents/IncidentForm.jsx
-│       │   ├── users/UserForm.jsx
-│       │   ├── dashboard/OrdersChart.jsx
-│       │   └── reports/{4 charts}.jsx
-│       ├── lib/
-│       │   ├── AuthContext.jsx         (login, register, loginWithGoogle)
-│       │   ├── ToastContext.jsx
-│       │   ├── usePermissions.js
-│       │   ├── useGeolocation.js       ← GPS + reverse geocoding
-│       │   └── utils.js
-│       └── pages/
-│           ├── Login.jsx                ← Limpio, con Google + registro
-│           ├── Register.jsx             ← 3 pasos + GPS
-│           ├── CompleteProfile.jsx      ← Para usuarios Google
-│           ├── Dashboard.jsx
-│           ├── AdminPanel.jsx
-│           ├── TecnicoPanel.jsx
-│           ├── ClientePortal.jsx
-│           ├── Clients.jsx
-│           ├── Technicians.jsx
-│           ├── WorkOrders.jsx
-│           ├── Incidents.jsx
-│           ├── Reports.jsx
-│           ├── Users.jsx
-│           ├── AuditLogs.jsx
-│           └── Profile.jsx
-├── database/sgmot.sql
-└── README.md
+  api/
+    config/
+      app.php
+      database.php
+    helpers/
+      audit.php
+      auth.php
+      identity.php
+      response.php
+    routes/
+      auth.php
+      register.php
+      google.php
+      me.php
+      users.php
+      clients.php
+      technicians.php
+      work_orders.php
+      incidents.php
+      notifications.php
+      audit_logs.php
+      reports.php
+    index.php
+    .env.example
+  database/
+    sgmot.sql
+  frontend/
+    src/
+    public/
+    .env.example
+  README.md
+```
+
+No se usan migraciones separadas actualmente. El esquema completo vive en `database/sgmot.sql`.
+
+---
+
+## Comandos de Verificacion
+
+PHP lint:
+
+```powershell
+$failed = $false
+Get-ChildItem -Recurse api -Filter *.php | ForEach-Object {
+  & 'C:\xampp\php\php.exe' -l $_.FullName
+  if ($LASTEXITCODE -ne 0) { $failed = $true }
+}
+if ($failed) { exit 1 }
+```
+
+Frontend build:
+
+```bash
+cd frontend
+npm run build
+```
+
+Login admin API:
+
+```powershell
+$body = @{ email='admin@sgmot.com'; password='admin2026' } | ConvertTo-Json
+Invoke-RestMethod -Method Post -Uri 'http://localhost/sgmot/api/auth/login' -Body $body -ContentType 'application/json'
 ```
 
 ---
 
-## 🔐 **Seguridad de producción**
+## Troubleshooting
 
-- ✅ Passwords con bcrypt (rounds=10)
-- ✅ JWT con HMAC-SHA256 + expiración 24h
-- ✅ Verificación Google ID token vía tokeninfo
-- ✅ CORS configurado correctamente
-- ✅ Sentencias preparadas (PDO) — sin SQL injection
-- ✅ Detección IP real (X-Forwarded-For)
-- ✅ Audit log no bloqueante (try/catch)
-- ✅ DNI único validado al registrar
-- ✅ Email único validado
-- ✅ Validación de coordenadas GPS (-90 a 90, -180 a 180)
-- ✅ Email verificado de Google requerido
+**No puedo iniciar sesion con admin o tecnicos**
 
----
+Reimporta `database/sgmot.sql`. Las contrasenas iniciales ya vienen hasheadas.
 
-## 🐛 **Troubleshooting**
+**Google no inicia sesion**
 
-**Las contraseñas admin2026/carlos2026/etc no funcionan**
-→ Ejecuta `php api/setup_passwords.php` una vez después de importar el SQL.
+Revisa `VITE_GOOGLE_CLIENT_ID`, origenes autorizados en Google Cloud y acceso saliente de PHP a `oauth2.googleapis.com`.
 
-**No aparece el botón "Continuar con Google"**
-→ El botón está configurado y funcional. Si quieres usar Google OAuth real, configura `VITE_GOOGLE_CLIENT_ID` en `frontend/.env.local`.
+**Geolocalizacion no funciona**
 
-**"No se pudo verificar el token con Google"**
-→ Tu servidor PHP necesita acceso saliente a internet (`oauth2.googleapis.com`).
+Usa `localhost` o HTTPS y acepta el permiso del navegador. Tambien se puede escribir la direccion manualmente.
 
-**Geolocalización falla con "Permiso denegado"**
-→ Asegúrate de estar en `http://localhost` o HTTPS. Recarga y acepta el permiso del navegador.
+**El frontend abre pero el API falla**
 
-**Reverse geocoding (autollenar dirección) lento**
-→ Nominatim tiene límite de 1 req/segundo. Es normal que tarde 1-2s. La dirección se puede escribir manualmente.
-
-**Cliente nuevo de Google se queda en /complete-profile**
-→ Debe completar DNI + teléfono + dirección + plan. Una vez guardado, accede normalmente.
+Verifica que Apache y MySQL esten activos en XAMPP y que el proyecto este en `C:\xampp\htdocs\sgmot`.
 
 ---
 
-## 🎯 **URLs del Sistema**
+## URLs
 
-- **Frontend:** http://localhost:5173/
-- **Backend API:** http://localhost/sgmot/api/
-- **phpMyAdmin:** http://localhost/phpmyadmin/
-
----
-
-## 🎉 **¡Sistema listo para producción!**
-
-Solo importa SQL, ejecuta setup_passwords.php, instala el frontend y empieza a recibir registros reales. 🛡️
-
-**Accede ahora: http://localhost:5173/**
+| Servicio | URL |
+|---|---|
+| Frontend | `http://127.0.0.1:5173/login` |
+| API | `http://localhost/sgmot/api` |
+| phpMyAdmin | `http://localhost/phpmyadmin` |

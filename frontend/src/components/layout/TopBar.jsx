@@ -5,8 +5,8 @@ import { useAuth } from '@/lib/AuthContext';
 import { usePermissions } from '@/lib/usePermissions';
 
 const ROLE_BADGES = {
-  admin:   { label: 'ADMIN',   cls: 'bg-matrix-primary/15 text-matrix-primary border-matrix-primary/40' },
-  tecnico: { label: 'TÉCNICO', cls: 'bg-matrix-primary/15 text-matrix-primary border-matrix-primary/40' },
+  admin: { label: 'ADMIN', cls: 'bg-matrix-primary/15 text-matrix-primary border-matrix-primary/40' },
+  tecnico: { label: 'TECNICO', cls: 'bg-matrix-primary/15 text-matrix-primary border-matrix-primary/40' },
   cliente: { label: 'CLIENTE', cls: 'bg-cyan-500/15 text-cyan-300 border-cyan-500/40' },
 };
 
@@ -16,12 +16,12 @@ export default function TopBar() {
   const badge = ROLE_BADGES[perms.role];
 
   return (
-    <header className="sticky top-0 z-30 bg-black/80 backdrop-blur-md border-b border-matrix-primary/20 h-14 flex items-center justify-between px-4 sm:px-6">
-      <div className="text-sm text-matrix-muted hidden sm:flex items-center gap-2">
-        <span>Sesión activa:</span>
+    <header className="sticky top-0 z-30 flex h-14 items-center justify-between border-b border-matrix-primary/20 bg-black/80 px-4 backdrop-blur-md sm:px-6">
+      <div className="hidden items-center gap-2 text-sm text-matrix-muted sm:flex">
+        <span>Sesion activa:</span>
         <span className="font-medium text-matrix-text">{user?.full_name}</span>
         {badge && (
-          <span className={`text-[10px] px-2 py-0.5 rounded border font-semibold tracking-wider ${badge.cls}`}>
+          <span className={`rounded border px-2 py-0.5 text-[10px] font-semibold tracking-wider ${badge.cls}`}>
             {badge.label}
           </span>
         )}
@@ -30,17 +30,18 @@ export default function TopBar() {
         <NotificationBell />
         <Link
           to="/profile"
-          className="p-2 rounded-md hover:bg-matrix-primary/10 text-matrix-muted hover:text-matrix-primary transition"
+          className="rounded-md p-2 text-matrix-muted transition hover:bg-matrix-primary/10 hover:text-matrix-primary"
           title="Mi perfil"
         >
-          <UserCircle className="w-5 h-5" />
+          <UserCircle className="h-5 w-5" />
         </Link>
         <button
+          type="button"
           onClick={logout}
-          className="p-2 rounded-md hover:bg-red-500/10 text-matrix-muted hover:text-red-400 transition"
-          title="Cerrar sesión"
+          className="rounded-md p-2 text-matrix-muted transition hover:bg-red-500/10 hover:text-red-400"
+          title="Cerrar sesion"
         >
-          <LogOut className="w-5 h-5" />
+          <LogOut className="h-5 w-5" />
         </button>
       </div>
     </header>

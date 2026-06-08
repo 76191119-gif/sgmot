@@ -22,14 +22,14 @@ function buildLast7Days(orders) {
 export default function OrdersChart({ orders = [] }) {
   const data = buildLast7Days(orders);
   return (
-    <div className="bg-card border border-border rounded-xl p-5">
-      <h3 className="font-semibold mb-4">Órdenes — últimos 7 días</h3>
+    <div className="bg-black/60 border border-matrix-primary/20 rounded-xl p-5">
+      <h3 className="font-semibold mb-4 text-matrix-text">Órdenes — últimos 7 días</h3>
       <div className="h-64">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={data}>
-            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
-            <XAxis dataKey="day" tick={{ fontSize: 12 }} />
-            <YAxis tick={{ fontSize: 12 }} allowDecimals={false} />
+            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(0,255,65,0.1)" />
+            <XAxis dataKey="day" tick={{ fontSize: 12, fill: '#4a7c59' }} />
+            <YAxis tick={{ fontSize: 12, fill: '#4a7c59' }} allowDecimals={false} />
             <Tooltip
               contentStyle={{ background: '#0a0a0a', border: '1px solid #00FF41', borderRadius: 8, fontSize: 12, color: '#CCFFCC' }}
             />

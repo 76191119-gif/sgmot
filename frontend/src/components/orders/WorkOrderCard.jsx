@@ -1,4 +1,4 @@
-import { User, MapPin, Wrench, Calendar, Pencil, Trash2, ChevronDown } from 'lucide-react';
+import { User, MapPin, Wrench, Calendar, Pencil, Trash2, ChevronDown, PackagePlus } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 import StatusBadge from '@/components/shared/StatusBadge';
 import { typeLabels, formatDate } from '@/lib/utils';
@@ -11,6 +11,15 @@ const STATUSES = [
   { value: 'cancelado',  label: 'Cancelado' },
 ];
 
+// Colores de borde superior por tipo de orden
+const TYPE_ACCENT = {
+  nueva_instalacion: 'border-t-matrix-primary',
+  instalacion:       'border-t-emerald-500',
+  soporte:           'border-t-blue-500',
+  mantenimiento:     'border-t-amber-500',
+  retiro:            'border-t-red-500',
+};
+
 export default function WorkOrderCard({ order, onEdit, onDelete, onChangeStatus }) {
   const perms = usePermissions();
   const [open, setOpen] = useState(false);
@@ -22,60 +31,86 @@ export default function WorkOrderCard({ order, onEdit, onDelete, onChangeStatus 
     return () => document.removeEventListener('mousedown', h);
   }, []);
 
+  const isNuevaInst = order.type === 'nueva_instalacion';
+  const accentCls   = TYPE_ACCENT[order.type] || 'border-t-matrix-primary/30';
+
   return (
-    <div className="bg-card border border-border rounded-xl p-4 hover:shadow-lg hover:shadow-primary/5 transition-all">
-      <div className="flex items-start justify-between gap-3 mb-3">
-        <div className="min-w-0">
-          <p className="text-xs font-mono text-muted-foreground">{order.order_number}</p>
-          <p className="font-semibold text-sm mt-0.5">{typeLabels[order.type] || order.type}</p>
+    <div className={`relative bg-black/60 border border-matrix-primary/20 border-t-2 ${accentCls} rounded-xl p-4 hover:border-matrix-primary/40 hover:bg-black/70 transition-all duration-200`}
+      style={{ boxShadow: isNuevaInst ? '0 0 20px rgba(0,255,65,0.06)' : 'none' }}>
+
+      {/* Badge especial para nueva instalación */}
+      {isNuevaInst && (
+        <div className="absolute -top-2.5 left-4">
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-matrix-primary text-black uppercase tracking-wider">
+            <PackagePlus className="w-2.5 h-2.5" /> Nueva Instalación
+          </span>
         </div>
-        <div className="flex flex-wrap gap-1 justify-end">
+      )}
+
+      {/* Header */}
+      <div className={`flex items-start justify-between gap-3 mb-3 ${isNuevaInst ? 'mt-1' : ''}`}>
+        <div className="min-w-0">
+          <p className="text-[10px] font-mono text-matrix-muted">{order.order_number}</p>
+          <p className={`font-bold text-sm mt-0.5 ${isNuevaInst ? 'text-matrix-primary' : 'text-matrix-text'}`}>
+            {typeLabels[order.type] || order.type}
+          </p>
+        </div>
+        <div className="flex flex-wrap gap-1 justify-end shrink-0">
           <StatusBadge status={order.priority} />
           <StatusBadge status={order.status} />
         </div>
       </div>
 
+      {/* Detalles */}
       <div className="space-y-2 text-sm">
-        <div className="flex items-center gap-2 text-foreground/80">
-          <User className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+        <div className="flex items-center gap-2 text-matrix-text/80">
+          <User className="w-3.5 h-3.5 text-matrix-muted shrink-0" />
           <span className="truncate">{order.client_name || 'Sin cliente'}</span>
         </div>
-        <div className="flex items-center gap-2 text-foreground/80">
-          <MapPin className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
-          <span className="truncate">{order.client_address || '—'}</span>
+        <div className="flex items-center gap-2 text-matrix-text/70">
+          <MapPin className="w-3.5 h-3.5 text-matrix-muted shrink-0" />
+          <span className="truncate text-xs">{order.client_address || '—'}</span>
         </div>
-        <div className="flex items-center gap-2 text-foreground/80">
-          <Wrench className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
-          <span className="truncate">{order.technician_name || 'Sin asignar'}</span>
+        <div className="flex items-center gap-2 text-matrix-text/70">
+          <Wrench className="w-3.5 h-3.5 text-matrix-muted shrink-0" />
+          <span className="truncate text-xs">
+            {order.technician_name
+              ? order.technician_name
+              : <span className="text-amber-400/70 italic">Sin asignar</span>}
+          </span>
         </div>
-        <div className="flex items-center gap-2 text-foreground/80">
-          <Calendar className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
-          <span>{formatDate(order.scheduled_date) || '—'}</span>
+        <div className="flex items-center gap-2 text-matrix-text/60">
+          <Calendar className="w-3.5 h-3.5 text-matrix-muted shrink-0" />
+          <span className="text-xs">{formatDate(order.scheduled_date) || '—'}</span>
         </div>
       </div>
 
       {order.description && (
-        <p className="text-xs text-muted-foreground mt-3 line-clamp-2">{order.description}</p>
+        <p className="text-xs text-matrix-muted mt-3 line-clamp-2 leading-relaxed">{order.description}</p>
       )}
 
-      <div className="flex items-center justify-between gap-2 mt-4 pt-3 border-t border-border">
+      {/* Footer */}
+      <div className="flex items-center justify-between gap-2 mt-4 pt-3 border-t border-matrix-primary/15">
         {perms.canChangeOrderStatus && onChangeStatus ? (
           <div ref={ref} className="relative">
             <button
               onClick={() => setOpen((o) => !o)}
-              className="text-xs flex items-center gap-1 px-2 py-1 rounded-md border border-input hover:bg-muted"
+              className="text-xs flex items-center gap-1 px-2.5 py-1.5 rounded-md border border-matrix-primary/30 text-matrix-muted hover:text-matrix-primary hover:border-matrix-primary/60 hover:bg-matrix-primary/8 transition"
             >
-              Cambiar estado <ChevronDown className="w-3 h-3" />
+              Estado <ChevronDown className={`w-3 h-3 transition-transform ${open ? 'rotate-180' : ''}`} />
             </button>
             {open && (
-              <div className="absolute left-0 top-full mt-1 w-44 bg-card border border-border rounded-md shadow-lg z-10 py-1">
+              <div className="absolute left-0 top-full mt-1 w-44 bg-black/95 border border-matrix-primary/30 rounded-lg shadow-xl z-10 py-1 overflow-hidden"
+                style={{ boxShadow: '0 8px 30px rgba(0,0,0,0.8), 0 0 15px rgba(0,255,65,0.08)' }}>
                 {STATUSES.map((s) => (
                   <button
                     key={s.value}
                     onClick={() => { onChangeStatus(s.value); setOpen(false); }}
-                    className="w-full text-left px-3 py-1.5 text-xs hover:bg-muted"
+                    className={`w-full text-left px-3 py-2 text-xs transition hover:bg-matrix-primary/10 hover:text-matrix-primary ${
+                      order.status === s.value ? 'text-matrix-primary bg-matrix-primary/5' : 'text-matrix-muted'
+                    }`}
                   >
-                    {s.label}
+                    {order.status === s.value ? '✓ ' : ''}{s.label}
                   </button>
                 ))}
               </div>
@@ -85,12 +120,16 @@ export default function WorkOrderCard({ order, onEdit, onDelete, onChangeStatus 
 
         <div className="flex items-center gap-1">
           {perms.canEdit && onEdit && (
-            <button onClick={() => onEdit(order)} className="p-1.5 rounded-md hover:bg-muted text-muted-foreground" title="Editar">
+            <button onClick={() => onEdit(order)}
+              className="p-1.5 rounded-md hover:bg-matrix-primary/10 text-matrix-muted hover:text-matrix-primary transition"
+              title="Editar">
               <Pencil className="w-3.5 h-3.5" />
             </button>
           )}
           {perms.canDelete && onDelete && (
-            <button onClick={() => onDelete(order)} className="p-1.5 rounded-md hover:bg-red-50 text-red-600" title="Eliminar">
+            <button onClick={() => onDelete(order)}
+              className="p-1.5 rounded-md hover:bg-red-500/10 text-matrix-muted hover:text-red-400 transition"
+              title="Eliminar">
               <Trash2 className="w-3.5 h-3.5" />
             </button>
           )}

@@ -76,32 +76,32 @@ export default function ClientePortal() {
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
         <button
           onClick={() => setOrderModalOpen(true)}
-          className="bg-card border border-border rounded-xl p-4 text-left hover:shadow-lg hover:shadow-primary/5 transition flex items-center gap-3"
+          className="bg-black/60 border border-matrix-primary/25 rounded-xl p-4 text-left hover:border-matrix-primary/50 hover:bg-black/70 transition flex items-center gap-3"
         >
-          <div className="w-10 h-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
+          <div className="w-10 h-10 rounded-lg bg-matrix-primary/10 border border-matrix-primary/25 text-matrix-primary flex items-center justify-center">
             <Wrench className="w-5 h-5" />
           </div>
           <div>
-            <p className="font-semibold text-sm">Solicitar Servicio</p>
-            <p className="text-xs text-muted-foreground">Instalación, soporte o mantenimiento</p>
+            <p className="font-semibold text-sm text-matrix-text">Solicitar Servicio</p>
+            <p className="text-xs text-matrix-muted">Instalación, soporte o mantenimiento</p>
           </div>
         </button>
         <button
           onClick={() => setIncidentModalOpen(true)}
-          className="bg-card border border-border rounded-xl p-4 text-left hover:shadow-lg hover:shadow-amber-500/10 transition flex items-center gap-3"
+          className="bg-black/60 border border-amber-500/25 rounded-xl p-4 text-left hover:border-amber-500/50 hover:bg-black/70 transition flex items-center gap-3"
         >
-          <div className="w-10 h-10 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center">
+          <div className="w-10 h-10 rounded-lg bg-amber-500/10 border border-amber-500/25 text-amber-400 flex items-center justify-center">
             <AlertCircle className="w-5 h-5" />
           </div>
           <div>
-            <p className="font-semibold text-sm">Reportar Problema</p>
-            <p className="text-xs text-muted-foreground">Algo no funciona como debería</p>
+            <p className="font-semibold text-sm text-matrix-text">Reportar Problema</p>
+            <p className="text-xs text-matrix-muted">Algo no funciona como debería</p>
           </div>
         </button>
       </div>
 
       {/* Tabs */}
-      <div className="border-b border-border mb-6 overflow-x-auto">
+      <div className="border-b border-matrix-primary/20 mb-6 overflow-x-auto">
         <div className="flex gap-1 min-w-max">
           {TABS.map((t) => {
             const Icon = t.icon;
@@ -109,7 +109,7 @@ export default function ClientePortal() {
             return (
               <button key={t.id} onClick={() => setTab(t.id)}
                 className={`inline-flex items-center gap-2 px-4 py-2.5 text-sm font-medium border-b-2 transition-colors -mb-px
-                  ${active ? 'border-blue-600 text-blue-700' : 'border-transparent text-muted-foreground hover:text-foreground hover:border-border'}`}>
+                  ${active ? 'border-matrix-primary text-matrix-primary' : 'border-transparent text-matrix-muted hover:text-matrix-text hover:border-matrix-primary/40'}`}>
                 <Icon className="w-4 h-4" /> {t.label}
               </button>
             );
@@ -155,17 +155,17 @@ function Mini({ label, value }) {
 function RecentOrdersCard({ orders }) {
   const recent = orders.slice(0, 4);
   return (
-    <div className="bg-card border border-border rounded-xl p-5">
-      <h3 className="font-semibold mb-4">Órdenes Recientes</h3>
+    <div className="bg-black/60 border border-matrix-primary/20 rounded-xl p-5">
+      <h3 className="font-semibold mb-4 text-matrix-text">Órdenes Recientes</h3>
       {recent.length === 0 ? (
-        <p className="text-sm text-muted-foreground text-center py-6">Sin órdenes</p>
+        <p className="text-sm text-matrix-muted text-center py-6">Sin órdenes</p>
       ) : (
-        <ul className="divide-y divide-border">
+        <ul className="divide-y divide-matrix-primary/[0.08]">
           {recent.map((o) => (
             <li key={o.id} className="py-2.5 flex items-center justify-between gap-3">
               <div>
-                <p className="text-sm font-medium">{typeLabels[o.type] || o.type}</p>
-                <p className="text-xs font-mono text-muted-foreground">{o.order_number}</p>
+                <p className="text-sm font-medium text-matrix-text">{typeLabels[o.type] || o.type}</p>
+                <p className="text-xs font-mono text-matrix-muted">{o.order_number}</p>
               </div>
               <StatusBadge status={o.status} />
             </li>
@@ -179,17 +179,17 @@ function RecentOrdersCard({ orders }) {
 function RecentIncidentsCard({ incidents }) {
   const recent = incidents.slice(0, 4);
   return (
-    <div className="bg-card border border-border rounded-xl p-5">
-      <h3 className="font-semibold mb-4">Incidencias Recientes</h3>
+    <div className="bg-black/60 border border-matrix-primary/20 rounded-xl p-5">
+      <h3 className="font-semibold mb-4 text-matrix-text">Incidencias Recientes</h3>
       {recent.length === 0 ? (
-        <p className="text-sm text-muted-foreground text-center py-6">Sin incidencias</p>
+        <p className="text-sm text-matrix-muted text-center py-6">Sin incidencias</p>
       ) : (
-        <ul className="divide-y divide-border">
+        <ul className="divide-y divide-matrix-primary/[0.08]">
           {recent.map((i) => (
             <li key={i.id} className="py-2.5 flex items-center justify-between gap-3">
               <div className="min-w-0">
-                <p className="text-sm font-medium truncate">{i.title}</p>
-                <p className="text-xs text-muted-foreground">{categoryLabels[i.category]}</p>
+                <p className="text-sm font-medium text-matrix-text truncate">{i.title}</p>
+                <p className="text-xs text-matrix-muted">{categoryLabels[i.category]}</p>
               </div>
               <StatusBadge status={i.status} />
             </li>
@@ -204,8 +204,8 @@ function OrdersList({ orders, onNew }) {
   return (
     <div>
       <div className="flex items-center justify-between mb-4">
-        <p className="text-sm text-muted-foreground">{orders.length} orden{orders.length !== 1 ? 'es' : ''}</p>
-        <button onClick={onNew} className="inline-flex items-center gap-2 bg-primary text-primary-foreground rounded-md px-3 py-2 text-sm font-medium hover:bg-primary/90">
+        <p className="text-sm text-matrix-muted">{orders.length} orden{orders.length !== 1 ? 'es' : ''}</p>
+        <button onClick={onNew} className="inline-flex items-center gap-2 bg-matrix-primary text-black rounded-md px-3 py-2 text-sm font-bold hover:bg-matrix-hover transition uppercase tracking-wider">
           <Wrench className="w-4 h-4" /> Nueva Solicitud
         </button>
       </div>
@@ -214,13 +214,13 @@ function OrdersList({ orders, onNew }) {
       ) : (
         <div className="space-y-3">
           {orders.map((o) => (
-            <div key={o.id} className="bg-card border border-border rounded-xl p-4">
+            <div key={o.id} className="bg-black/60 border border-matrix-primary/20 rounded-xl p-4 hover:border-matrix-primary/35 transition">
               <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
                 <div className="min-w-0 flex-1">
-                  <p className="text-xs font-mono text-muted-foreground">{o.order_number}</p>
-                  <p className="font-semibold text-sm mt-0.5">{typeLabels[o.type] || o.type}</p>
-                  {o.description && <p className="text-xs text-muted-foreground mt-1">{o.description}</p>}
-                  <div className="flex flex-wrap items-center gap-3 mt-2 text-xs text-muted-foreground">
+                  <p className="text-xs font-mono text-matrix-muted">{o.order_number}</p>
+                  <p className="font-semibold text-sm mt-0.5 text-matrix-text">{typeLabels[o.type] || o.type}</p>
+                  {o.description && <p className="text-xs text-matrix-muted mt-1">{o.description}</p>}
+                  <div className="flex flex-wrap items-center gap-3 mt-2 text-xs text-matrix-muted">
                     {o.technician_name && <span className="inline-flex items-center gap-1"><Wrench className="w-3 h-3" /> {o.technician_name}</span>}
                     {o.scheduled_date && <span>📅 {formatDate(o.scheduled_date)}</span>}
                   </div>
@@ -248,8 +248,8 @@ function IncidentsList({ incidents, onNew }) {
   return (
     <div>
       <div className="flex items-center justify-between mb-4">
-        <p className="text-sm text-muted-foreground">{incidents.length} incidencia{incidents.length !== 1 ? 's' : ''}</p>
-        <button onClick={onNew} className="inline-flex items-center gap-2 bg-amber-500 text-white rounded-md px-3 py-2 text-sm font-medium hover:bg-amber-600">
+        <p className="text-sm text-matrix-muted">{incidents.length} incidencia{incidents.length !== 1 ? 's' : ''}</p>
+        <button onClick={onNew} className="inline-flex items-center gap-2 bg-amber-500 text-white rounded-md px-3 py-2 text-sm font-bold hover:bg-amber-600 transition uppercase tracking-wider">
           <AlertCircle className="w-4 h-4" /> Reportar Problema
         </button>
       </div>
@@ -258,13 +258,13 @@ function IncidentsList({ incidents, onNew }) {
       ) : (
         <div className="space-y-3">
           {incidents.map((i) => (
-            <div key={i.id} className="bg-card border border-border rounded-xl p-4">
+            <div key={i.id} className="bg-black/60 border border-matrix-primary/20 rounded-xl p-4 hover:border-matrix-primary/35 transition">
               <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
                 <div className="min-w-0 flex-1">
-                  <p className="font-semibold text-sm">{i.title}</p>
-                  <p className="text-xs text-muted-foreground mt-0.5">{categoryLabels[i.category]}</p>
-                  {i.description && <p className="text-xs text-muted-foreground mt-1">{i.description}</p>}
-                  <p className="text-xs text-muted-foreground mt-2">{formatDateTime(i.created_date)}</p>
+                  <p className="font-semibold text-sm text-matrix-text">{i.title}</p>
+                  <p className="text-xs text-matrix-muted mt-0.5">{categoryLabels[i.category]}</p>
+                  {i.description && <p className="text-xs text-matrix-muted mt-1">{i.description}</p>}
+                  <p className="text-xs text-matrix-muted/60 mt-2">{formatDateTime(i.created_date)}</p>
                 </div>
                 <div className="flex flex-row sm:flex-col gap-1 items-end">
                   <StatusBadge status={i.priority} />
@@ -307,7 +307,7 @@ function RequestServiceModal({ client, onClose }) {
   if (!client) {
     return (
       <Modal open={true} onClose={onClose} title="Solicitar Servicio">
-        <p className="text-sm text-muted-foreground">No se encontró tu ficha de cliente. Contacta al administrador.</p>
+        <p className="text-sm text-matrix-muted">No se encontró tu ficha de cliente. Contacta al administrador.</p>
       </Modal>
     );
   }
@@ -317,17 +317,16 @@ function RequestServiceModal({ client, onClose }) {
       <form onSubmit={(e) => { e.preventDefault(); mut.mutate(); }} className="space-y-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-xs font-medium mb-1">Tipo de servicio</label>
-            <select value={type} onChange={(e) => setType(e.target.value)} className="w-full border border-input rounded-md px-3 py-2 text-sm bg-background">
-              <option value="instalacion">Nueva Instalación</option>
+            <label className="block text-[11px] font-medium mb-1.5 text-matrix-muted uppercase tracking-wider">Tipo de servicio</label>
+            <select value={type} onChange={(e) => setType(e.target.value)} className="w-full bg-black/60 border border-matrix-primary/30 rounded-md px-3 py-2.5 text-sm focus:outline-none focus:border-matrix-primary transition text-matrix-text cursor-pointer">
               <option value="soporte">Soporte Técnico</option>
               <option value="mantenimiento">Mantenimiento</option>
               <option value="retiro">Retiro de Equipo</option>
             </select>
           </div>
           <div>
-            <label className="block text-xs font-medium mb-1">Prioridad</label>
-            <select value={priority} onChange={(e) => setPriority(e.target.value)} className="w-full border border-input rounded-md px-3 py-2 text-sm bg-background">
+            <label className="block text-[11px] font-medium mb-1.5 text-matrix-muted uppercase tracking-wider">Prioridad</label>
+            <select value={priority} onChange={(e) => setPriority(e.target.value)} className="w-full bg-black/60 border border-matrix-primary/30 rounded-md px-3 py-2.5 text-sm focus:outline-none focus:border-matrix-primary transition text-matrix-text cursor-pointer">
               <option value="baja">Baja</option>
               <option value="media">Media</option>
               <option value="alta">Alta</option>
@@ -336,16 +335,16 @@ function RequestServiceModal({ client, onClose }) {
           </div>
         </div>
         <div>
-          <label className="block text-xs font-medium mb-1">Describe lo que necesitas</label>
+          <label className="block text-[11px] font-medium mb-1.5 text-matrix-muted uppercase tracking-wider">Describe lo que necesitas</label>
           <textarea
             rows={4} required value={description} onChange={(e) => setDescription(e.target.value)}
-            className="w-full border border-input rounded-md px-3 py-2 text-sm bg-background"
+            className="w-full bg-black/60 border border-matrix-primary/30 rounded-md px-3 py-2.5 text-sm focus:outline-none focus:border-matrix-primary transition text-matrix-text placeholder:text-matrix-muted/40"
             placeholder="Detalla tu solicitud..."
           />
         </div>
-        <div className="flex justify-end gap-2 pt-2 border-t border-border">
-          <button type="button" onClick={onClose} className="px-4 py-2 rounded-md border border-input text-sm font-medium hover:bg-muted">Cancelar</button>
-          <button type="submit" disabled={mut.isPending} className="px-4 py-2 rounded-md bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 disabled:opacity-50">
+        <div className="flex justify-end gap-2 pt-2 border-t border-matrix-primary/15">
+          <button type="button" onClick={onClose} className="px-4 py-2 rounded-md border border-matrix-primary/30 text-sm font-medium text-matrix-muted hover:text-matrix-text hover:bg-matrix-primary/5 transition">Cancelar</button>
+          <button type="submit" disabled={mut.isPending} className="px-5 py-2 rounded-md bg-matrix-primary text-black text-sm font-bold hover:bg-matrix-hover transition disabled:opacity-50 uppercase tracking-wider">
             {mut.isPending ? 'Enviando...' : 'Enviar solicitud'}
           </button>
         </div>
@@ -374,7 +373,7 @@ function ReportProblemModal({ client, onClose }) {
   if (!client) {
     return (
       <Modal open={true} onClose={onClose} title="Reportar Problema">
-        <p className="text-sm text-muted-foreground">No se encontró tu ficha de cliente. Contacta al administrador.</p>
+        <p className="text-sm text-matrix-muted">No se encontró tu ficha de cliente. Contacta al administrador.</p>
       </Modal>
     );
   }
@@ -383,17 +382,17 @@ function ReportProblemModal({ client, onClose }) {
     <Modal open={true} onClose={onClose} title="Reportar Problema">
       <form onSubmit={(e) => { e.preventDefault(); mut.mutate(); }} className="space-y-4">
         <div>
-          <label className="block text-xs font-medium mb-1">Título *</label>
+          <label className="block text-[11px] font-medium mb-1.5 text-matrix-muted uppercase tracking-wider">Título *</label>
           <input
             required value={title} onChange={(e) => setTitle(e.target.value)}
             placeholder="Ej: Sin internet desde la mañana"
-            className="w-full border border-input rounded-md px-3 py-2 text-sm bg-background"
+            className="w-full bg-black/60 border border-matrix-primary/30 rounded-md px-3 py-2.5 text-sm focus:outline-none focus:border-matrix-primary transition text-matrix-text placeholder:text-matrix-muted/40"
           />
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-xs font-medium mb-1">Categoría</label>
-            <select value={category} onChange={(e) => setCategory(e.target.value)} className="w-full border border-input rounded-md px-3 py-2 text-sm bg-background">
+            <label className="block text-[11px] font-medium mb-1.5 text-matrix-muted uppercase tracking-wider">Categoría</label>
+            <select value={category} onChange={(e) => setCategory(e.target.value)} className="w-full bg-black/60 border border-matrix-primary/30 rounded-md px-3 py-2.5 text-sm focus:outline-none focus:border-matrix-primary transition text-matrix-text cursor-pointer">
               <option value="sin_servicio">Sin Servicio</option>
               <option value="lentitud">Lentitud</option>
               <option value="corte_fibra">Corte de Fibra</option>
@@ -403,8 +402,8 @@ function ReportProblemModal({ client, onClose }) {
             </select>
           </div>
           <div>
-            <label className="block text-xs font-medium mb-1">Prioridad</label>
-            <select value={priority} onChange={(e) => setPriority(e.target.value)} className="w-full border border-input rounded-md px-3 py-2 text-sm bg-background">
+            <label className="block text-[11px] font-medium mb-1.5 text-matrix-muted uppercase tracking-wider">Prioridad</label>
+            <select value={priority} onChange={(e) => setPriority(e.target.value)} className="w-full bg-black/60 border border-matrix-primary/30 rounded-md px-3 py-2.5 text-sm focus:outline-none focus:border-matrix-primary transition text-matrix-text cursor-pointer">
               <option value="baja">Baja</option>
               <option value="media">Media</option>
               <option value="alta">Alta</option>
@@ -413,16 +412,16 @@ function ReportProblemModal({ client, onClose }) {
           </div>
         </div>
         <div>
-          <label className="block text-xs font-medium mb-1">Descripción</label>
+          <label className="block text-[11px] font-medium mb-1.5 text-matrix-muted uppercase tracking-wider">Descripción</label>
           <textarea
             rows={4} value={description} onChange={(e) => setDescription(e.target.value)}
             placeholder="Describe el problema con detalle..."
-            className="w-full border border-input rounded-md px-3 py-2 text-sm bg-background"
+            className="w-full bg-black/60 border border-matrix-primary/30 rounded-md px-3 py-2.5 text-sm focus:outline-none focus:border-matrix-primary transition text-matrix-text placeholder:text-matrix-muted/40"
           />
         </div>
-        <div className="flex justify-end gap-2 pt-2 border-t border-border">
-          <button type="button" onClick={onClose} className="px-4 py-2 rounded-md border border-input text-sm font-medium hover:bg-muted">Cancelar</button>
-          <button type="submit" disabled={mut.isPending} className="px-4 py-2 rounded-md bg-amber-500 text-white text-sm font-medium hover:bg-amber-600 disabled:opacity-50">
+        <div className="flex justify-end gap-2 pt-2 border-t border-matrix-primary/15">
+          <button type="button" onClick={onClose} className="px-4 py-2 rounded-md border border-matrix-primary/30 text-sm font-medium text-matrix-muted hover:text-matrix-text hover:bg-matrix-primary/5 transition">Cancelar</button>
+          <button type="submit" disabled={mut.isPending} className="px-5 py-2 rounded-md bg-amber-500 text-white text-sm font-bold hover:bg-amber-600 transition disabled:opacity-50 uppercase tracking-wider">
             {mut.isPending ? 'Enviando...' : 'Reportar'}
           </button>
         </div>

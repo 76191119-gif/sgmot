@@ -1,8 +1,8 @@
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   ClipboardList, AlertTriangle, History, CheckCircle2,
-  Clock, Loader, MapPin, Calendar, User as UserIcon, X,
+  Clock, Loader, MapPin, Calendar, User as UserIcon,
 } from 'lucide-react';
 import { api } from '@/api/localClient';
 import { useAuth } from '@/lib/AuthContext';
@@ -10,6 +10,10 @@ import StatusBadge from '@/components/shared/StatusBadge';
 import EmptyState from '@/components/shared/EmptyState';
 import Modal from '@/components/shared/Modal';
 import { typeLabels, categoryLabels, formatDate, formatDateTime } from '@/lib/utils';
+
+const INPUT  = "w-full bg-black/60 border border-matrix-primary/30 rounded-md px-3 py-2.5 text-sm focus:outline-none focus:border-matrix-primary focus:ring-1 focus:ring-matrix-primary/50 transition text-matrix-text placeholder:text-matrix-muted/40";
+const LABEL  = "block text-[11px] font-medium mb-1.5 text-matrix-muted uppercase tracking-wider";
+const SELECT = `${INPUT} cursor-pointer`;
 
 const TABS = [
   { id: 'orders',    label: 'Mis Órdenes',  icon: ClipboardList },
@@ -24,8 +28,7 @@ export default function TecnicoPanel() {
   const { data: orders = [] }    = useQuery({ queryKey: ['work_orders'], queryFn: api.workOrders.list });
   const { data: incidents = [] } = useQuery({ queryKey: ['incidents'],   queryFn: api.incidents.list });
 
-  // Filtrar lo del técnico actual (la API ya filtra, pero por consistencia local)
-  const myOrders = orders;
+  const myOrders   = orders;
   const pendientes = myOrders.filter((o) => o.status === 'pendiente');
   const enProceso  = myOrders.filter((o) => o.status === 'en_proceso');
   const completed  = myOrders.filter((o) => o.status === 'completado');
@@ -49,15 +52,15 @@ export default function TecnicoPanel() {
             <p className="text-sm text-matrix-text/70 mt-1">Panel de operación en campo</p>
           </div>
           <div className="grid grid-cols-3 gap-3 md:gap-4">
-            <Mini label="Pendientes" value={pendientes.length}  icon={Clock}        />
-            <Mini label="En Proceso" value={enProceso.length}   icon={Loader}       />
-            <Mini label="Completas"  value={completed.length}   icon={CheckCircle2} />
+            <Mini label="Pendientes" value={pendientes.length} icon={Clock}        />
+            <Mini label="En Proceso" value={enProceso.length}  icon={Loader}       />
+            <Mini label="Completas"  value={completed.length}  icon={CheckCircle2} />
           </div>
         </div>
       </div>
 
       {/* Tabs */}
-      <div className="border-b border-border mb-6 overflow-x-auto">
+      <div className="border-b border-matrix-primary/20 mb-6 overflow-x-auto">
         <div className="flex gap-1 min-w-max">
           {TABS.map((t) => {
             const Icon = t.icon;
@@ -65,7 +68,7 @@ export default function TecnicoPanel() {
             return (
               <button key={t.id} onClick={() => setTab(t.id)}
                 className={`inline-flex items-center gap-2 px-4 py-2.5 text-sm font-medium border-b-2 transition-colors -mb-px
-                  ${active ? 'border-emerald-600 text-emerald-700' : 'border-transparent text-muted-foreground hover:text-foreground hover:border-border'}`}>
+                  ${active ? 'border-matrix-primary text-matrix-primary' : 'border-transparent text-matrix-muted hover:text-matrix-text hover:border-matrix-primary/40'}`}>
                 <Icon className="w-4 h-4" /> {t.label}
               </button>
             );
@@ -98,39 +101,38 @@ function OrdersBoard({ enProceso, pendientes }) {
   return (
     <div className="space-y-6">
       {enProceso.length > 0 && (
-        <Section title="En Proceso" color="border-blue-300" orders={enProceso} onClick={setSelected} actionLabel="Marcar Completado" />
+        <Section title="En Proceso" accentCls="bg-blue-500" borderCls="border-l-blue-500" orders={enProceso} onClick={setSelected} actionLabel="Marcar Completado" />
       )}
       {pendientes.length > 0 && (
-        <Section title="Pendientes" color="border-amber-300" orders={pendientes} onClick={setSelected} actionLabel="Iniciar Trabajo" />
+        <Section title="Pendientes" accentCls="bg-amber-500" borderCls="border-l-amber-500" orders={pendientes} onClick={setSelected} actionLabel="Iniciar Trabajo" />
       )}
       {enProceso.length === 0 && pendientes.length === 0 && (
         <EmptyState icon={ClipboardList} title="Sin órdenes asignadas" description="No tienes órdenes pendientes en este momento." />
       )}
-
       {selected && <OrderDetailModal order={selected} onClose={() => setSelected(null)} />}
     </div>
   );
 }
 
-function Section({ title, color, orders, onClick, actionLabel }) {
+function Section({ title, accentCls, borderCls, orders, onClick, actionLabel }) {
   return (
     <div>
       <div className="flex items-center gap-2 mb-3">
-        <div className={`w-1 h-5 rounded-full ${color.replace('border', 'bg').replace('-300', '-500')}`} />
-        <h3 className="font-semibold">{title}</h3>
-        <span className="text-xs text-muted-foreground">({orders.length})</span>
+        <div className={`w-1 h-5 rounded-full ${accentCls}`} />
+        <h3 className="font-semibold text-matrix-text">{title}</h3>
+        <span className="text-xs text-matrix-muted">({orders.length})</span>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
         {orders.map((o) => (
           <button
             key={o.id}
             onClick={() => onClick(o)}
-            className={`text-left bg-card border-l-4 ${color} border border-border rounded-xl p-4 hover:shadow-lg hover:shadow-primary/5 transition-all`}
+            className={`text-left bg-black/60 border-l-4 ${borderCls} border border-matrix-primary/20 rounded-xl p-4 hover:border-matrix-primary/40 hover:bg-black/70 transition-all`}
           >
             <div className="flex items-start justify-between gap-2 mb-2">
               <div className="min-w-0">
-                <p className="text-xs font-mono text-muted-foreground">{o.order_number}</p>
-                <p className="font-semibold text-sm mt-0.5">{typeLabels[o.type] || o.type}</p>
+                <p className="text-xs font-mono text-matrix-muted">{o.order_number}</p>
+                <p className="font-semibold text-sm mt-0.5 text-matrix-text">{typeLabels[o.type] || o.type}</p>
               </div>
               <div className="flex flex-wrap gap-1">
                 <StatusBadge status={o.priority} />
@@ -138,13 +140,13 @@ function Section({ title, color, orders, onClick, actionLabel }) {
               </div>
             </div>
             <div className="space-y-1.5 text-xs">
-              <div className="flex items-center gap-2 text-foreground/80"><UserIcon className="w-3 h-3 text-muted-foreground" /> {o.client_name}</div>
-              <div className="flex items-center gap-2 text-foreground/80"><MapPin className="w-3 h-3 text-muted-foreground" /> <span className="truncate">{o.client_address}</span></div>
-              <div className="flex items-center gap-2 text-foreground/80"><Calendar className="w-3 h-3 text-muted-foreground" /> {formatDate(o.scheduled_date) || '—'}</div>
+              <div className="flex items-center gap-2 text-matrix-text/80"><UserIcon className="w-3 h-3 text-matrix-muted" /> {o.client_name}</div>
+              <div className="flex items-center gap-2 text-matrix-text/70"><MapPin className="w-3 h-3 text-matrix-muted" /> <span className="truncate">{o.client_address}</span></div>
+              <div className="flex items-center gap-2 text-matrix-text/60"><Calendar className="w-3 h-3 text-matrix-muted" /> {formatDate(o.scheduled_date) || '—'}</div>
             </div>
-            {o.description && <p className="text-xs text-muted-foreground mt-3 line-clamp-2">{o.description}</p>}
-            <div className="mt-3 pt-3 border-t border-border">
-              <span className="text-xs font-medium text-primary">{actionLabel} →</span>
+            {o.description && <p className="text-xs text-matrix-muted mt-3 line-clamp-2">{o.description}</p>}
+            <div className="mt-3 pt-3 border-t border-matrix-primary/15">
+              <span className="text-xs font-medium text-matrix-primary">{actionLabel} →</span>
             </div>
           </button>
         ))}
@@ -171,22 +173,22 @@ function OrderDetailModal({ order, onClose }) {
   return (
     <Modal open={true} onClose={onClose} title={`Orden ${order.order_number}`}>
       <div className="space-y-4">
-        <div className="bg-muted/50 rounded-lg p-4 space-y-2 text-sm">
-          <div className="flex justify-between"><span className="text-muted-foreground">Cliente:</span> <span className="font-medium">{order.client_name}</span></div>
-          <div className="flex justify-between"><span className="text-muted-foreground">Tipo:</span> <span className="font-medium">{typeLabels[order.type] || order.type}</span></div>
-          <div className="flex justify-between"><span className="text-muted-foreground">Dirección:</span> <span className="font-medium text-right">{order.client_address}</span></div>
-          <div className="flex justify-between"><span className="text-muted-foreground">Fecha:</span> <span className="font-medium">{formatDate(order.scheduled_date) || '—'}</span></div>
+        <div className="bg-matrix-primary/5 border border-matrix-primary/20 rounded-lg p-4 space-y-2 text-sm">
+          <div className="flex justify-between"><span className="text-matrix-muted">Cliente:</span> <span className="font-medium text-matrix-text">{order.client_name}</span></div>
+          <div className="flex justify-between"><span className="text-matrix-muted">Tipo:</span> <span className="font-medium text-matrix-text">{typeLabels[order.type] || order.type}</span></div>
+          <div className="flex justify-between"><span className="text-matrix-muted">Dirección:</span> <span className="font-medium text-matrix-text text-right">{order.client_address}</span></div>
+          <div className="flex justify-between"><span className="text-matrix-muted">Fecha:</span> <span className="font-medium text-matrix-text">{formatDate(order.scheduled_date) || '—'}</span></div>
           {order.description && (
-            <div className="pt-2 border-t border-border">
-              <p className="text-xs text-muted-foreground mb-1">Descripción</p>
-              <p className="text-sm">{order.description}</p>
+            <div className="pt-2 border-t border-matrix-primary/15">
+              <p className="text-xs text-matrix-muted mb-1">Descripción</p>
+              <p className="text-sm text-matrix-text">{order.description}</p>
             </div>
           )}
         </div>
 
         <div>
-          <label className="block text-xs font-medium mb-1">Nuevo estado</label>
-          <select value={status} onChange={(e) => setStatus(e.target.value)} className="w-full border border-input rounded-md px-3 py-2 text-sm bg-background">
+          <label className={LABEL}>Nuevo estado</label>
+          <select value={status} onChange={(e) => setStatus(e.target.value)} className={SELECT}>
             <option value="pendiente">Pendiente</option>
             <option value="en_proceso">En Proceso</option>
             <option value="completado">Completado</option>
@@ -195,19 +197,17 @@ function OrderDetailModal({ order, onClose }) {
         </div>
 
         <div>
-          <label className="block text-xs font-medium mb-1">Notas de resolución</label>
+          <label className={LABEL}>Notas de resolución</label>
           <textarea
-            rows={4}
-            value={notes}
-            onChange={(e) => setNotes(e.target.value)}
+            rows={4} value={notes} onChange={(e) => setNotes(e.target.value)}
             placeholder="Describir el trabajo realizado..."
-            className="w-full border border-input rounded-md px-3 py-2 text-sm bg-background"
+            className={INPUT}
           />
         </div>
 
-        <div className="flex justify-end gap-2 pt-2 border-t border-border">
-          <button onClick={onClose} className="px-4 py-2 rounded-md border border-input text-sm font-medium hover:bg-muted">Cancelar</button>
-          <button onClick={() => mut.mutate()} disabled={mut.isPending} className="px-4 py-2 rounded-md bg-emerald-600 text-white text-sm font-medium hover:bg-emerald-700 disabled:opacity-50">
+        <div className="flex justify-end gap-2 pt-2 border-t border-matrix-primary/15">
+          <button onClick={onClose} className="px-4 py-2 rounded-md border border-matrix-primary/30 text-sm font-medium text-matrix-muted hover:text-matrix-text hover:bg-matrix-primary/5 transition">Cancelar</button>
+          <button onClick={() => mut.mutate()} disabled={mut.isPending} className="px-5 py-2 rounded-md bg-emerald-600 text-white text-sm font-bold hover:bg-emerald-700 transition disabled:opacity-50 uppercase tracking-wider">
             {mut.isPending ? 'Guardando...' : 'Guardar'}
           </button>
         </div>
@@ -231,23 +231,22 @@ function IncidentsBoard({ incidents }) {
         {incidents.map((i) => (
           <button
             key={i.id} onClick={() => setSelected(i)}
-            className="text-left bg-card border border-border rounded-xl p-4 hover:shadow-lg hover:shadow-primary/5 transition-all"
+            className="text-left bg-black/60 border border-matrix-primary/20 rounded-xl p-4 hover:border-matrix-primary/40 hover:bg-black/70 transition-all"
           >
             <div className="flex items-start justify-between gap-2 mb-2">
-              <p className="font-semibold text-sm flex-1">{i.title}</p>
+              <p className="font-semibold text-sm flex-1 text-matrix-text">{i.title}</p>
               <StatusBadge status={i.priority} />
             </div>
-            <p className="text-xs text-muted-foreground mb-1">{i.client_name}</p>
-            <p className="text-xs">{categoryLabels[i.category] || i.category}</p>
-            {i.description && <p className="text-xs text-muted-foreground mt-2 line-clamp-2">{i.description}</p>}
-            <div className="flex items-center justify-between mt-3 pt-3 border-t border-border">
+            <p className="text-xs text-matrix-muted mb-1">{i.client_name}</p>
+            <p className="text-xs text-matrix-text/70">{categoryLabels[i.category] || i.category}</p>
+            {i.description && <p className="text-xs text-matrix-muted mt-2 line-clamp-2">{i.description}</p>}
+            <div className="flex items-center justify-between mt-3 pt-3 border-t border-matrix-primary/15">
               <StatusBadge status={i.status} />
-              <span className="text-xs text-muted-foreground">{formatDateTime(i.created_date)}</span>
+              <span className="text-xs text-matrix-muted">{formatDateTime(i.created_date)}</span>
             </div>
           </button>
         ))}
       </div>
-
       {selected && <IncidentAttendModal incident={selected} onClose={() => setSelected(null)} />}
     </div>
   );
@@ -266,21 +265,21 @@ function IncidentAttendModal({ incident, onClose }) {
   return (
     <Modal open={true} onClose={onClose} title="Atender Incidencia">
       <div className="space-y-4">
-        <div className="bg-muted/50 rounded-lg p-4 space-y-2 text-sm">
-          <div className="flex justify-between"><span className="text-muted-foreground">Título:</span> <span className="font-medium">{incident.title}</span></div>
-          <div className="flex justify-between"><span className="text-muted-foreground">Cliente:</span> <span className="font-medium">{incident.client_name}</span></div>
-          <div className="flex justify-between"><span className="text-muted-foreground">Categoría:</span> <span className="font-medium">{categoryLabels[incident.category]}</span></div>
+        <div className="bg-matrix-primary/5 border border-matrix-primary/20 rounded-lg p-4 space-y-2 text-sm">
+          <div className="flex justify-between"><span className="text-matrix-muted">Título:</span> <span className="font-medium text-matrix-text">{incident.title}</span></div>
+          <div className="flex justify-between"><span className="text-matrix-muted">Cliente:</span> <span className="font-medium text-matrix-text">{incident.client_name}</span></div>
+          <div className="flex justify-between"><span className="text-matrix-muted">Categoría:</span> <span className="font-medium text-matrix-text">{categoryLabels[incident.category]}</span></div>
           {incident.description && (
-            <div className="pt-2 border-t border-border">
-              <p className="text-xs text-muted-foreground mb-1">Descripción</p>
-              <p className="text-sm">{incident.description}</p>
+            <div className="pt-2 border-t border-matrix-primary/15">
+              <p className="text-xs text-matrix-muted mb-1">Descripción</p>
+              <p className="text-sm text-matrix-text">{incident.description}</p>
             </div>
           )}
         </div>
 
         <div>
-          <label className="block text-xs font-medium mb-1">Estado</label>
-          <select value={status} onChange={(e) => setStatus(e.target.value)} className="w-full border border-input rounded-md px-3 py-2 text-sm bg-background">
+          <label className={LABEL}>Estado</label>
+          <select value={status} onChange={(e) => setStatus(e.target.value)} className={SELECT}>
             <option value="abierta">Abierta</option>
             <option value="en_atencion">En Atención</option>
             <option value="resuelta">Resuelta</option>
@@ -289,15 +288,14 @@ function IncidentAttendModal({ incident, onClose }) {
         </div>
 
         <div>
-          <label className="block text-xs font-medium mb-1">Resolución aplicada</label>
+          <label className={LABEL}>Resolución aplicada</label>
           <textarea rows={4} value={resolution} onChange={(e) => setResolution(e.target.value)}
-            placeholder="Describir solución..."
-            className="w-full border border-input rounded-md px-3 py-2 text-sm bg-background" />
+            placeholder="Describir solución..." className={INPUT} />
         </div>
 
-        <div className="flex justify-end gap-2 pt-2 border-t border-border">
-          <button onClick={onClose} className="px-4 py-2 rounded-md border border-input text-sm font-medium hover:bg-muted">Cancelar</button>
-          <button onClick={() => mut.mutate()} disabled={mut.isPending} className="px-4 py-2 rounded-md bg-emerald-600 text-white text-sm font-medium hover:bg-emerald-700 disabled:opacity-50">
+        <div className="flex justify-end gap-2 pt-2 border-t border-matrix-primary/15">
+          <button onClick={onClose} className="px-4 py-2 rounded-md border border-matrix-primary/30 text-sm font-medium text-matrix-muted hover:text-matrix-text hover:bg-matrix-primary/5 transition">Cancelar</button>
+          <button onClick={() => mut.mutate()} disabled={mut.isPending} className="px-5 py-2 rounded-md bg-emerald-600 text-white text-sm font-bold hover:bg-emerald-700 transition disabled:opacity-50 uppercase tracking-wider">
             {mut.isPending ? 'Guardando...' : 'Guardar'}
           </button>
         </div>
@@ -315,15 +313,15 @@ function HistoryBoard({ completed }) {
   return (
     <div className="space-y-3">
       {completed.map((o) => (
-        <div key={o.id} className="bg-card border border-border rounded-xl p-4">
+        <div key={o.id} className="bg-black/60 border border-matrix-primary/20 rounded-xl p-4">
           <div className="flex items-start justify-between gap-3 mb-2">
             <div>
-              <p className="text-xs font-mono text-muted-foreground">{o.order_number}</p>
-              <p className="font-semibold text-sm">{o.client_name} — {typeLabels[o.type] || o.type}</p>
+              <p className="text-xs font-mono text-matrix-muted">{o.order_number}</p>
+              <p className="font-semibold text-sm text-matrix-text">{o.client_name} — {typeLabels[o.type] || o.type}</p>
             </div>
             <div className="text-right">
               <StatusBadge status={o.status} />
-              <p className="text-xs text-muted-foreground mt-1">{formatDate(o.completed_date)}</p>
+              <p className="text-xs text-matrix-muted mt-1">{formatDate(o.completed_date)}</p>
             </div>
           </div>
           {o.resolution_notes && (

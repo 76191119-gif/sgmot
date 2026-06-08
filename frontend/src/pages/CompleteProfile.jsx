@@ -55,7 +55,7 @@ export default function CompleteProfile() {
     onSuccess: () => {
       refreshUser({ profile_complete: true, full_name: data.full_name });
       // Ensure ProtectedRoute sees the new client record
-      queryClient.invalidateQueries(['me-client']);
+      queryClient.invalidateQueries({ queryKey: ['me-client'] });
       navigate('/');
     },
     onError: (e) => {

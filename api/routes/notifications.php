@@ -7,7 +7,7 @@ if ($method === 'GET' && !$id && !$action) {
     $onlyUnread = isset($_GET['unread']) && $_GET['unread'] === '1';
     $sql = "SELECT * FROM notifications WHERE user_id = ?";
     if ($onlyUnread) $sql .= " AND is_read = 0";
-    $sql .= " ORDER BY created_date DESC LIMIT 50";
+    $sql .= " ORDER BY created_date DESC LIMIT 200";
     $stmt = $db->prepare($sql);
     $stmt->execute([$user['id']]);
     $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);

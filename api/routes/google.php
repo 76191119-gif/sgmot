@@ -14,8 +14,10 @@ if (!$idToken) {
     sendResponse(['error' => 'Falta id_token'], 400);
 }
 
+$allowDemoGoogle = sgmot_env_value('SGMOT_ALLOW_GOOGLE_DEMO', 'false') === 'true';
+
 // Detectar si es un token simulado (para desarrollo)
-if (strpos($idToken, '.') !== false) {
+if ($allowDemoGoogle && strpos($idToken, '.') !== false) {
     $parts = explode('.', $idToken);
     if (count($parts) === 3) {
         try {
@@ -64,9 +66,7 @@ if (strpos($idToken, '.') !== false) {
                 $profileComplete = (int)$user['profile_complete'] === 1;
                 if ($user['role'] === 'cliente' && $profileComplete) {
                     // Asegurar que también tiene ficha en clients
-                    $ck = $db->prepare("SELECT id FROM clients WHERE email = ?");
-                    $ck->execute([$email]);
-                    if (!$ck->fetch()) {
+                    if (!findCurrentClient($db, $user)) {
                         // Tiene profile_complete=1 pero no hay ficha → marcar incompleto
                         $db->prepare("UPDATE users SET profile_complete=0 WHERE id=?")->execute([$user['id']]);
                         $profileComplete = false;
@@ -94,30 +94,52 @@ if (strpos($idToken, '.') !== false) {
 }
 
 // Verificar token con Google (modo producción)
-$ctx = stream_context_create([
-    'http' => ['timeout' => 5, 'ignore_errors' => true],
-]);
-$resp = @file_get_contents(
-    "https://oauth2.googleapis.com/tokeninfo?id_token=" . urlencode($idToken),
-    false, $ctx
-);
+if (!defined('GOOGLE_CLIENT_ID') || !GOOGLE_CLIENT_ID) {
+    audit_log($db, 'google_login_failed', null, null, 'Google Client ID no configurado', 'failed');
+    sendResponse(['error' => 'Google OAuth no esta configurado en el servidor'], 500);
+}
+
+function fetchGoogleTokenInfo($idToken) {
+    $url = "https://oauth2.googleapis.com/tokeninfo?id_token=" . urlencode($idToken);
+
+    if (function_exists('curl_init')) {
+        $ch = curl_init($url);
+        curl_setopt_array($ch, [
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_TIMEOUT => 8,
+            CURLOPT_SSL_VERIFYPEER => true,
+        ]);
+        $body = curl_exec($ch);
+        $err = curl_error($ch);
+        curl_close($ch);
+        if ($body !== false && $body !== '') return $body;
+        error_log('google tokeninfo curl error: ' . $err);
+    }
+
+    $ctx = stream_context_create([
+        'http' => ['timeout' => 8, 'ignore_errors' => true],
+    ]);
+    return @file_get_contents($url, false, $ctx);
+}
+
+$resp = fetchGoogleTokenInfo($idToken);
 
 if (!$resp) {
     audit_log($db, 'google_login_failed', null, null, 'No se pudo contactar Google', 'failed');
-    sendResponse(['error' => 'No se pudo verificar el token con Google. ¿Hay internet?'], 502);
+    sendResponse(['error' => 'No se pudo verificar el token con Google. Revisa internet del servidor.'], 502);
 }
 
 $info = json_decode($resp, true);
 if (!$info || isset($info['error'])) {
     audit_log($db, 'google_login_failed', null, null, 'Token inválido: ' . ($info['error_description'] ?? 'desconocido'), 'failed');
-    sendResponse(['error' => 'Token de Google inválido o expirado'], 401);
+    sendResponse(['error' => 'Token de Google invalido o expirado. Intenta iniciar sesion nuevamente.'], 401);
 }
 
 // Validar audiencia si está configurada (opcional)
-$expectedAud = defined('GOOGLE_CLIENT_ID') && GOOGLE_CLIENT_ID ? GOOGLE_CLIENT_ID : (getenv('GOOGLE_CLIENT_ID') ?: '');
-if ($expectedAud && ($info['aud'] ?? '') !== $expectedAud) {
+$expectedAud = GOOGLE_CLIENT_ID;
+if (($info['aud'] ?? '') !== $expectedAud) {
     audit_log($db, 'google_login_failed', null, null, 'Audiencia inválida', 'failed');
-    sendResponse(['error' => 'Token con audiencia incorrecta'], 401);
+    sendResponse(['error' => 'El Client ID de Google del frontend no coincide con el backend'], 401);
 }
 
 if (empty($info['email']) || empty($info['email_verified']) || $info['email_verified'] === 'false') {
@@ -171,9 +193,7 @@ if (!$user) {
 $profileComplete = (int)$user['profile_complete'] === 1;
 if ($user['role'] === 'cliente' && $profileComplete) {
     // Asegurar que también tiene ficha en clients
-    $ck = $db->prepare("SELECT id FROM clients WHERE email = ?");
-    $ck->execute([$email]);
-    if (!$ck->fetch()) {
+    if (!findCurrentClient($db, $user)) {
         // Tiene profile_complete=1 pero no hay ficha → marcar incompleto
         $db->prepare("UPDATE users SET profile_complete=0 WHERE id=?")->execute([$user['id']]);
         $profileComplete = false;

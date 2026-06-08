@@ -1,5 +1,4 @@
 <?php
-define('JWT_SECRET', 'SGMOT_INPE_CABLE_SECRET_2026');
 
 function b64url_encode($data) {
     return rtrim(strtr(base64_encode($data), '+/', '-_'), '=');
