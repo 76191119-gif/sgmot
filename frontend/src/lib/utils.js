@@ -15,11 +15,19 @@ export const planLabels = {
 
 export const typeLabels = {
   nueva_instalacion: 'Nueva Instalación',
-  instalacion: 'Instalación / Reinstalación',
-  soporte: 'Soporte Técnico',
+  instalacion: 'Instalación',
+  soporte: 'Soporte',
   mantenimiento: 'Mantenimiento',
-  retiro: 'Retiro de Equipo',
+  retiro: 'Retiro',
 };
+
+export const orderTypeOptions = [
+  { value: 'nueva_instalacion', label: typeLabels.nueva_instalacion },
+  { value: 'instalacion', label: typeLabels.instalacion },
+  { value: 'soporte', label: typeLabels.soporte },
+  { value: 'mantenimiento', label: typeLabels.mantenimiento },
+  { value: 'retiro', label: typeLabels.retiro },
+];
 
 export const categoryLabels = {
   sin_servicio: 'Sin Servicio',
@@ -29,6 +37,15 @@ export const categoryLabels = {
   configuracion: 'Configuración',
   otro: 'Otro',
 };
+
+export const incidentCategoryOptions = [
+  { value: 'sin_servicio', label: categoryLabels.sin_servicio },
+  { value: 'lentitud', label: categoryLabels.lentitud },
+  { value: 'corte_fibra', label: categoryLabels.corte_fibra },
+  { value: 'equipo_danado', label: categoryLabels.equipo_danado },
+  { value: 'configuracion', label: categoryLabels.configuracion },
+  { value: 'otro', label: categoryLabels.otro },
+];
 
 export const specialtyLabels = {
   instalacion: 'Instalación',

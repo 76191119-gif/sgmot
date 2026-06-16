@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '@/api/localClient';
 import { useAuth } from '@/lib/AuthContext';
+import { orderTypeOptions } from '@/lib/utils';
 
 const INPUT = "w-full bg-black/60 border border-matrix-primary/30 rounded-md px-3 py-2.5 text-sm focus:outline-none focus:border-matrix-primary focus:ring-1 focus:ring-matrix-primary/50 transition text-matrix-text placeholder:text-matrix-muted/40";
 const LABEL = "block text-[11px] font-medium mb-1.5 text-matrix-muted uppercase tracking-wider";
@@ -12,6 +13,7 @@ export default function WorkOrderForm({ initial, onSubmit, onCancel, loading }) 
   const isEdit    = Boolean(initial?.id);
   const isAdmin   = user?.role === 'admin';
   const isTecnico = user?.role === 'tecnico';
+  const isCliente = user?.role === 'cliente';
 
   // Solo admins pueden listar clientes y técnicos
   const { data: clients = [] } = useQuery({
@@ -38,8 +40,18 @@ export default function WorkOrderForm({ initial, onSubmit, onCancel, loading }) 
     description:      initial?.description      || '',
     resolution_notes: initial?.resolution_notes || '',
   });
+  const [requestTitle, setRequestTitle] = useState('');
 
   const set = (k, v) => setData((d) => ({ ...d, [k]: v }));
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (isCliente && !isEdit) {
+      const description = [requestTitle.trim(), data.description.trim()].filter(Boolean).join('\n\n');
+      onSubmit({ ...data, description, status: 'pendiente' });
+      return;
+    }
+    onSubmit(data);
+  };
 
   // Auto-rellenar nombre y dirección al elegir cliente (solo admin)
   useEffect(() => {
@@ -57,19 +69,29 @@ export default function WorkOrderForm({ initial, onSubmit, onCancel, loading }) 
   }, [data.technician_id, technicians, isAdmin]);
 
   return (
-    <form onSubmit={(e) => { e.preventDefault(); onSubmit(data); }} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-4">
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {isCliente && !isEdit && (
+          <div className="sm:col-span-2">
+            <label className={LABEL}>Título *</label>
+            <input
+              className={INPUT}
+              required
+              value={requestTitle}
+              onChange={(e) => setRequestTitle(e.target.value)}
+              placeholder="Ej: Necesito soporte para mi servicio"
+            />
+          </div>
+        )}
 
         {/* Tipo de servicio */}
         <div>
           <label className={LABEL}>Tipo de servicio *</label>
           <select className={SELECT} required value={data.type} onChange={(e) => set('type', e.target.value)}
             disabled={isTecnico}>
-            <option value="nueva_instalacion">Nueva Instalación</option>
-            <option value="instalacion">Instalación / Reinstalación</option>
-            <option value="soporte">Soporte Técnico</option>
-            <option value="mantenimiento">Mantenimiento</option>
-            <option value="retiro">Retiro de Equipo</option>
+            {orderTypeOptions.map((option) => (
+              <option key={option.value} value={option.value}>{option.label}</option>
+            ))}
           </select>
         </div>
 
@@ -96,13 +118,13 @@ export default function WorkOrderForm({ initial, onSubmit, onCancel, loading }) 
               ))}
             </select>
           </div>
-        ) : (
+        ) : (!isCliente || isEdit) ? (
           <div>
             <label className={LABEL}>Cliente</label>
             <input className={INPUT} value={data.client_name} readOnly disabled
               style={{ opacity: 0.6, cursor: 'not-allowed' }} />
           </div>
-        )}
+        ) : null}
 
         {/* Técnico asignado — solo admin */}
         {isAdmin && (
@@ -127,15 +149,17 @@ export default function WorkOrderForm({ initial, onSubmit, onCancel, loading }) 
         )}
 
         {/* Estado */}
-        <div>
-          <label className={LABEL}>Estado</label>
-          <select className={SELECT} value={data.status} onChange={(e) => set('status', e.target.value)}>
-            <option value="pendiente">Pendiente</option>
-            <option value="en_proceso">En Proceso</option>
-            <option value="completado">Completado</option>
-            <option value="cancelado">Cancelado</option>
-          </select>
-        </div>
+        {(!isCliente || isEdit) && (
+          <div>
+            <label className={LABEL}>Estado</label>
+            <select className={SELECT} value={data.status} onChange={(e) => set('status', e.target.value)}>
+              <option value="pendiente">Pendiente</option>
+              <option value="en_proceso">En Proceso</option>
+              <option value="completado">Completado</option>
+              <option value="cancelado">Cancelado</option>
+            </select>
+          </div>
+        )}
 
         {/* Descripción */}
         <div className="sm:col-span-2">

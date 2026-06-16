@@ -2,13 +2,10 @@ import { useMemo, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   AlertTriangle,
-  Calendar,
   Loader2,
   Lock,
   Mail,
-  MapPin,
   Pencil,
-  Phone,
   Plus,
   Search,
   Shield,
@@ -179,9 +176,9 @@ export default function Users() {
       ) : filtered.length === 0 ? (
         <EmptyState icon={UsersIcon} title="Sin usuarios" />
       ) : (
-        <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
+        <div className="space-y-2 rounded-xl border border-matrix-primary/20 bg-black/60 p-3">
           {filtered.map((u) => (
-            <UserProfileCard
+            <UserTableRow
               key={u.id}
               user={u}
               isMe={u.id === currentUser?.id}
@@ -253,103 +250,65 @@ export default function Users() {
   );
 }
 
-function UserProfileCard({ user, isMe, onEdit, onDelete }) {
+function UserTableRow({ user, isMe, onEdit, onDelete }) {
   const cfg = ROLE_BADGES[user.role] || ROLE_BADGES.cliente;
   const RIcon = cfg.Icon;
   const profile = user.profile;
   const status = profile?.status;
+  const detail = profile?.type === 'cliente'
+    ? [profile.district, planLabels[profile.plan] || profile.plan].filter(Boolean).join(' - ')
+    : [profile?.specialty, profile?.zone].filter(Boolean).join(' - ');
 
   return (
-    <article className="overflow-hidden rounded-xl border border-matrix-primary/20 bg-black/60 transition hover:border-matrix-primary/40 hover:bg-matrix-primary/[0.035]">
-      <div className="flex flex-col gap-4 border-b border-matrix-primary/10 p-4 sm:flex-row sm:items-start">
-        <div className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-matrix-primary/30 bg-matrix-primary/10 text-xl font-bold text-matrix-primary">
+    <div className="grid grid-cols-1 items-center gap-3 rounded-xl border border-matrix-primary/20 bg-black/55 px-4 py-3 transition hover:border-matrix-primary/45 hover:bg-matrix-primary/[0.035] lg:grid-cols-[minmax(260px,1.6fr)_170px_120px_150px_120px_minmax(220px,1.2fr)_100px_80px]">
+      <div>
+        <div className="flex min-w-0 items-center gap-3">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-matrix-primary/30 bg-matrix-primary/10 text-xs font-bold text-matrix-primary">
           {user.photo_url ? <img src={user.photo_url} alt={user.full_name} className="h-full w-full object-cover" /> : getInitials(user.full_name)}
-        </div>
-
-        <div className="min-w-0 flex-1">
-          <div className="flex flex-wrap items-start justify-between gap-3">
-            <div className="min-w-0">
-              <div className="flex flex-wrap items-center gap-2">
-                <h3 className="truncate text-lg font-bold text-matrix-text">{user.full_name}</h3>
-                {isMe && <span className="rounded-full bg-matrix-primary px-2 py-0.5 text-[10px] font-bold text-black">TU</span>}
-              </div>
-              <p className="mt-1 flex items-center gap-2 text-xs text-matrix-muted">
-                <Mail className="h-3.5 w-3.5" /> <span className="truncate">{user.email}</span>
-              </p>
-            </div>
-            <div className="flex gap-1">
-              <button onClick={onEdit} className="rounded-md p-2 text-matrix-muted transition hover:bg-matrix-primary/10 hover:text-matrix-primary" title="Editar">
-                <Pencil className="h-4 w-4" />
-              </button>
-              {!isMe && (
-                <button onClick={onDelete} className="rounded-md p-2 text-matrix-muted transition hover:bg-red-500/10 hover:text-red-400" title="Eliminar">
-                  <Trash2 className="h-4 w-4" />
-                </button>
-              )}
-            </div>
           </div>
-
-          <div className="mt-3 flex flex-wrap gap-2">
-            <span className={`inline-flex items-center gap-1 rounded-md border px-2 py-1 text-xs font-medium ${cfg.cls}`}>
-              <RIcon className="h-3.5 w-3.5" /> {cfg.label}
-            </span>
-            <span className="rounded-md border border-matrix-primary/20 px-2 py-1 text-xs text-matrix-muted">
-              {user.provider === 'google' ? 'Google OAuth' : 'Cuenta local'}
-            </span>
-            <span className={`rounded-md border px-2 py-1 text-xs ${user.profile_complete ? 'border-matrix-primary/30 text-matrix-primary' : 'border-amber-400/35 text-amber-300'}`}>
-              {user.profile_complete ? 'Perfil completo' : 'Perfil pendiente'}
-            </span>
-            {status && <span className={`rounded-md border px-2 py-1 text-xs ${STATUS_STYLE[status] || 'border-matrix-primary/20 text-matrix-muted'}`}>{status}</span>}
+          <div className="min-w-0">
+            <div className="flex items-center gap-2">
+              <p className="truncate font-semibold text-matrix-text">{user.full_name}</p>
+              {isMe && <span className="rounded bg-matrix-primary px-1.5 py-0.5 text-[10px] font-bold text-black">TU</span>}
+            </div>
+            <p className="mt-0.5 flex items-center gap-1.5 text-xs text-matrix-muted">
+              <Mail className="h-3.5 w-3.5" /> <span className="truncate">{user.email}</span>
+            </p>
           </div>
         </div>
       </div>
-
-      <div className="grid gap-3 p-4 md:grid-cols-2">
-        <InfoItem icon={Calendar} label="Creado" value={formatDate(user.created_date)} />
-        <InfoItem icon={Calendar} label="Actualizado" value={formatDate(user.updated_date)} />
-
-        {profile ? (
-          profile.type === 'cliente' ? <ClientInfo profile={profile} /> : <TechnicianInfo profile={profile} />
-        ) : (
-          <div className="md:col-span-2 rounded-lg border border-dashed border-matrix-primary/20 p-3 text-xs text-matrix-muted">
-            Sin ficha operativa vinculada. Al crear o sincronizar un cliente/tecnico con este email se mostrara aqui.
-          </div>
-        )}
+      <div>
+        <span className={`inline-flex items-center gap-1 rounded-md border px-2 py-1 text-xs font-medium ${cfg.cls}`}>
+          <RIcon className="h-3.5 w-3.5" /> {cfg.label}
+        </span>
       </div>
-    </article>
-  );
-}
-
-function ClientInfo({ profile }) {
-  return (
-    <>
-      <InfoItem icon={UserCircle} label="DNI" value={profile.dni} />
-      <InfoItem icon={Phone} label="Telefono" value={profile.phone} />
-      <InfoItem icon={MapPin} label="Direccion" value={profile.address} wide />
-      <InfoItem icon={MapPin} label="Distrito" value={profile.district} />
-      <InfoItem icon={Shield} label="Plan" value={planLabels[profile.plan] || profile.plan} />
-    </>
-  );
-}
-
-function TechnicianInfo({ profile }) {
-  return (
-    <>
-      <InfoItem icon={UserCircle} label="DNI" value={profile.dni} />
-      <InfoItem icon={Phone} label="Telefono" value={profile.phone} />
-      <InfoItem icon={Wrench} label="Especialidad" value={profile.specialty} />
-      <InfoItem icon={MapPin} label="Zona" value={profile.zone} />
-    </>
-  );
-}
-
-function InfoItem({ icon: Icon, label, value, wide }) {
-  return (
-    <div className={`rounded-lg border border-matrix-primary/10 bg-black/35 p-3 ${wide ? 'md:col-span-2' : ''}`}>
-      <p className="mb-1 flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider text-matrix-muted">
-        <Icon className="h-3 w-3" /> {label}
-      </p>
-      <p className="break-words text-sm font-medium text-matrix-text">{value || 'No registrado'}</p>
+      <p className="text-xs text-matrix-muted">{user.provider === 'google' ? 'Google OAuth' : 'Cuenta local'}</p>
+      <div>
+        <div className="flex flex-wrap gap-1.5">
+          <span className={`rounded-md border px-2 py-1 text-xs ${user.profile_complete ? 'border-matrix-primary/30 text-matrix-primary' : 'border-amber-400/35 text-amber-300'}`}>
+            {user.profile_complete ? 'Completo' : 'Pendiente'}
+          </span>
+          {status && <span className={`rounded-md border px-2 py-1 text-xs ${STATUS_STYLE[status] || 'border-matrix-primary/20 text-matrix-muted'}`}>{status}</span>}
+        </div>
+      </div>
+      <div>
+        <p className="font-mono text-xs text-matrix-text">{profile?.dni || '-'}</p>
+        <p className="mt-1 text-xs text-matrix-muted">{profile?.phone || '-'}</p>
+      </div>
+      <p className="truncate text-xs text-matrix-muted">{detail || 'Sin ficha operativa'}</p>
+      <p className="whitespace-nowrap text-xs text-matrix-muted">{formatDate(user.created_date)}</p>
+      <div>
+        <div className="flex justify-end gap-1">
+          <button onClick={onEdit} className="rounded-md p-2 text-matrix-muted transition hover:bg-matrix-primary/10 hover:text-matrix-primary" title="Editar">
+            <Pencil className="h-4 w-4" />
+          </button>
+          {!isMe && (
+            <button onClick={onDelete} className="rounded-md p-2 text-matrix-muted transition hover:bg-red-500/10 hover:text-red-400" title="Eliminar">
+              <Trash2 className="h-4 w-4" />
+            </button>
+          )}
+        </div>
+      </div>
     </div>
   );
 }

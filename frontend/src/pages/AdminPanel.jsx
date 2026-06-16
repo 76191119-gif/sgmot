@@ -17,7 +17,7 @@ import WorkOrderForm from '@/components/orders/WorkOrderForm';
 import IncidentForm from '@/components/incidents/IncidentForm';
 import ClientForm from '@/components/clients/ClientForm';
 import TechnicianForm from '@/components/technicians/TechnicianForm';
-import { typeLabels, categoryLabels, planLabels, specialtyLabels, formatDate, getInitials } from '@/lib/utils';
+import { typeLabels, categoryLabels, planLabels, specialtyLabels, formatDate } from '@/lib/utils';
 
 const TABS = [
   { id: 'overview',    label: 'Resumen',     icon: LayoutDashboard },
@@ -232,40 +232,25 @@ function OrdersTab({ orders, qc }) {
 
       <div className="bg-black/60 border border-matrix-primary/20 rounded-xl overflow-hidden">
         {filtered.length === 0 ? <EmptyState icon={ClipboardList} title="Sin órdenes" /> : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead className="border-b border-matrix-primary/20">
-                <tr className="text-[11px] uppercase text-matrix-muted tracking-wider">
-                  <th className="text-left px-4 py-3">N° Orden</th>
-                  <th className="text-left px-4 py-3">Cliente</th>
-                  <th className="text-left px-4 py-3">Técnico</th>
-                  <th className="text-left px-4 py-3">Tipo</th>
-                  <th className="text-left px-4 py-3">Estado</th>
-                  <th className="text-left px-4 py-3">Prioridad</th>
-                  <th className="text-left px-4 py-3">Fecha</th>
-                  <th className="text-right px-4 py-3 w-20"></th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-matrix-primary/[0.08]">
-                {filtered.map((o) => (
-                  <tr key={o.id} className="hover:bg-matrix-primary/[0.03] transition">
-                    <td className="px-4 py-3 font-mono text-xs text-matrix-muted">{o.order_number}</td>
-                    <td className="px-4 py-3 text-matrix-text">{o.client_name}</td>
-                    <td className="px-4 py-3 text-matrix-muted">{o.technician_name || '—'}</td>
-                    <td className="px-4 py-3 text-matrix-text">{typeLabels[o.type] || o.type}</td>
-                    <td className="px-4 py-3"><StatusBadge status={o.status} /></td>
-                    <td className="px-4 py-3"><StatusBadge status={o.priority} /></td>
-                    <td className="px-4 py-3 text-xs text-matrix-muted">{formatDate(o.scheduled_date)}</td>
-                    <td className="px-4 py-3">
-                      <div className="flex justify-end gap-1">
-                        <button onClick={() => { setEditing(o); setOpen(true); }} className="p-1.5 rounded-md hover:bg-matrix-primary/10 text-matrix-muted hover:text-matrix-primary transition"><Pencil className="w-3.5 h-3.5" /></button>
-                        <button onClick={() => setConfirm(o)} className="p-1.5 rounded-md hover:bg-red-500/10 text-matrix-muted hover:text-red-400 transition"><Trash2 className="w-3.5 h-3.5" /></button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="space-y-2 p-3">
+            {filtered.map((o) => (
+              <div key={o.id} className="grid grid-cols-1 items-center gap-3 rounded-xl border border-matrix-primary/20 bg-black/55 px-4 py-3 transition hover:border-matrix-primary/45 hover:bg-matrix-primary/[0.035] lg:grid-cols-[minmax(240px,1.5fr)_minmax(170px,1fr)_minmax(150px,0.9fr)_minmax(140px,0.8fr)_110px_90px_120px_80px]">
+                <div className="min-w-0">
+                  <p className="font-mono text-[11px] text-matrix-muted">{o.order_number}</p>
+                  <p className="truncate font-semibold text-matrix-text">{typeLabels[o.type] || o.type}</p>
+                </div>
+                <p className="truncate text-sm text-matrix-text">{o.client_name}</p>
+                <p className="truncate text-xs text-matrix-muted">{o.technician_name || 'Sin asignar'}</p>
+                <p className="truncate text-xs text-matrix-text">{typeLabels[o.type] || o.type}</p>
+                <StatusBadge status={o.status} />
+                <StatusBadge status={o.priority} />
+                <p className="text-xs text-matrix-muted">{formatDate(o.scheduled_date) || '-'}</p>
+                <div className="flex justify-end gap-1">
+                  <button onClick={() => { setEditing(o); setOpen(true); }} className="rounded-md p-2 text-matrix-muted transition hover:bg-matrix-primary/10 hover:text-matrix-primary"><Pencil className="h-4 w-4" /></button>
+                  <button onClick={() => setConfirm(o)} className="rounded-md p-2 text-matrix-muted transition hover:bg-red-500/10 hover:text-red-400"><Trash2 className="h-4 w-4" /></button>
+                </div>
+              </div>
+            ))}
           </div>
         )}
       </div>
@@ -330,38 +315,21 @@ function IncidentsTab({ incidents, qc }) {
 
       <div className="bg-black/60 border border-matrix-primary/20 rounded-xl overflow-hidden">
         {filtered.length === 0 ? <EmptyState icon={AlertTriangle} title="Sin incidencias" /> : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead className="border-b border-matrix-primary/20">
-                <tr className="text-[11px] uppercase text-matrix-muted tracking-wider">
-                  <th className="text-left px-4 py-3">Título</th>
-                  <th className="text-left px-4 py-3">Cliente</th>
-                  <th className="text-left px-4 py-3">Categoría</th>
-                  <th className="text-left px-4 py-3">Prioridad</th>
-                  <th className="text-left px-4 py-3">Estado</th>
-                  <th className="text-left px-4 py-3">Fecha</th>
-                  <th className="text-right px-4 py-3 w-20"></th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-matrix-primary/[0.08]">
-                {filtered.map((i) => (
-                  <tr key={i.id} className="hover:bg-matrix-primary/[0.03] transition">
-                    <td className="px-4 py-3 font-medium max-w-[240px] truncate text-matrix-text">{i.title}</td>
-                    <td className="px-4 py-3 text-matrix-text">{i.client_name}</td>
-                    <td className="px-4 py-3 text-matrix-muted">{categoryLabels[i.category] || i.category}</td>
-                    <td className="px-4 py-3"><StatusBadge status={i.priority} /></td>
-                    <td className="px-4 py-3"><StatusBadge status={i.status} /></td>
-                    <td className="px-4 py-3 text-xs text-matrix-muted">{formatDate(i.created_date)}</td>
-                    <td className="px-4 py-3">
-                      <div className="flex justify-end gap-1">
-                        <button onClick={() => { setEditing(i); setOpen(true); }} className="p-1.5 rounded-md hover:bg-matrix-primary/10 text-matrix-muted hover:text-matrix-primary transition"><Pencil className="w-3.5 h-3.5" /></button>
-                        <button onClick={() => setConfirm(i)} className="p-1.5 rounded-md hover:bg-red-500/10 text-matrix-muted hover:text-red-400 transition"><Trash2 className="w-3.5 h-3.5" /></button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="space-y-2 p-3">
+            {filtered.map((i) => (
+              <div key={i.id} className="grid grid-cols-1 items-center gap-3 rounded-xl border border-matrix-primary/20 bg-black/55 px-4 py-3 transition hover:border-matrix-primary/45 hover:bg-matrix-primary/[0.035] lg:grid-cols-[minmax(260px,1.7fr)_minmax(170px,1fr)_150px_90px_110px_120px_80px]">
+                <p className="truncate font-semibold text-matrix-text">{i.title}</p>
+                <p className="truncate text-sm text-matrix-text">{i.client_name}</p>
+                <p className="text-xs text-matrix-muted">{categoryLabels[i.category] || i.category}</p>
+                <StatusBadge status={i.priority} />
+                <StatusBadge status={i.status} />
+                <p className="text-xs text-matrix-muted">{formatDate(i.created_date)}</p>
+                <div className="flex justify-end gap-1">
+                  <button onClick={() => { setEditing(i); setOpen(true); }} className="rounded-md p-2 text-matrix-muted transition hover:bg-matrix-primary/10 hover:text-matrix-primary"><Pencil className="h-4 w-4" /></button>
+                  <button onClick={() => setConfirm(i)} className="rounded-md p-2 text-matrix-muted transition hover:bg-red-500/10 hover:text-red-400"><Trash2 className="h-4 w-4" /></button>
+                </div>
+              </div>
+            ))}
           </div>
         )}
       </div>
@@ -419,36 +387,20 @@ function ClientsTab({ clients, qc }) {
 
       <div className="bg-black/60 border border-matrix-primary/20 rounded-xl overflow-hidden">
         {filtered.length === 0 ? <EmptyState icon={Users} title="Sin clientes" /> : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead className="border-b border-matrix-primary/20">
-                <tr className="text-[11px] uppercase text-matrix-muted tracking-wider">
-                  <th className="text-left px-4 py-3">Nombre</th>
-                  <th className="text-left px-4 py-3">DNI</th>
-                  <th className="text-left px-4 py-3">Teléfono</th>
-                  <th className="text-left px-4 py-3">Plan</th>
-                  <th className="text-left px-4 py-3">Estado</th>
-                  <th className="text-right px-4 py-3 w-20"></th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-matrix-primary/[0.08]">
-                {filtered.map((c) => (
-                  <tr key={c.id} className="hover:bg-matrix-primary/[0.03] transition">
-                    <td className="px-4 py-3 font-medium text-matrix-text">{c.full_name}</td>
-                    <td className="px-4 py-3 font-mono text-xs text-matrix-muted">{c.dni}</td>
-                    <td className="px-4 py-3 text-matrix-muted">{c.phone}</td>
-                    <td className="px-4 py-3 text-matrix-text">{planLabels[c.plan] || c.plan}</td>
-                    <td className="px-4 py-3"><StatusBadge status={c.status} /></td>
-                    <td className="px-4 py-3">
-                      <div className="flex justify-end gap-1">
-                        <button onClick={() => { setEditing(c); setOpen(true); }} className="p-1.5 rounded-md hover:bg-matrix-primary/10 text-matrix-muted hover:text-matrix-primary transition"><Pencil className="w-3.5 h-3.5" /></button>
-                        <button onClick={() => setConfirm(c)} className="p-1.5 rounded-md hover:bg-red-500/10 text-matrix-muted hover:text-red-400 transition"><Trash2 className="w-3.5 h-3.5" /></button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="space-y-2 p-3">
+            {filtered.map((c) => (
+              <div key={c.id} className="grid grid-cols-1 items-center gap-3 rounded-xl border border-matrix-primary/20 bg-black/55 px-4 py-3 transition hover:border-matrix-primary/45 hover:bg-matrix-primary/[0.035] lg:grid-cols-[minmax(240px,1.5fr)_120px_130px_170px_110px_80px]">
+                <p className="truncate font-semibold text-matrix-text">{c.full_name}</p>
+                <p className="font-mono text-xs text-matrix-muted">{c.dni}</p>
+                <p className="text-xs text-matrix-muted">{c.phone}</p>
+                <p className="text-xs text-matrix-text">{planLabels[c.plan] || c.plan}</p>
+                <StatusBadge status={c.status} />
+                <div className="flex justify-end gap-1">
+                  <button onClick={() => { setEditing(c); setOpen(true); }} className="rounded-md p-2 text-matrix-muted transition hover:bg-matrix-primary/10 hover:text-matrix-primary"><Pencil className="h-4 w-4" /></button>
+                  <button onClick={() => setConfirm(c)} className="rounded-md p-2 text-matrix-muted transition hover:bg-red-500/10 hover:text-red-400"><Trash2 className="h-4 w-4" /></button>
+                </div>
+              </div>
+            ))}
           </div>
         )}
       </div>
@@ -496,30 +448,24 @@ function TechniciansTab({ technicians, qc }) {
       </div>
 
       {filtered.length === 0 ? <EmptyState icon={HardHat} title="Sin técnicos" /> : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="space-y-2 rounded-xl border border-matrix-primary/20 bg-black/60 p-3">
           {filtered.map((t) => (
-            <div key={t.id} className="bg-black/60 border border-matrix-primary/20 rounded-xl p-5 hover:border-matrix-primary/40 transition">
-              <div className="flex items-start gap-3 mb-3">
-                <div className="w-12 h-12 rounded-full bg-matrix-primary/10 text-matrix-primary flex items-center justify-center font-bold text-sm shrink-0 border border-matrix-primary/30">
-                  {getInitials(t.full_name)}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="font-semibold truncate text-matrix-text">{t.full_name}</p>
-                  <p className="text-xs text-matrix-muted">{specialtyLabels[t.specialty] || t.specialty}</p>
-                </div>
-                <StatusBadge status={t.status} />
+            <div key={t.id} className="grid grid-cols-1 items-center gap-3 rounded-xl border border-matrix-primary/20 bg-black/55 px-4 py-3 transition hover:border-matrix-primary/45 hover:bg-matrix-primary/[0.035] lg:grid-cols-[minmax(240px,1.5fr)_120px_130px_170px_minmax(160px,1fr)_110px_80px]">
+              <div className="min-w-0">
+                <p className="truncate font-semibold text-matrix-text">{t.full_name}</p>
+                <p className="truncate text-xs text-matrix-muted">{t.email || 'Sin email'}</p>
               </div>
-              <div className="text-xs text-matrix-muted space-y-1 mb-3">
-                <p><span className="font-medium text-matrix-text">DNI:</span> {t.dni}</p>
-                <p><span className="font-medium text-matrix-text">Tel:</span> {t.phone}</p>
-                {t.zone && <p><span className="font-medium text-matrix-text">Zona:</span> {t.zone}</p>}
-              </div>
-              <div className="flex gap-2 pt-3 border-t border-matrix-primary/20">
-                <button onClick={() => { setEditing(t); setOpen(true); }} className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-md border border-matrix-primary/30 text-xs font-medium hover:bg-matrix-primary/10 text-matrix-text hover:text-matrix-primary transition">
-                  <Pencil className="w-3 h-3" /> Editar
+              <p className="font-mono text-xs text-matrix-muted">{t.dni}</p>
+              <p className="text-xs text-matrix-muted">{t.phone}</p>
+              <p className="text-xs text-matrix-text">{specialtyLabels[t.specialty] || t.specialty}</p>
+              <p className="truncate text-xs text-matrix-muted">{t.zone || 'Sin zona'}</p>
+              <StatusBadge status={t.status} />
+              <div className="flex justify-end gap-1">
+                <button onClick={() => { setEditing(t); setOpen(true); }} className="rounded-md p-2 text-matrix-muted transition hover:bg-matrix-primary/10 hover:text-matrix-primary">
+                  <Pencil className="h-4 w-4" />
                 </button>
-                <button onClick={() => setConfirm(t)} className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-md border border-red-500/30 text-red-400 text-xs font-medium hover:bg-red-500/10 transition">
-                  <Trash2 className="w-3 h-3" /> Eliminar
+                <button onClick={() => setConfirm(t)} className="rounded-md p-2 text-matrix-muted transition hover:bg-red-500/10 hover:text-red-400">
+                  <Trash2 className="h-4 w-4" />
                 </button>
               </div>
             </div>

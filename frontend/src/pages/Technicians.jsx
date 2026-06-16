@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Plus, Search, Pencil, Trash2, HardHat, Phone, MapPin } from 'lucide-react';
+import { Plus, Search, Pencil, Trash2, HardHat } from 'lucide-react';
 import { api } from '@/api/localClient';
 import { usePermissions } from '@/lib/usePermissions';
 import PageHeader from '@/components/shared/PageHeader';
@@ -10,7 +10,7 @@ import AccessDenied from '@/components/shared/AccessDenied';
 import Modal from '@/components/shared/Modal';
 import ConfirmDialog from '@/components/shared/ConfirmDialog';
 import TechnicianForm from '@/components/technicians/TechnicianForm';
-import { specialtyLabels, getInitials } from '@/lib/utils';
+import { specialtyLabels } from '@/lib/utils';
 
 export default function Technicians() {
   const perms = usePermissions();
@@ -89,54 +89,32 @@ export default function Technicians() {
       ) : filtered.length === 0 ? (
         <EmptyState icon={HardHat} title="Sin técnicos" description="No hay técnicos que coincidan con tu búsqueda." />
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="space-y-2 rounded-xl border border-matrix-primary/20 bg-black/60 p-3">
           {filtered.map((t) => (
-            <div key={t.id} className="bg-black/60 border border-matrix-primary/20 rounded-xl p-5 hover:border-matrix-primary/40 transition-all">
-              <div className="flex items-start gap-3 mb-3">
-                <div className="w-12 h-12 rounded-full bg-matrix-primary/10 border border-matrix-primary/25 text-matrix-primary flex items-center justify-center font-bold text-sm shrink-0">
-                  {getInitials(t.full_name)}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="font-semibold truncate text-matrix-text">{t.full_name}</p>
-                  <p className="text-xs text-matrix-muted">{specialtyLabels[t.specialty] || t.specialty}</p>
-                </div>
-                <StatusBadge status={t.status} />
+            <div key={t.id} className="grid grid-cols-1 items-center gap-3 rounded-xl border border-matrix-primary/20 bg-black/55 px-4 py-3 transition hover:border-matrix-primary/45 hover:bg-matrix-primary/[0.035] lg:grid-cols-[minmax(220px,1.4fr)_130px_140px_minmax(160px,1fr)_minmax(160px,1fr)_120px_80px]">
+              <div className="min-w-0">
+                <p className="truncate font-semibold text-matrix-text">{t.full_name}</p>
+                <p className="mt-1 truncate text-xs text-matrix-muted">{t.email || 'Sin email'}</p>
               </div>
-
-              <div className="space-y-1.5 text-xs text-matrix-muted">
-                <div className="flex items-center gap-2">
-                  <span className="font-medium text-matrix-text">DNI:</span> {t.dni}
-                </div>
-                <div className="flex items-center gap-2">
-                  <Phone className="w-3 h-3" /> {t.phone}
-                </div>
-                {t.zone && (
-                  <div className="flex items-center gap-2">
-                    <MapPin className="w-3 h-3" /> {t.zone}
-                  </div>
+              <p className="font-mono text-xs text-matrix-muted">{t.dni}</p>
+              <p className="text-xs text-matrix-text">{t.phone}</p>
+              <p className="text-xs font-medium text-matrix-text">{specialtyLabels[t.specialty] || t.specialty}</p>
+              <p className="truncate text-xs text-matrix-muted">{t.zone || 'Sin zona'}</p>
+              <StatusBadge status={t.status} />
+              <div className="flex justify-end gap-1">
+                {perms.canEdit && (
+                  <button onClick={() => { setEditing(t); setModalOpen(true); }}
+                    className="rounded-md p-2 text-matrix-muted transition hover:bg-matrix-primary/10 hover:text-matrix-primary" title="Editar">
+                    <Pencil className="h-4 w-4" />
+                  </button>
+                )}
+                {perms.canDelete && (
+                  <button onClick={() => setConfirm(t)}
+                    className="rounded-md p-2 text-matrix-muted transition hover:bg-red-500/10 hover:text-red-400" title="Eliminar">
+                    <Trash2 className="h-4 w-4" />
+                  </button>
                 )}
               </div>
-
-              {(perms.canEdit || perms.canDelete) && (
-                <div className="flex gap-2 mt-4 pt-3 border-t border-matrix-primary/15">
-                  {perms.canEdit && (
-                    <button
-                      onClick={() => { setEditing(t); setModalOpen(true); }}
-                      className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-md border border-matrix-primary/30 text-xs font-medium text-matrix-muted hover:text-matrix-text hover:bg-matrix-primary/5 transition"
-                    >
-                      <Pencil className="w-3 h-3" /> Editar
-                    </button>
-                  )}
-                  {perms.canDelete && (
-                    <button
-                      onClick={() => setConfirm(t)}
-                      className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-md border border-red-500/30 text-red-400 text-xs font-medium hover:bg-red-500/10 transition"
-                    >
-                      <Trash2 className="w-3 h-3" /> Eliminar
-                    </button>
-                  )}
-                </div>
-              )}
             </div>
           ))}
         </div>

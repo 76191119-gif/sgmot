@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '@/api/localClient';
 import { useAuth } from '@/lib/AuthContext';
+import { incidentCategoryOptions } from '@/lib/utils';
 
 const INPUT = "w-full bg-black/60 border border-matrix-primary/30 rounded-md px-3 py-2.5 text-sm focus:outline-none focus:border-matrix-primary focus:ring-1 focus:ring-matrix-primary/50 transition text-matrix-text placeholder:text-matrix-muted/40";
 const LABEL = "block text-[11px] font-medium mb-1.5 text-matrix-muted uppercase tracking-wider";
@@ -91,12 +92,9 @@ export default function IncidentForm({ initial, onSubmit, onCancel, loading }) {
         <div>
           <label className={LABEL}>Categoria *</label>
           <select className={SELECT} required value={data.category} onChange={(e) => set('category', e.target.value)}>
-            <option value="sin_servicio">Sin Servicio</option>
-            <option value="lentitud">Lentitud</option>
-            <option value="corte_fibra">Corte de Fibra</option>
-            <option value="equipo_danado">Equipo Danado</option>
-            <option value="configuracion">Configuracion</option>
-            <option value="otro">Otro</option>
+            {incidentCategoryOptions.map((option) => (
+              <option key={option.value} value={option.value}>{option.label}</option>
+            ))}
           </select>
         </div>
 

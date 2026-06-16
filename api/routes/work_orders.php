@@ -33,6 +33,13 @@ function canAccessWorkOrder($db, $user, $order) {
     return false;
 }
 
+function validateWorkOrderType($type) {
+    $validTypes = ['nueva_instalacion', 'instalacion', 'soporte', 'mantenimiento', 'retiro'];
+    if (!in_array($type, $validTypes, true)) {
+        sendResponse(['error' => 'Tipo de orden no valido'], 400);
+    }
+}
+
 // =================== LISTADO FILTRADO POR ROL ===================
 if ($method === 'GET' && !$id) {
     if ($user['role'] === 'admin') {
@@ -85,10 +92,7 @@ if ($method === 'POST') {
     if (empty($b['type']) || empty($b['client_id'])) {
         sendResponse(['error' => 'Tipo y cliente son obligatorios'], 400);
     }
-    $tiposValidos = ['nueva_instalacion','instalacion','soporte','mantenimiento','retiro'];
-    if (!in_array($b['type'], $tiposValidos)) {
-        sendResponse(['error' => 'Tipo de orden no válido'], 400);
-    }
+    validateWorkOrderType($b['type']);
 
     $orderNum = $b['order_number'] ?? ('OT-' . date('ymd') . '-' . rand(100, 999));
 
@@ -180,6 +184,11 @@ if ($method === 'PUT' && $id) {
             $completedDate, $id
         ]);
     } else {
+        if (empty($b['type']) || empty($b['client_id'])) {
+            sendResponse(['error' => 'Tipo y cliente son obligatorios'], 400);
+        }
+        validateWorkOrderType($b['type']);
+
         $completedDate = !empty($b['completed_date']) ? $b['completed_date']
                         : (($b['status'] ?? '') === 'completado' ? date('Y-m-d') : null);
         $stmt = $db->prepare("UPDATE work_orders SET

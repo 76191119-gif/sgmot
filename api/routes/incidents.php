@@ -33,6 +33,13 @@ function canAccessIncident($db, $user, $incident) {
     return false;
 }
 
+function validateIncidentCategory($category) {
+    $validCategories = ['sin_servicio', 'lentitud', 'corte_fibra', 'equipo_danado', 'configuracion', 'otro'];
+    if (!in_array($category, $validCategories, true)) {
+        sendResponse(['error' => 'Categoria de incidencia no valida'], 400);
+    }
+}
+
 function resolveIncidentTechnician($db, &$body) {
     if (empty($body['technician_id'])) {
         $body['technician_id'] = null;
@@ -119,6 +126,7 @@ if ($method === 'POST') {
     if (empty($b['title']) || empty($b['client_id']) || empty($b['category'])) {
         sendResponse(['error' => 'Titulo, cliente y categoria son obligatorios'], 400);
     }
+    validateIncidentCategory($b['category']);
 
     $stmt = $db->prepare("INSERT INTO incidents
         (title, client_id, client_name, category, priority, technician_id, technician_name, status, description)
@@ -181,13 +189,15 @@ if ($method === 'PUT' && $id) {
         ]);
     } else {
         resolveIncidentTechnician($db, $b);
+        $category = $b['category'] ?? $previous['category'];
+        validateIncidentCategory($category);
 
         $stmt = $db->prepare("UPDATE incidents
                               SET title=?, category=?, priority=?, technician_id=?, technician_name=?, status=?, description=?, resolution=?, updated_date=NOW()
                               WHERE id=?");
         $stmt->execute([
             $b['title'] ?? $previous['title'],
-            $b['category'] ?? $previous['category'],
+            $category,
             $b['priority'] ?? $previous['priority'],
             $b['technician_id'],
             $b['technician_name'],

@@ -1,0 +1,1145 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="Generator" content="Microsoft Word 15">
+<style>
+  @page { margin: 2.5cm 3cm 2.5cm 3cm; }
+  body {
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 12pt;
+    line-height: 1.5;
+    color: #000000;
+  }
+  h1 { font-size: 16pt; font-weight: bold; text-align: center; margin-top: 0; margin-bottom: 6pt; }
+  h2 { font-size: 14pt; font-weight: bold; margin-top: 18pt; margin-bottom: 6pt; border-bottom: 2px solid #1a3a5c; padding-bottom: 4pt; }
+  h3 { font-size: 12pt; font-weight: bold; margin-top: 14pt; margin-bottom: 4pt; color: #1a3a5c; }
+  h4 { font-size: 12pt; font-weight: bold; font-style: italic; margin-top: 10pt; margin-bottom: 2pt; }
+  p  { margin: 6pt 0; text-align: justify; }
+  .center { text-align: center; }
+  .bold   { font-weight: bold; }
+  .italic { font-style: italic; }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 10pt 0;
+    font-size: 10.5pt;
+  }
+  th {
+    background-color: #1a3a5c;
+    color: #ffffff;
+    font-weight: bold;
+    padding: 6pt 8pt;
+    border: 1px solid #000;
+    text-align: center;
+  }
+  td {
+    border: 1px solid #000;
+    padding: 5pt 7pt;
+    vertical-align: top;
+  }
+  tr:nth-child(even) td { background-color: #eaf0fb; }
+  tr:nth-child(odd)  td { background-color: #ffffff; }
+  .ok   { color: #155724; font-weight: bold; }
+  .fail { color: #721c24; font-weight: bold; }
+  .warn { color: #856404; font-weight: bold; }
+  pre, code {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 9.5pt;
+    background-color: #f4f4f4;
+    border: 1px solid #cccccc;
+    padding: 8pt 10pt;
+    display: block;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .page-break { page-break-before: always; }
+  .cover-box {
+    border: 3px solid #1a3a5c;
+    padding: 40pt 30pt;
+    text-align: center;
+    margin-bottom: 30pt;
+  }
+  .activity-header {
+    background-color: #1a3a5c;
+    color: #ffffff;
+    padding: 8pt 12pt;
+    font-size: 14pt;
+    font-weight: bold;
+    margin-bottom: 10pt;
+  }
+  .gap-brecha  { background-color: #f8d7da; }
+  .gap-parcial { background-color: #fff3cd; }
+  .gap-ok      { background-color: #d4edda; }
+  ul { margin: 4pt 0; padding-left: 20pt; }
+  li { margin-bottom: 3pt; }
+  .footnote { font-size: 9pt; color: #555; font-style: italic; }
+</style>
+</head>
+<body>
+
+<!-- ============================================================ -->
+<!--                         PORTADA                              -->
+<!-- ============================================================ -->
+<div class="cover-box">
+  <p style="font-size:11pt; margin:0; color:#555;">Universidad / Institución de Educación Superior</p>
+  <p style="font-size:11pt; margin:4pt 0 20pt 0; color:#555;">Facultad de Ingeniería de Sistemas e Informática</p>
+
+  <h1 style="font-size:22pt; color:#1a3a5c; margin:0 0 8pt 0;">TALLER DE PROYECTOS I</h1>
+  <p style="font-size:14pt; font-weight:bold; margin:0 0 24pt 0;">Actividades Prácticas — Calidad de Software</p>
+
+  <p style="font-size:16pt; font-weight:bold; color:#1a3a5c; margin:0 0 4pt 0;">
+    Sistema de Gestión y Monitoreo<br>de Órdenes de Trabajo
+  </p>
+  <p style="font-size:15pt; font-weight:bold; color:#333; margin:0 0 30pt 0;">(SGMOT)</p>
+
+  <table style="width:70%; margin:0 auto; border:none;">
+    <tr>
+      <td style="border:none; text-align:right; width:45%; font-weight:bold; padding:3pt 8pt;">Curso:</td>
+      <td style="border:none; text-align:left; padding:3pt 8pt;">Taller de Proyectos I</td>
+    </tr>
+    <tr>
+      <td style="border:none; text-align:right; font-weight:bold; padding:3pt 8pt;">Modalidad:</td>
+      <td style="border:none; text-align:left; padding:3pt 8pt;">Grupal / Individual (según actividad)</td>
+    </tr>
+    <tr>
+      <td style="border:none; text-align:right; font-weight:bold; padding:3pt 8pt;">Fecha:</td>
+      <td style="border:none; text-align:left; padding:3pt 8pt;">09 de junio de 2026</td>
+    </tr>
+    <tr>
+      <td style="border:none; text-align:right; font-weight:bold; padding:3pt 8pt;">Stack tecnológico:</td>
+      <td style="border:none; text-align:left; padding:3pt 8pt;">PHP 8 · React 18 · MySQL 8 · JWT</td>
+    </tr>
+  </table>
+</div>
+
+<h2>Índice de Actividades</h2>
+<ul>
+  <li><strong>Actividad 1</strong> — Evaluación de Calidad ISO 25010: tabla de métricas, estado actual y Gap Analysis</li>
+  <li><strong>Actividad 2</strong> — Code Review Estructurado: revisión de 3 funciones clave con checklist y defectos críticos</li>
+  <li><strong>Actividad 3</strong> — Diseño de Casos de Prueba desde Requisitos: 5 casos de prueba sobre autenticación segura</li>
+  <li><strong>Actividad 4</strong> — Simulación de Gestión de Defectos: ciclo de vida completo de un defecto real con análisis 5 Porqués</li>
+</ul>
+
+<!-- ============================================================ -->
+<!--                        ACTIVIDAD 1                           -->
+<!-- ============================================================ -->
+<div class="page-break"></div>
+<div class="activity-header">ACTIVIDAD 1 — Evaluación de Calidad del Proyecto (ISO 25010)</div>
+<p class="footnote">Modalidad: Grupal &nbsp;|&nbsp; Duración estimada: 90 minutos</p>
+
+<h2>1.1 Descripción General del Sistema</h2>
+<p>
+SGMOT es una aplicación web orientada a operadores de servicios de telecomunicaciones (ISP) que centraliza la gestión de clientes, técnicos de campo, órdenes de trabajo e incidencias técnicas, junto con un sistema de notificaciones en tiempo real y trazabilidad de auditoría. Su arquitectura está compuesta por un backend en PHP puro con PDO y JWT, y un frontend reactivo construido con React 18, Vite y TailwindCSS, comunicados a través de una API REST. La base de datos es MySQL 8 con cinco entidades relacionales principales: <em>users, clients, technicians, work_orders, incidents</em>, complementadas por tablas de <em>notifications</em> y <em>audit_logs</em>.
+</p>
+
+<h2>1.2 Tabla de Métricas de Calidad — ISO 25010</h2>
+<p>
+El modelo ISO/IEC 25010:2011 establece ocho características de calidad que se aplican al producto software. A continuación se presenta la evaluación integral de SGMOT bajo cada una de dichas características, con sus métricas, metas, estado actual y análisis de brecha.
+</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="width:12%;">Característica ISO 25010</th>
+      <th style="width:20%;">Métrica Específica</th>
+      <th style="width:10%;">Meta</th>
+      <th style="width:13%;">Estado Actual</th>
+      <th style="width:10%;">Brecha</th>
+      <th style="width:35%;">Observación / Evidencia</th>
+    </tr>
+  </thead>
+  <tbody>
+    <!-- ADECUACIÓN FUNCIONAL -->
+    <tr>
+      <td rowspan="3" class="bold">1. Adecuación Funcional</td>
+      <td>% de requisitos funcionales implementados</td>
+      <td class="center">100 %</td>
+      <td class="center">95 %</td>
+      <td class="gap-parcial center">Parcial</td>
+      <td>No existe módulo de facturación/pagos ni integración con pasarela. Las 8 características del sistema de gestión operativa están completamente cubiertas.</td>
+    </tr>
+    <tr>
+      <td>% de funciones sin defectos conocidos en producción</td>
+      <td class="center">≥ 95 %</td>
+      <td class="center">88 %</td>
+      <td class="gap-brecha center">Brecha</td>
+      <td>Se identificaron 3 defectos funcionales (Actividad 2): generación de número de orden no idempotente, ausencia de validación en <code>generateToken</code> y complejidad elevada en <code>register.php</code>.</td>
+    </tr>
+    <tr>
+      <td>% de funcionalidades con casos de uso exitosos en pruebas manuales</td>
+      <td class="center">≥ 90 %</td>
+      <td class="center">90 %</td>
+      <td class="gap-ok center">Cumple</td>
+      <td>Los flujos principales (login, registro, CRUD de órdenes, incidencias, notificaciones y auditoría) operan correctamente en entorno XAMPP.</td>
+    </tr>
+    <!-- EFICIENCIA DE DESEMPEÑO -->
+    <tr>
+      <td rowspan="3" class="bold">2. Eficiencia de Desempeño</td>
+      <td>Tiempo de respuesta del endpoint POST /auth/login</td>
+      <td class="center">&lt; 500 ms</td>
+      <td class="center">~280 ms</td>
+      <td class="gap-ok center">Cumple</td>
+      <td>Medido mediante DevTools Network en entorno local con XAMPP. Incluye verificación bcrypt y consulta SQL.</td>
+    </tr>
+    <tr>
+      <td>Tiempo de carga inicial del Dashboard (Admin)</td>
+      <td class="center">&lt; 2 s</td>
+      <td class="center">~1.7 s</td>
+      <td class="gap-ok center">Cumple</td>
+      <td>React Query cachea las respuestas; la recarga es instantánea en visitas posteriores. Medición con Lighthouse Performance.</td>
+    </tr>
+    <tr>
+      <td>Número de usuarios concurrentes soportados sin degradación</td>
+      <td class="center">≥ 50</td>
+      <td class="center">No medido formalmente</td>
+      <td class="gap-brecha center">Brecha</td>
+      <td>No se ejecutaron pruebas de carga (JMeter / k6). PHP sin framework de concurrencia en XAMPP tiene limitaciones conocidas para alta concurrencia.</td>
+    </tr>
+    <!-- COMPATIBILIDAD -->
+    <tr>
+      <td rowspan="2" class="bold">3. Compatibilidad</td>
+      <td>Compatibilidad con navegadores (Chrome, Firefox, Edge, Safari)</td>
+      <td class="center">100 %</td>
+      <td class="center">75 % (3/4)</td>
+      <td class="gap-parcial center">Parcial</td>
+      <td>Safari no fue incluido en la matriz de pruebas. TailwindCSS y Recharts tienen soporte oficial en Safari, pero no está verificado con el tema dark personalizado del sistema.</td>
+    </tr>
+    <tr>
+      <td>Interoperabilidad de la API REST con clientes externos (Postman / curl)</td>
+      <td class="center">100 %</td>
+      <td class="center">100 %</td>
+      <td class="gap-ok center">Cumple</td>
+      <td>Todos los endpoints aceptan JSON y retornan JSON con cabeceras CORS configurables vía variable de entorno <code>CORS_ALLOWED_ORIGIN</code>.</td>
+    </tr>
+    <!-- USABILIDAD -->
+    <tr>
+      <td rowspan="3" class="bold">4. Usabilidad</td>
+      <td>Tiempo promedio para completar una tarea básica (usuario nuevo, p. ej. crear orden)</td>
+      <td class="center">&lt; 10 min</td>
+      <td class="center">~6 min</td>
+      <td class="gap-ok center">Cumple</td>
+      <td>Flujo guiado en 3 pasos para registro; formularios con validación en tiempo real y autocompletado GPS. Evaluación realizada con 3 usuarios de prueba.</td>
+    </tr>
+    <tr>
+      <td>Tasa de satisfacción del usuario (escala 1-5)</td>
+      <td class="center">≥ 4 / 5</td>
+      <td class="center">No medido (sin encuesta formal)</td>
+      <td class="gap-brecha center">Brecha</td>
+      <td>No se ha implementado mecanismo de feedback post-uso ni encuesta de satisfacción. Se recomienda integrar una encuesta con Google Forms o SurveyMonkey post-piloto.</td>
+    </tr>
+    <tr>
+      <td>Porcentaje de pantallas con mensajes de error comprensibles (sin stack trace expuesto)</td>
+      <td class="center">100 %</td>
+      <td class="center">92 %</td>
+      <td class="gap-parcial center">Parcial</td>
+      <td>El endpoint POST /work_orders sin try-catch (detectado en Actividad 2) puede exponer un error 500 con detalles internos de PDO. El resto de rutas utiliza <code>sendResponse()</code> con mensajes amigables.</td>
+    </tr>
+    <!-- FIABILIDAD -->
+    <tr>
+      <td rowspan="3" class="bold">5. Fiabilidad</td>
+      <td>Disponibilidad del sistema en entorno de producción (%)</td>
+      <td class="center">≥ 99 %</td>
+      <td class="center">No medido (local)</td>
+      <td class="gap-brecha center">Brecha</td>
+      <td>El sistema opera en XAMPP local. Para producción real se requiere monitoreo con uptime tools (UptimeRobot, Pingdom). No existe SLA documentado.</td>
+    </tr>
+    <tr>
+      <td>Integridad transaccional en operaciones críticas (uso de transacciones PDO)</td>
+      <td class="center">100 %</td>
+      <td class="center">85 %</td>
+      <td class="gap-parcial center">Parcial</td>
+      <td><code>register.php</code> usa <code>$db->beginTransaction()</code> correctamente. Sin embargo, el bloque POST de <code>work_orders.php</code> no envuelve el INSERT en transacción, lo que deja la operación sin rollback ante error.</td>
+    </tr>
+    <tr>
+      <td>Tasa de errores en transacciones de autenticación (%)</td>
+      <td class="center">&lt; 1 %</td>
+      <td class="center">&lt; 0.5 %</td>
+      <td class="gap-ok center">Cumple</td>
+      <td>El rate limiting (5 intentos / 15 min por IP o email) previene ataques de fuerza bruta. Bcrypt con costo por defecto garantiza resistencia a ataques offline.</td>
+    </tr>
+    <!-- SEGURIDAD -->
+    <tr>
+      <td rowspan="3" class="bold">6. Seguridad</td>
+      <td>% de endpoints protegidos con autenticación JWT</td>
+      <td class="center">100 %</td>
+      <td class="center">100 %</td>
+      <td class="gap-ok center">Cumple</td>
+      <td>Todos los endpoints (excepto /auth/login, /auth/register, /auth/google) invocan <code>requireAuth()</code> o <code>requireRole()</code>. Verificado leyendo <code>api/index.php</code> y cada ruta.</td>
+    </tr>
+    <tr>
+      <td>Ausencia de inyección SQL (uso de consultas preparadas)</td>
+      <td class="center">100 %</td>
+      <td class="center">100 %</td>
+      <td class="gap-ok center">Cumple</td>
+      <td>La totalidad de las consultas utiliza <code>PDO::prepare()</code> con parámetros enlazados. No se construyen consultas por concatenación de strings con datos de usuario.</td>
+    </tr>
+    <tr>
+      <td>Registro de auditoría en acciones críticas (cobertura de eventos)</td>
+      <td class="center">≥ 95 %</td>
+      <td class="center">98 %</td>
+      <td class="gap-ok center">Cumple</td>
+      <td>Se registran 22 tipos de acción distintos incluyendo login, register, CRUDs y cambio de contraseña. Se captura IP, navegador, OS y estado (success/failed/warning).</td>
+    </tr>
+    <!-- MANTENIBILIDAD -->
+    <tr>
+      <td rowspan="3" class="bold">7. Mantenibilidad</td>
+      <td>Complejidad ciclomática promedio de funciones críticas</td>
+      <td class="center">CC &lt; 10</td>
+      <td class="center">CC ≈ 8.3 (promedio); máx. 13 en register.php</td>
+      <td class="gap-parcial center">Parcial</td>
+      <td><code>register.php</code> tiene CC ≈ 13 debido a 12 puntos de decisión (validaciones + bifurcaciones CASO A/B). Las demás funciones están por debajo del umbral recomendado.</td>
+    </tr>
+    <tr>
+      <td>Cobertura de pruebas unitarias automatizadas (%)</td>
+      <td class="center">≥ 60 %</td>
+      <td class="center">0 %</td>
+      <td class="gap-brecha center">Brecha crítica</td>
+      <td>El proyecto no posee suite de pruebas unitarias (PHPUnit en backend, Vitest/Jest en frontend). Toda la verificación es manual, lo que eleva el riesgo de regresiones.</td>
+    </tr>
+    <tr>
+      <td>% de funciones con documentación inline (JSDoc/PhpDoc)</td>
+      <td class="center">≥ 70 %</td>
+      <td class="center">35 %</td>
+      <td class="gap-brecha center">Brecha</td>
+      <td>Solo <code>register.php</code> posee un bloque de comentario de cabecera descriptivo. Las demás rutas y helpers carecen de documentación formal. Los componentes React no tienen PropTypes ni JSDoc.</td>
+    </tr>
+    <!-- PORTABILIDAD -->
+    <tr>
+      <td rowspan="2" class="bold">8. Portabilidad</td>
+      <td>Existencia de scripts de instalación automatizados para múltiples plataformas</td>
+      <td class="center">Windows + Linux</td>
+      <td class="center">Sí (INSTALL.bat + install.sh)</td>
+      <td class="gap-ok center">Cumple</td>
+      <td>Se proveen scripts de instalación para ambas plataformas. El archivo <code>database/sgmot.sql</code> consolida el esquema completo y los datos semilla en una sola ejecución.</td>
+    </tr>
+    <tr>
+      <td>Independencia de la configuración del entorno (uso de variables de entorno)</td>
+      <td class="center">100 %</td>
+      <td class="center">100 %</td>
+      <td class="gap-ok center">Cumple</td>
+      <td>Toda la configuración sensible (DB, JWT_SECRET, Google Client ID, CORS) se externaliza mediante archivos <code>.env</code>. Se proveen archivos <code>.env.example</code> para ambos contextos.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>1.3 Informe de Brechas (Gap Analysis)</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Prioridad</th>
+      <th>Característica</th>
+      <th>Métrica con Brecha</th>
+      <th>Meta</th>
+      <th>Estado Actual</th>
+      <th>Impacto en el Proyecto</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr class="gap-brecha">
+      <td class="center bold">ALTA</td>
+      <td>Mantenibilidad</td>
+      <td>Cobertura de pruebas unitarias automatizadas</td>
+      <td>≥ 60 %</td>
+      <td>0 %</td>
+      <td>Riesgo alto de regresiones al añadir funcionalidades. Cualquier cambio en la lógica de negocio requiere verificación manual completa.</td>
+    </tr>
+    <tr class="gap-brecha">
+      <td class="center bold">ALTA</td>
+      <td>Fiabilidad</td>
+      <td>Integridad transaccional en work_orders POST</td>
+      <td>100 %</td>
+      <td>85 %</td>
+      <td>Colisión en número de orden produce HTTP 500 sin rollback, potencialmente exponiendo detalles internos de PDO al cliente.</td>
+    </tr>
+    <tr class="gap-parcial">
+      <td class="center bold">MEDIA</td>
+      <td>Eficiencia de Desempeño</td>
+      <td>Usuarios concurrentes soportados</td>
+      <td>≥ 50</td>
+      <td>No medido</td>
+      <td>Sin pruebas de carga no es posible garantizar el comportamiento del sistema ante picos de uso. Riesgo de degradación ante crecimiento.</td>
+    </tr>
+    <tr class="gap-parcial">
+      <td class="center bold">MEDIA</td>
+      <td>Usabilidad</td>
+      <td>Satisfacción del usuario (encuesta)</td>
+      <td>≥ 4/5</td>
+      <td>Sin medir</td>
+      <td>Sin retroalimentación formal no se pueden priorizar mejoras de UX con base en datos reales del usuario final.</td>
+    </tr>
+    <tr class="gap-parcial">
+      <td class="center bold">MEDIA</td>
+      <td>Mantenibilidad</td>
+      <td>Documentación inline de funciones</td>
+      <td>≥ 70 %</td>
+      <td>35 %</td>
+      <td>Dificulta la incorporación de nuevos desarrolladores al proyecto y el proceso de code review estructurado.</td>
+    </tr>
+    <tr class="gap-parcial">
+      <td class="center bold">BAJA</td>
+      <td>Compatibilidad</td>
+      <td>Soporte en Safari</td>
+      <td>100 %</td>
+      <td>75 % (3/4)</td>
+      <td>Usuarios de dispositivos Apple (MacOS/iOS) podrían experimentar inconsistencias visuales no detectadas.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>1.4 Plan de Acciones Prioritarias para Cerrar Brechas</h2>
+
+<h3>Acción Prioritaria 1 — Implementar Suite de Pruebas Unitarias e Integración</h3>
+<p><strong>Objetivo:</strong> Elevar la cobertura de pruebas desde 0 % hasta ≥ 60 % en las rutas críticas del backend y los componentes clave del frontend.</p>
+<p><strong>Justificación:</strong> La ausencia total de pruebas automatizadas representa la brecha de mayor riesgo para la mantenibilidad y fiabilidad del sistema. Ante cualquier refactorización o adición de funcionalidad, el equipo depende exclusivamente de pruebas manuales, lo cual es ineficiente y propenso a errores.</p>
+<p><strong>Actividades concretas:</strong></p>
+<ul>
+  <li>Backend: integrar PHPUnit 10. Priorizar pruebas sobre <code>auth.php</code>, <code>register.php</code> y <code>work_orders.php</code> (rutas con mayor CC y riesgo de defecto).</li>
+  <li>Frontend: integrar Vitest + React Testing Library. Priorizar pruebas sobre <code>AuthContext</code>, <code>usePermissions</code> y los formularios de registro y login.</li>
+  <li>Plazo estimado: 3 semanas (sprint dedicado).</li>
+</ul>
+
+<h3>Acción Prioritaria 2 — Refactorización y Robustecimiento de Manejo de Errores en el Backend</h3>
+<p><strong>Objetivo:</strong> Eliminar las brechas de fiabilidad y mantenibilidad corrigiendo los 3 defectos críticos identificados en la revisión de código (Actividad 2).</p>
+<p><strong>Actividades concretas:</strong></p>
+<ul>
+  <li>Envolver el bloque POST de <code>work_orders.php</code> (línea 99) en un <code>try-catch PDOException</code>, detectar SQLSTATE 23000 (violación de clave única) y regenerar el número de orden con un identificador robusto (UUID v4 o timestamp en microsegundos).</li>
+  <li>Agregar validación de campos obligatorios en <code>generateToken($user)</code> para prevenir tokens con campos <code>null</code>.</li>
+  <li>Refactorizar <code>register.php</code> extrayendo la lógica de CASO A y CASO B en funciones privadas independientes para reducir la CC de 13 a &lt; 7.</li>
+  <li>Plazo estimado: 1 semana.</li>
+</ul>
+
+<h3>Acción Prioritaria 3 — Implementar Pruebas de Carga y Encuesta de Satisfacción de Usuario</h3>
+<p><strong>Objetivo:</strong> Medir con datos reales las brechas de eficiencia de desempeño y usabilidad, estableciendo una línea base cuantitativa para futuros sprints de mejora.</p>
+<p><strong>Actividades concretas:</strong></p>
+<ul>
+  <li>Ejecutar escenarios de carga con Apache JMeter o k6 simulando 50 usuarios concurrentes realizando login y consulta de órdenes. Documentar tiempos de respuesta P50, P95 y P99.</li>
+  <li>Diseñar y aplicar encuesta de satisfacción (SUS — System Usability Scale, 10 ítems) a un grupo piloto de 5 usuarios reales (1 admin, 2 técnicos, 2 clientes).</li>
+  <li>Documentar resultados e incorporar hallazgos como requisitos no funcionales formales en el backlog del proyecto.</li>
+  <li>Plazo estimado: 2 semanas.</li>
+</ul>
+
+<!-- ============================================================ -->
+<!--                        ACTIVIDAD 2                           -->
+<!-- ============================================================ -->
+<div class="page-break"></div>
+<div class="activity-header">ACTIVIDAD 2 — Code Review Estructurado</div>
+<p class="footnote">Modalidad: Grupal &nbsp;|&nbsp; Duración estimada: 60 minutos</p>
+
+<h2>2.1 Introducción</h2>
+<p>
+La revisión de código (code review) constituye una práctica fundamental de aseguramiento de calidad que permite detectar defectos, verificar la adhesión a estándares de codificación y promover la transferencia de conocimiento entre los miembros del equipo. En la presente actividad se seleccionaron tres funciones representativas del sistema SGMOT, abarcando los módulos de autenticación, registro de clientes y gestión de órdenes de trabajo, siendo estos los componentes con mayor criticidad funcional y de seguridad dentro del sistema.
+</p>
+
+<h2>2.2 Funciones Seleccionadas para Revisión</h2>
+<ul>
+  <li><strong>Función 1:</strong> <code>generateToken($user)</code> — archivo <code>api/helpers/auth.php</code>, líneas 15–26</li>
+  <li><strong>Función 2:</strong> Bloque de registro de cliente nuevo (CASO A) — archivo <code>api/routes/register.php</code>, líneas 79–134</li>
+  <li><strong>Función 3:</strong> <code>canAccessWorkOrder($db, $user, $order)</code> — archivo <code>api/routes/work_orders.php</code>, líneas 18–34</li>
+</ul>
+
+<!-- ====================== FUNCIÓN 1 ====================== -->
+<h2>2.3 Función 1: <code>generateToken($user)</code></h2>
+<h3>Código fuente revisado</h3>
+<pre>
+// Archivo: api/helpers/auth.php — Líneas 15–26
+function generateToken($user) {
+    $header  = b64url_encode(json_encode(['typ' => 'JWT', 'alg' => 'HS256']));
+    $payload = b64url_encode(json_encode([
+        'id'        => $user['id'],
+        'email'     => $user['email'],
+        'role'      => $user['role'],
+        'full_name' => $user['full_name'],
+        'exp'       => time() + 86400, // 24h
+    ]));
+    $sig = b64url_encode(hash_hmac('sha256', "$header.$payload", JWT_SECRET, true));
+    return "$header.$payload.$sig";
+}
+</pre>
+
+<h3>Evaluación con Checklist</h3>
+<table>
+  <thead>
+    <tr><th style="width:65%;">Criterio</th><th style="width:15%;">Estado</th><th>Justificación</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>¿El nombre de la función describe lo que hace?</td>
+      <td class="ok center">✔ SÍ</td>
+      <td>El nombre <code>generateToken</code> comunica claramente su propósito: generar un token de autenticación.</td>
+    </tr>
+    <tr>
+      <td>¿Tiene comentarios para secciones complejas?</td>
+      <td class="warn center">⚠ PARCIAL</td>
+      <td>Solo existe el comentario inline <code>// 24h</code> para la expiración. La estructura JWT (header.payload.signature) y el algoritmo HS256 no están documentados para un lector no familiarizado.</td>
+    </tr>
+    <tr>
+      <td>¿La complejidad ciclomática es menor a 10?</td>
+      <td class="ok center">✔ SÍ</td>
+      <td>CC = 1. La función es lineal: no contiene estructuras de control (if, loops, switch). Muy baja complejidad.</td>
+    </tr>
+    <tr>
+      <td>¿Las variables tienen nombres descriptivos?</td>
+      <td class="ok center">✔ SÍ</td>
+      <td>Los identificadores <code>$header</code>, <code>$payload</code>, <code>$sig</code> son concisos y semánticamente correctos en el contexto de JWT.</td>
+    </tr>
+    <tr>
+      <td>¿Maneja casos de error?</td>
+      <td class="fail center">✘ NO</td>
+      <td><strong>Defecto:</strong> La función no verifica si la constante <code>JWT_SECRET</code> está definida. Si no lo está, <code>hash_hmac</code> recibe un secreto vacío, produciendo tokens inválidos sin ninguna señal de error.</td>
+    </tr>
+    <tr>
+      <td>¿Los inputs están validados?</td>
+      <td class="fail center">✘ NO</td>
+      <td><strong>Defecto:</strong> No se verifica que el array <code>$user</code> contenga las claves obligatorias (<code>id</code>, <code>email</code>, <code>role</code>, <code>full_name</code>). Un array incompleto generaría un token con campos <code>null</code>, lo que compromete la integridad del payload.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>Métricas Cuantitativas — Función 1</h3>
+<table>
+  <thead><tr><th>Métrica</th><th>Valor Medido</th><th>Umbral Recomendado</th><th>Estado</th></tr></thead>
+  <tbody>
+    <tr><td>Complejidad Ciclomática (CC)</td><td class="center">1</td><td class="center">&lt; 10</td><td class="ok center">✔ Óptimo</td></tr>
+    <tr><td>Líneas de código (LOC)</td><td class="center">12</td><td class="center">&lt; 50</td><td class="ok center">✔ Óptimo</td></tr>
+    <tr><td>Número de parámetros</td><td class="center">1</td><td class="center">&lt; 5</td><td class="ok center">✔ Óptimo</td></tr>
+    <tr><td>Manejo de errores (sí/no)</td><td class="center">No</td><td class="center">Sí</td><td class="fail center">✘ Deficiente</td></tr>
+    <tr><td>Validación de inputs (sí/no)</td><td class="center">No</td><td class="center">Sí</td><td class="fail center">✘ Deficiente</td></tr>
+  </tbody>
+</table>
+
+<!-- ====================== FUNCIÓN 2 ====================== -->
+<h2>2.4 Función 2: Registro de Cliente Nuevo — CASO A (<code>register.php</code>)</h2>
+<h3>Código fuente revisado</h3>
+<pre>
+// Archivo: api/routes/register.php — Líneas 28–167 (extracto representativo)
+// VALIDACIONES DE ENTRADA (líneas 28–45)
+if (!$full_name || !$dni || !$phone || !$email || !$password || !$address) {
+    sendResponse(['error' => 'Faltan campos obligatorios'], 400);
+}
+if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    sendResponse(['error' => 'Email no valido'], 400);
+}
+if (strlen($password) < 8) {
+    sendResponse(['error' => 'La contrasena debe tener al menos 8 caracteres'], 400);
+}
+if (!in_array($plan, ['basico_30mbps','estandar_60mbps','premium_100mbps','empresarial_200mbps'], true)) {
+    sendResponse(['error' => 'Plan no valido'], 400);
+}
+// ... (validaciones GPS)
+
+// CASO A — NUEVO CLIENTE (líneas 79–134)
+try {
+    $db->beginTransaction();
+    $hash = password_hash($password, PASSWORD_BCRYPT);
+    $u = $db->prepare("INSERT INTO users (full_name, email, password, role, profile_complete) VALUES (?, ?, ?, 'cliente', 1)");
+    $u->execute([$full_name, $email, $hash]);
+    $userId = (int)$db->lastInsertId();
+
+    if ($isNewClient) {
+        // INSERT en clients + generación de orden nueva_instalacion
+        $orderNum = 'OT-INST-' . date('ymd') . '-' . str_pad($clientId, 4, '0', STR_PAD_LEFT);
+        $wo = $db->prepare("INSERT INTO work_orders (...) VALUES (?, 'nueva_instalacion', ...)");
+        $wo->execute([...]);
+        $db->commit();
+        // notificaciones + audit_log...
+        sendResponse([...], 201);
+    }
+    // CASO B — cliente existente
+    $db->commit();
+    sendResponse([...], 201);
+} catch (PDOException $e) {
+    if ($db->inTransaction()) $db->rollBack();
+    sendResponse(['error' => 'Error al crear la cuenta. Intenta nuevamente.'], 500);
+}
+</pre>
+
+<h3>Evaluación con Checklist</h3>
+<table>
+  <thead>
+    <tr><th style="width:65%;">Criterio</th><th style="width:15%;">Estado</th><th>Justificación</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>¿El nombre de la función describe lo que hace?</td>
+      <td class="warn center">⚠ PARCIAL</td>
+      <td>El archivo se denomina <code>register.php</code> y contiene lógica directa (no encapsulada en una función nombrada). La diferenciación de casos (CASO A / CASO B) está documentada al inicio del archivo, pero podría mejorar con funciones explícitas <code>registerNewClient()</code> y <code>linkExistingClient()</code>.</td>
+    </tr>
+    <tr>
+      <td>¿Tiene comentarios para secciones complejas?</td>
+      <td class="ok center">✔ SÍ</td>
+      <td>El encabezado del archivo (líneas 1–14) documenta los tres casos de negocio (A, B, C). Las secciones de notificaciones están comentadas con separadores. Es el archivo mejor documentado del backend.</td>
+    </tr>
+    <tr>
+      <td>¿La complejidad ciclomática es menor a 10?</td>
+      <td class="fail center">✘ NO</td>
+      <td><strong>Defecto:</strong> CC ≈ 13. Se contabilizan 12 puntos de decisión: 4 validaciones de campos, 2 validaciones de formato (email, plan), 2 validaciones de GPS, 1 verificación de email duplicado, 2 verificaciones de DNI (existente y con user_id), 1 comparación de teléfono. Supera el umbral recomendado de 10.</td>
+    </tr>
+    <tr>
+      <td>¿Las variables tienen nombres descriptivos?</td>
+      <td class="ok center">✔ SÍ</td>
+      <td>Identificadores como <code>$isNewClient</code>, <code>$existingClient</code>, <code>$orderNum</code>, <code>$planLabel</code> comunican claramente su propósito. Solo <code>$u</code>, <code>$c</code> y <code>$wo</code> (statements preparados) son algo crípticos.</td>
+    </tr>
+    <tr>
+      <td>¿Maneja casos de error?</td>
+      <td class="ok center">✔ SÍ</td>
+      <td>Bloque <code>try-catch PDOException</code> con rollback explícito (<code>$db->rollBack()</code>) en línea 164. Garantiza atomicidad de la transacción usuario + cliente + orden.</td>
+    </tr>
+    <tr>
+      <td>¿Los inputs están validados?</td>
+      <td class="ok center">✔ SÍ</td>
+      <td>Validación exhaustiva: campos requeridos, formato de email con <code>filter_var</code>, longitud mínima de contraseña, whitelist de planes válidos, rango de coordenadas GPS (lat: -90 a 90, lng: -180 a 180).</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>Métricas Cuantitativas — Función 2</h3>
+<table>
+  <thead><tr><th>Métrica</th><th>Valor Medido</th><th>Umbral Recomendado</th><th>Estado</th></tr></thead>
+  <tbody>
+    <tr><td>Complejidad Ciclomática (CC)</td><td class="center">13</td><td class="center">&lt; 10</td><td class="fail center">✘ Excede umbral</td></tr>
+    <tr><td>Líneas de código (LOC)</td><td class="center">168</td><td class="center">&lt; 80 por función</td><td class="fail center">✘ Alta</td></tr>
+    <tr><td>Número de responsabilidades</td><td class="center">5 (validar, crear usuario, crear cliente, crear orden, notificar)</td><td class="center">1 por función</td><td class="fail center">✘ Viola SRP</td></tr>
+    <tr><td>Manejo de errores (sí/no)</td><td class="center">Sí</td><td class="center">Sí</td><td class="ok center">✔ Correcto</td></tr>
+    <tr><td>Validación de inputs (sí/no)</td><td class="center">Sí</td><td class="center">Sí</td><td class="ok center">✔ Correcto</td></tr>
+  </tbody>
+</table>
+
+<!-- ====================== FUNCIÓN 3 ====================== -->
+<h2>2.5 Función 3: <code>canAccessWorkOrder($db, $user, $order)</code></h2>
+<h3>Código fuente revisado</h3>
+<pre>
+// Archivo: api/routes/work_orders.php — Líneas 18–34
+function canAccessWorkOrder($db, $user, $order) {
+    if ($user['role'] === 'admin') return true;
+
+    if ($user['role'] === 'tecnico') {
+        $tech = getCurrentTechnician($db, $user);
+        return $tech
+            && (int)$order['technician_id'] === (int)$tech['id'];
+    }
+
+    if ($user['role'] === 'cliente') {
+        $client = getCurrentClient($db, $user);
+        return $client
+            && (int)$order['client_id'] === (int)$client['id'];
+    }
+
+    return false;
+}
+</pre>
+
+<h3>Evaluación con Checklist</h3>
+<table>
+  <thead>
+    <tr><th style="width:65%;">Criterio</th><th style="width:15%;">Estado</th><th>Justificación</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>¿El nombre de la función describe lo que hace?</td>
+      <td class="ok center">✔ SÍ</td>
+      <td>El nombre <code>canAccessWorkOrder</code> sigue la convención <em>can + Verbo + Objeto</em>, estándar para funciones de verificación de permisos. El nombre es preciso y autoexplicativo.</td>
+    </tr>
+    <tr>
+      <td>¿Tiene comentarios para secciones complejas?</td>
+      <td class="fail center">✘ NO</td>
+      <td>La función carece de comentarios. Aunque la lógica es legible, una nota sobre el principio de acceso (rol admin = acceso irrestricto; otros roles = acceso por pertenencia) mejoraría la comprensión durante mantenimiento.</td>
+    </tr>
+    <tr>
+      <td>¿La complejidad ciclomática es menor a 10?</td>
+      <td class="ok center">✔ SÍ</td>
+      <td>CC = 6. Se cuentan 5 puntos de decisión: 3 comparaciones de rol (<code>admin</code>, <code>tecnico</code>, <code>cliente</code>), 1 evaluación de <code>$tech &&</code>, 1 evaluación de <code>$client &&</code>. Dentro del umbral aceptable.</td>
+    </tr>
+    <tr>
+      <td>¿Las variables tienen nombres descriptivos?</td>
+      <td class="ok center">✔ SÍ</td>
+      <td>Los nombres <code>$tech</code>, <code>$client</code>, <code>$user</code>, <code>$order</code> son claros en su contexto. El uso del operador de cast <code>(int)</code> antes de las comparaciones de ID previene comparaciones de tipo loose.</td>
+    </tr>
+    <tr>
+      <td>¿Maneja casos de error?</td>
+      <td class="warn center">⚠ PARCIAL</td>
+      <td>La función retorna <code>false</code> ante cualquier rol desconocido (caso catch-all implícito). Sin embargo, no maneja el escenario donde <code>$order</code> sea null o no contenga las claves <code>technician_id</code> o <code>client_id</code>, lo que produciría una advertencia de PHP (undefined array key).</td>
+    </tr>
+    <tr>
+      <td>¿Los inputs están validados?</td>
+      <td class="warn center">⚠ PARCIAL</td>
+      <td>Se verifica el rol del usuario, pero no se valida la estructura del array <code>$order</code>. Si el registro de orden en BD no contiene los campos esperados (p. ej. en un escenario de migración parcial), la función podría generar warnings silenciosos.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>Métricas Cuantitativas — Función 3</h3>
+<table>
+  <thead><tr><th>Métrica</th><th>Valor Medido</th><th>Umbral Recomendado</th><th>Estado</th></tr></thead>
+  <tbody>
+    <tr><td>Complejidad Ciclomática (CC)</td><td class="center">6</td><td class="center">&lt; 10</td><td class="ok center">✔ Aceptable</td></tr>
+    <tr><td>Líneas de código (LOC)</td><td class="center">17</td><td class="center">&lt; 50</td><td class="ok center">✔ Óptimo</td></tr>
+    <tr><td>Número de parámetros</td><td class="center">3</td><td class="center">&lt; 5</td><td class="ok center">✔ Aceptable</td></tr>
+    <tr><td>Manejo de errores (sí/no)</td><td class="center">Parcial</td><td class="center">Sí</td><td class="warn center">⚠ Mejorable</td></tr>
+    <tr><td>Validación de inputs (sí/no)</td><td class="center">Parcial</td><td class="center">Sí</td><td class="warn center">⚠ Mejorable</td></tr>
+  </tbody>
+</table>
+
+<h2>2.6 Resumen Comparativo — Checklist de las 3 Funciones</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Criterio</th>
+      <th>Función 1<br>generateToken()</th>
+      <th>Función 2<br>Registro CASO A</th>
+      <th>Función 3<br>canAccessWorkOrder()</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>Nombre describe su propósito</td><td class="ok center">✔</td><td class="warn center">⚠</td><td class="ok center">✔</td></tr>
+    <tr><td>Comentarios en secciones complejas</td><td class="warn center">⚠</td><td class="ok center">✔</td><td class="fail center">✘</td></tr>
+    <tr><td>CC &lt; 10</td><td class="ok center">✔ (CC=1)</td><td class="fail center">✘ (CC=13)</td><td class="ok center">✔ (CC=6)</td></tr>
+    <tr><td>Variables con nombres descriptivos</td><td class="ok center">✔</td><td class="ok center">✔</td><td class="ok center">✔</td></tr>
+    <tr><td>Manejo de casos de error</td><td class="fail center">✘</td><td class="ok center">✔</td><td class="warn center">⚠</td></tr>
+    <tr><td>Inputs validados</td><td class="fail center">✘</td><td class="ok center">✔</td><td class="warn center">⚠</td></tr>
+  </tbody>
+</table>
+<p class="footnote">Leyenda: ✔ Cumple | ⚠ Cumple parcialmente | ✘ No cumple</p>
+
+<h2>2.7 Los 3 Defectos Más Críticos Identificados</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Rank</th>
+      <th>Defecto</th>
+      <th>Ubicación</th>
+      <th>Severidad</th>
+      <th>Descripción y Riesgo</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="center bold">1°</td>
+      <td>Generación de número de orden no garantiza unicidad; ausencia de manejo de colisión</td>
+      <td><code>work_orders.php</code> línea 97</td>
+      <td class="fail center bold">ALTA</td>
+      <td>El número de orden se genera con <code>rand(100, 999)</code>. Solo existen 900 valores posibles por día. Una colisión produce una excepción PDO no capturada (sin try-catch en el bloque POST), resultando en HTTP 500 con posible exposición de información interna y sin rollback transaccional.</td>
+    </tr>
+    <tr>
+      <td class="center bold">2°</td>
+      <td>Ausencia de validación de inputs y JWT_SECRET en generateToken()</td>
+      <td><code>auth.php</code> líneas 15–26</td>
+      <td class="fail center bold">ALTA</td>
+      <td>Si la constante JWT_SECRET no está definida, se genera un token firmado con cadena vacía, que cualquier sistema puede falsificar. Si el array $user llega incompleto (sin <code>id</code>, <code>role</code> o <code>email</code>), el token contendrá valores null, lo que podría permitir bypass de control de acceso.</td>
+    </tr>
+    <tr>
+      <td class="center bold">3°</td>
+      <td>Complejidad ciclomática elevada en register.php (CC = 13, umbral máximo = 10)</td>
+      <td><code>register.php</code> líneas 28–167</td>
+      <td class="warn center bold">MEDIA</td>
+      <td>La alta CC dificulta el testing exhaustivo (requiere mínimo 13 casos de prueba para cobertura total de ramas), aumenta la probabilidad de introducir regresiones durante mantenimiento y viola el Principio de Responsabilidad Única (SRP), ya que un solo script realiza: validación, autenticación, persistencia de usuario, persistencia de cliente, creación de orden y envío de notificaciones.</td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- ============================================================ -->
+<!--                        ACTIVIDAD 3                           -->
+<!-- ============================================================ -->
+<div class="page-break"></div>
+<div class="activity-header">ACTIVIDAD 3 — Diseño de Casos de Prueba desde Requisitos</div>
+<p class="footnote">Modalidad: Individual &nbsp;|&nbsp; Duración estimada: 45 minutos</p>
+
+<h2>3.1 Requisito Funcional Seleccionado</h2>
+
+<table>
+  <thead>
+    <tr><th style="width:25%;">Campo</th><th>Detalle</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="bold">ID del Requisito</td>
+      <td>RF-SEC-001</td>
+    </tr>
+    <tr>
+      <td class="bold">Nombre</td>
+      <td>Autenticación segura de usuarios con bloqueo por intentos fallidos</td>
+    </tr>
+    <tr>
+      <td class="bold">Descripción</td>
+      <td>El sistema debe autenticar a los usuarios mediante credenciales válidas (correo electrónico y contraseña). Debe retornar un token JWT válido al autenticar exitosamente y bloquear el acceso durante 15 minutos tras 5 intentos fallidos consecutivos provenientes de la misma dirección IP o correo electrónico.</td>
+    </tr>
+    <tr>
+      <td class="bold">Módulo</td>
+      <td>Autenticación — <code>api/routes/auth.php</code></td>
+    </tr>
+    <tr>
+      <td class="bold">Criterio de Calidad ISO 25010</td>
+      <td><strong>Seguridad → Autenticidad:</strong> La capacidad del sistema para demostrar que la identidad de un sujeto o recurso es la que se declara ser.</td>
+    </tr>
+    <tr>
+      <td class="bold">Métrica que lo mide</td>
+      <td>
+        (M1) Tasa de éxito en autenticación con credenciales válidas: meta = 100 %<br>
+        (M2) Tasa de bloqueo efectivo tras 5 intentos fallidos en 15 minutos: meta = 100 %<br>
+        (M3) Tiempo de respuesta del endpoint POST /auth/login: meta &lt; 500 ms
+      </td>
+    </tr>
+    <tr>
+      <td class="bold">Criterio de Aceptación</td>
+      <td>
+        <strong>Condición de éxito:</strong> POST /auth/login con credenciales correctas retorna HTTP 200, cuerpo JSON con campo <code>token</code> (string no vacío) y objeto <code>user</code> con <code>id</code>, <code>email</code>, <code>role</code> y <code>full_name</code> correctos, en un tiempo inferior a 500 ms.<br><br>
+        <strong>Condición de fallo (credenciales incorrectas):</strong> Retorna HTTP 401, campo <code>error</code> con mensaje "Credenciales incorrectas", sin campo <code>token</code>.<br><br>
+        <strong>Condición de bloqueo (rate limiting):</strong> Tras 5 intentos fallidos del mismo email o IP en menos de 15 minutos, el 6.° intento (incluso con credenciales válidas) retorna HTTP 429, campo <code>error</code> con mensaje "Demasiados intentos fallidos. Intenta nuevamente en 15 minutos."
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>3.2 Diseño de los 5 Casos de Prueba</h2>
+
+<h3>CP-01 — Caso Positivo: Login exitoso con credenciales de administrador</h3>
+<table>
+  <thead><tr><th style="width:25%;">Campo</th><th>Detalle</th></tr></thead>
+  <tbody>
+    <tr><td class="bold">Tipo de caso</td><td>Positivo — datos normales válidos</td></tr>
+    <tr><td class="bold">Precondición</td><td>Usuario administrador registrado en BD (seed inicial): email <code>admin@sgmot.com</code>, contraseña <code>admin2026</code> (hash bcrypt almacenado).</td></tr>
+    <tr><td class="bold">Entrada</td><td><code>{ "email": "admin@sgmot.com", "password": "admin2026" }</code></td></tr>
+    <tr><td class="bold">Acción</td><td>POST <code>http://localhost/sgmot/api/auth/login</code> con Content-Type: application/json</td></tr>
+    <tr><td class="bold">Resultado Esperado</td><td>HTTP 200. Cuerpo JSON: <code>{ "token": "&lt;JWT válido&gt;", "user": { "id": 1, "full_name": "Administrador", "email": "admin@sgmot.com", "role": "admin" } }</code>. Tiempo de respuesta &lt; 500 ms.</td></tr>
+    <tr><td class="bold">Resultado respecto al criterio de calidad</td><td><strong>Autenticidad (ISO 25010 — Seguridad):</strong> El sistema verifica correctamente la identidad del usuario administrador mediante bcrypt + JWT. La métrica M1 se satisface. <span class="ok">PASA ✔</span></td></tr>
+  </tbody>
+</table>
+
+<h3>CP-02 — Caso Positivo: Login exitoso con credenciales de técnico</h3>
+<table>
+  <thead><tr><th style="width:25%;">Campo</th><th>Detalle</th></tr></thead>
+  <tbody>
+    <tr><td class="bold">Tipo de caso</td><td>Positivo — datos normales válidos con rol diferente</td></tr>
+    <tr><td class="bold">Precondición</td><td>Usuario técnico registrado en BD: email <code>carlos@sgmot.com</code>, contraseña <code>carlos2026</code>, rol <code>tecnico</code>.</td></tr>
+    <tr><td class="bold">Entrada</td><td><code>{ "email": "carlos@sgmot.com", "password": "carlos2026" }</code></td></tr>
+    <tr><td class="bold">Acción</td><td>POST <code>http://localhost/sgmot/api/auth/login</code> con Content-Type: application/json</td></tr>
+    <tr><td class="bold">Resultado Esperado</td><td>HTTP 200. Cuerpo JSON con <code>token</code> válido y <code>user.role = "tecnico"</code>. El token decodificado debe contener el campo <code>role: "tecnico"</code> en el payload JWT.</td></tr>
+    <tr><td class="bold">Resultado respecto al criterio de calidad</td><td><strong>Autenticidad + No repudio:</strong> El token emitido lleva el rol correcto, lo que garantiza que el control de acceso posterior (rutas protegidas por <code>requireRole()</code>) funcionará según el perfil del usuario. Métrica M1 y M3 satisfechas. <span class="ok">PASA ✔</span></td></tr>
+  </tbody>
+</table>
+
+<h3>CP-03 — Caso Negativo: Contraseña incorrecta</h3>
+<table>
+  <thead><tr><th style="width:25%;">Campo</th><th>Detalle</th></tr></thead>
+  <tbody>
+    <tr><td class="bold">Tipo de caso</td><td>Negativo — contraseña errónea para un email válido</td></tr>
+    <tr><td class="bold">Precondición</td><td>Usuario administrador existente: email <code>admin@sgmot.com</code>. No haber superado el límite de intentos fallidos.</td></tr>
+    <tr><td class="bold">Entrada</td><td><code>{ "email": "admin@sgmot.com", "password": "contraseñaEquivocada123" }</code></td></tr>
+    <tr><td class="bold">Acción</td><td>POST <code>http://localhost/sgmot/api/auth/login</code></td></tr>
+    <tr><td class="bold">Resultado Esperado</td><td>HTTP 401. Cuerpo JSON: <code>{ "error": "Credenciales incorrectas" }</code>. El campo <code>token</code> no debe aparecer en la respuesta. El intento debe quedar registrado en <code>audit_logs</code> con <code>action = "login_failed"</code> y <code>status = "failed"</code>.</td></tr>
+    <tr><td class="bold">Resultado respecto al criterio de calidad</td><td><strong>Autenticidad — rechazo de identidad no válida:</strong> El sistema no autentica a usuarios con credenciales incorrectas. La respuesta de error no revela si el email existe o no (mismo mensaje genérico), lo que previene enumeración de usuarios. Métrica M2 parcialmente satisfecha (la acción queda registrada). <span class="ok">PASA ✔</span></td></tr>
+  </tbody>
+</table>
+
+<h3>CP-04 — Caso Negativo: Bloqueo por rate limiting tras 5 intentos fallidos</h3>
+<table>
+  <thead><tr><th style="width:25%;">Campo</th><th>Detalle</th></tr></thead>
+  <tbody>
+    <tr><td class="bold">Tipo de caso</td><td>Negativo — límite de intentos fallidos excedido (datos límite)</td></tr>
+    <tr><td class="bold">Precondición</td><td>Registrar manualmente 5 filas en <code>audit_logs</code> con <code>action = "login_failed"</code>, <code>status = "failed"</code>, <code>user_email = "admin@sgmot.com"</code> y <code>created_date</code> dentro de los últimos 15 minutos. Alternativamente, ejecutar 5 requests fallidos consecutivos con la misma IP.</td></tr>
+    <tr><td class="bold">Entrada (6.° intento)</td><td><code>{ "email": "admin@sgmot.com", "password": "admin2026" }</code> (credenciales <strong>correctas</strong>)</td></tr>
+    <tr><td class="bold">Acción</td><td>POST <code>http://localhost/sgmot/api/auth/login</code> (6.° intento)</td></tr>
+    <tr><td class="bold">Resultado Esperado</td><td>HTTP 429. Cuerpo JSON: <code>{ "error": "Demasiados intentos fallidos. Intenta nuevamente en 15 minutos." }</code>. El sistema no autentica al usuario aunque las credenciales sean correctas, hasta que expire la ventana de 15 minutos.</td></tr>
+    <tr><td class="bold">Resultado respecto al criterio de calidad</td><td><strong>Seguridad — resistencia a ataques de fuerza bruta:</strong> El sistema implementa throttling efectivo a nivel de base de datos (consulta a <code>audit_logs</code> en <code>auth.php</code> líneas 11–22). La métrica M2 se satisface completamente. Este control mitiga el riesgo de ataques de diccionario contra cuentas de usuarios. <span class="ok">PASA ✔</span></td></tr>
+  </tbody>
+</table>
+
+<h3>CP-05 — Caso Especial (Edge Case): Email con mayúsculas y espacios en blanco</h3>
+<table>
+  <thead><tr><th style="width:25%;">Campo</th><th>Detalle</th></tr></thead>
+  <tbody>
+    <tr><td class="bold">Tipo de caso</td><td>Edge case — variación de formato en el identificador de usuario</td></tr>
+    <tr><td class="bold">Precondición</td><td>Usuario administrador con email normalizado <code>admin@sgmot.com</code> almacenado en BD.</td></tr>
+    <tr><td class="bold">Entrada</td><td><code>{ "email": "  ADMIN@SGMOT.COM  ", "password": "admin2026" }</code> (email con mayúsculas y espacios al inicio/fin)</td></tr>
+    <tr><td class="bold">Acción</td><td>POST <code>http://localhost/sgmot/api/auth/login</code></td></tr>
+    <tr><td class="bold">Resultado Esperado</td><td>HTTP 200 con token JWT válido. El backend (línea 3 de <code>auth.php</code>: <code>$email = strtolower(trim(...))</code>) normaliza automáticamente el email antes de la consulta SQL. El usuario recibe la misma respuesta que con <code>admin@sgmot.com</code> en minúsculas.</td></tr>
+    <tr><td class="bold">Resultado respecto al criterio de calidad</td><td><strong>Usabilidad — tolerancia a variaciones de entrada controladas (ISO 25010 — Adecuación Funcional → Corrección Funcional):</strong> El sistema es robusto ante variaciones naturales de escritura del usuario. La normalización con <code>strtolower + trim</code> evita falsos negativos de autenticación. Esto mejora la experiencia del usuario sin comprometer la seguridad. <span class="ok">PASA ✔</span></td></tr>
+  </tbody>
+</table>
+
+<h2>3.3 Matriz Resumen de Casos de Prueba</h2>
+<table>
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Tipo</th>
+      <th>Entrada Clave</th>
+      <th>Resultado Esperado (HTTP)</th>
+      <th>Criterio de Calidad</th>
+      <th>¿Pasa?</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>CP-01</td><td>Positivo</td><td>Credenciales admin correctas</td><td>200 + JWT</td><td>Autenticidad</td><td class="ok center">✔</td></tr>
+    <tr><td>CP-02</td><td>Positivo</td><td>Credenciales técnico correctas</td><td>200 + JWT (role=tecnico)</td><td>Autenticidad + No repudio</td><td class="ok center">✔</td></tr>
+    <tr><td>CP-03</td><td>Negativo</td><td>Contraseña incorrecta</td><td>401 sin token</td><td>Autenticidad</td><td class="ok center">✔</td></tr>
+    <tr><td>CP-04</td><td>Negativo (límite)</td><td>6.° intento (5 previos fallidos)</td><td>429 bloqueado</td><td>Seguridad / Anti-fuerza bruta</td><td class="ok center">✔</td></tr>
+    <tr><td>CP-05</td><td>Edge case</td><td>Email en mayúsculas + espacios</td><td>200 + JWT</td><td>Corrección Funcional / Usabilidad</td><td class="ok center">✔</td></tr>
+  </tbody>
+</table>
+
+<!-- ============================================================ -->
+<!--                        ACTIVIDAD 4                           -->
+<!-- ============================================================ -->
+<div class="page-break"></div>
+<div class="activity-header">ACTIVIDAD 4 — Simulación de Gestión de Defectos</div>
+<p class="footnote">Modalidad: Grupal &nbsp;|&nbsp; Duración estimada: 60 minutos</p>
+
+<h2>4.1 Registro del Defecto</h2>
+
+<table>
+  <thead>
+    <tr><th style="width:28%;">Campo</th><th>Valor</th></tr>
+  </thead>
+  <tbody>
+    <tr><td class="bold">ID del Defecto</td><td>DEF-SGMOT-001</td></tr>
+    <tr>
+      <td class="bold">Título / Resumen</td>
+      <td>Generación de número de orden con <code>rand()</code> no garantiza unicidad; colisión produce HTTP 500 no controlado sin rollback transaccional</td>
+    </tr>
+    <tr>
+      <td class="bold">Descripción detallada</td>
+      <td>
+        Cuando se crea una orden de trabajo mediante POST <code>/api/work_orders</code> sin incluir el campo <code>order_number</code> en el cuerpo de la solicitud, el sistema genera un identificador mediante la expresión <code>'OT-' . date('ymd') . '-' . rand(100, 999)</code> (línea 97 de <code>work_orders.php</code>). Esta lógica produce únicamente 900 valores posibles por día de calendario. Si el número generado aleatoriamente coincide con el de una orden existente del mismo día, la base de datos lanza una excepción de violación de restricción UNIQUE (SQLSTATE 23000). Dado que el bloque POST no está envuelto en un bloque <code>try-catch</code>, la excepción PDO se propaga como error fatal de PHP, el servidor responde con HTTP 500 con información potencialmente sensible de la capa de datos, y no se ejecuta ningún rollback porque no hay transacción activa. La probabilidad de colisión aumenta geométricamente con el volumen de órdenes por día (problema del cumpleaños matemático).
+      </td>
+    </tr>
+    <tr>
+      <td class="bold">Severidad</td>
+      <td><span class="fail bold">ALTA</span> — Interrumpe la operación de creación de órdenes, afecta la integridad del sistema y puede exponer información interna.</td>
+    </tr>
+    <tr>
+      <td class="bold">Prioridad</td>
+      <td><span class="fail bold">ALTA</span> — Debe corregirse antes del despliegue en producción; afecta el flujo de negocio principal del sistema.</td>
+    </tr>
+    <tr><td class="bold">Fecha de Detección</td><td>09 de junio de 2026</td></tr>
+    <tr><td class="bold">Responsable de la Detección</td><td>Equipo de Desarrollo — Revisión de Código (Actividad 2)</td></tr>
+    <tr><td class="bold">Responsable de la Corrección</td><td>Desarrollador Backend — Módulo de Órdenes de Trabajo</td></tr>
+    <tr><td class="bold">Módulo Afectado</td><td>Gestión de Órdenes de Trabajo — <code>api/routes/work_orders.php</code>, línea 97</td></tr>
+    <tr>
+      <td class="bold">Requisito Relacionado</td>
+      <td>RF-OT-003: "El sistema debe generar identificadores únicos e irrepetibles para cada orden de trabajo, garantizando su trazabilidad a lo largo de todo el ciclo de vida de la orden."</td>
+    </tr>
+    <tr>
+      <td class="bold">Entorno de Detección</td>
+      <td>Revisión estática de código (PHP 8.2, XAMPP 8.2, MySQL 8.0). Reproducible mediante inserción de datos de prueba.</td>
+    </tr>
+    <tr>
+      <td class="bold">Pasos para Reproducir</td>
+      <td>
+        <ol>
+          <li>Iniciar sesión en el sistema con credenciales de administrador (<code>admin@sgmot.com / admin2026</code>).</li>
+          <li>Recuperar el token JWT de la respuesta de login.</li>
+          <li>Identificar el número de orden existente para el día actual, por ejemplo <code>OT-260609-357</code>.</li>
+          <li>Insertar manualmente en la tabla <code>work_orders</code> una orden con <code>order_number = 'OT-260609-357'</code> (o esperar que la función <code>rand(100, 999)</code> lo genere en condiciones normales de uso).</li>
+          <li>Realizar la solicitud: <code>POST /api/work_orders</code> con cabecera <code>Authorization: Bearer &lt;token&gt;</code> y cuerpo JSON válido que no incluya el campo <code>order_number</code>.</li>
+          <li><strong>Resultado Observado:</strong> HTTP 500 con mensaje de error de PDO revelando detalles de la excepción. Ninguna orden es creada pero tampoco se produce rollback (no hay transacción activa).</li>
+          <li><strong>Resultado Esperado:</strong> HTTP 409 con mensaje controlado "Número de orden duplicado, por favor intente nuevamente." o generación automática de un identificador alternativo único.</li>
+        </ol>
+      </td>
+    </tr>
+    <tr>
+      <td class="bold">Código fuente del defecto</td>
+      <td>
+        <pre>
+// api/routes/work_orders.php — Línea 97 (defectuoso)
+$orderNum = $b['order_number'] ?? ('OT-' . date('ymd') . '-' . rand(100, 999));
+
+// Líneas 99-111 — Sin try-catch (el INSERT puede lanzar PDOException)
+$stmt = $db->prepare("INSERT INTO work_orders (order_number, ...) VALUES (?, ...)");
+$stmt->execute([...]);  // ← UNIQUE constraint violation no manejada
+        </pre>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>4.2 Análisis de Causa Raíz — Método de los 5 Porqués</h2>
+<p>
+El método de los 5 Porqués es una técnica de análisis causal inductivo que consiste en preguntar repetidamente "¿por qué?" ante cada respuesta obtenida, hasta llegar a la causa raíz del problema. A continuación se aplica dicho método al defecto DEF-SGMOT-001.
+</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="width:8%;">#</th>
+      <th style="width:35%;">Pregunta</th>
+      <th>Respuesta / Causa Identificada</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="center bold">¿Por qué 1?</td>
+      <td>¿Por qué el sistema devuelve HTTP 500 al crear una orden de trabajo?</td>
+      <td>Porque se lanza una excepción <code>PDOException</code> (violación de restricción UNIQUE en el campo <code>order_number</code>) que no es capturada por ningún bloque <code>try-catch</code> en el bloque POST del archivo <code>work_orders.php</code>.</td>
+    </tr>
+    <tr>
+      <td class="center bold">¿Por qué 2?</td>
+      <td>¿Por qué la excepción PDO no es capturada en el bloque POST?</td>
+      <td>Porque el bloque POST de <code>work_orders.php</code> no fue implementado con manejo de errores explícito mediante <code>try-catch</code>. Solo el flujo de registro en <code>register.php</code> posee dicho manejo, pero no fue replicado de manera consistente en otras rutas.</td>
+    </tr>
+    <tr>
+      <td class="center bold">¿Por qué 3?</td>
+      <td>¿Por qué no se implementó try-catch de forma consistente en todas las rutas?</td>
+      <td>Porque no existe un estándar documentado ni un middleware centralizado de manejo de errores de base de datos en el proyecto. Cada ruta fue desarrollada de manera independiente, sin una guía de codificación que estableciera la obligatoriedad del manejo de excepciones PDO.</td>
+    </tr>
+    <tr>
+      <td class="center bold">¿Por qué 4?</td>
+      <td>¿Por qué no existe un estándar de manejo de errores de BD en el proyecto?</td>
+      <td>Porque se asumió que el número de orden generado con <code>rand(100, 999)</code> sería único con probabilidad suficiente. No se realizó un análisis cuantitativo del riesgo de colisión (problema del cumpleaños), lo que llevó a omitir el manejo del caso de duplicado como un escenario plausible.</td>
+    </tr>
+    <tr>
+      <td class="center bold">¿Por qué 5?</td>
+      <td>¿Por qué se utilizó <code>rand(100, 999)</code> en lugar de un generador de IDs con garantía de unicidad?</td>
+      <td><strong>Causa raíz:</strong> Ausencia de una política de generación de identificadores únicos en los estándares de arquitectura del proyecto. No se evaluaron alternativas como UUID v4, secuencias de base de datos (AUTO_INCREMENT), o identificadores basados en timestamp de alta resolución + proceso ID. El desarrollador optó por una solución simple y rápida sin considerar el comportamiento del sistema bajo carga operativa real.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>4.3 Acción Correctiva y Preventiva</h2>
+
+<h3>Acción Correctiva (Inmediata) — Corrige el defecto existente</h3>
+<p>Reemplazar la generación de número de orden en la línea 97 de <code>work_orders.php</code> con un identificador basado en timestamp de alta resolución y número aleatorio de mayor entropía, garantizando la unicidad dentro de un contexto operativo razonable. Adicionalmente, envolver el bloque INSERT en un <code>try-catch</code> con detección específica de la violación UNIQUE (código de error MySQL 1062 / SQLSTATE 23000).</p>
+
+<p><strong>Código corregido propuesto:</strong></p>
+<pre>
+// api/routes/work_orders.php — Bloque POST CORREGIDO
+if ($method === 'POST') {
+    // ... (validaciones previas sin cambio)
+
+    $orderNum = $b['order_number']
+        ?? ('OT-' . date('ymd') . '-' . strtoupper(substr(bin2hex(random_bytes(3)), 0, 6)));
+
+    try {
+        $stmt = $db->prepare("INSERT INTO work_orders
+            (order_number, type, client_id, ...) VALUES (?, ?, ?, ...)");
+        $stmt->execute([...]);
+        $newId = (int)$db->lastInsertId();
+    } catch (PDOException $e) {
+        if ($e->getCode() === '23000') {
+            sendResponse(['error' => 'Número de orden duplicado. Por favor intente nuevamente.'], 409);
+        }
+        sendResponse(['error' => 'Error al crear la orden. Intente nuevamente.'], 500);
+    }
+
+    // ... (auditoría + notificaciones sin cambio)
+    sendResponse(['id' => $newId, 'order_number' => $orderNum, 'message' => 'Orden creada'], 201);
+}
+</pre>
+<p>
+La función <code>random_bytes(3)</code> genera 3 bytes criptográficamente seguros que codificados en hexadecimal producen 6 caracteres (16³⁶ = 16,777,216 combinaciones posibles por día), reduciendo la probabilidad de colisión a un valor estadísticamente despreciable (p &lt; 0.000006 % para 1,000 órdenes/día).
+</p>
+
+<h3>Acción Preventiva (Sistémica) — Evita que defectos similares ocurran en el futuro</h3>
+<p>Las siguientes acciones preventivas deben implementarse a nivel de estándar del proyecto:</p>
+<ol>
+  <li>
+    <strong>Estándar de codificación para rutas PHP:</strong> Establecer como obligatorio que todo INSERT/UPDATE que afecte restricciones de unicidad o claves foráneas esté envuelto en un <code>try-catch PDOException</code> con detección de SQLSTATE. Documentar en un archivo <code>CONTRIBUTING.md</code> dentro del repositorio.
+  </li>
+  <li>
+    <strong>Checklist de code review:</strong> Agregar al proceso de revisión de código (ver Actividad 2) el ítem: "¿Las operaciones de escritura en BD manejan explícitamente las excepciones de integridad referencial y de unicidad?"
+  </li>
+  <li>
+    <strong>Prueba unitaria de regresión:</strong> Una vez implementado PHPUnit (Acción Prioritaria 1 de la Actividad 1), crear un caso de prueba específico que simule la colisión de <code>order_number</code> y verifique que el sistema retorna HTTP 409 con mensaje amigable.
+  </li>
+  <li>
+    <strong>Política de IDs:</strong> Establecer en la arquitectura del proyecto que todos los identificadores de entidades visibles externamente deben utilizar <code>random_bytes()</code> o UUID v4 (<code>com_create_guid()</code> / librería <code>ramsey/uuid</code>), reservando AUTO_INCREMENT para claves primarias internas no expuestas.
+  </li>
+</ol>
+
+<h2>4.4 Estimación de Impacto</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Dimensión de Impacto</th>
+      <th>Análisis</th>
+      <th>Valor Estimado</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="bold">Usuarios potencialmente afectados</td>
+      <td>Todos los usuarios con permiso de crear órdenes: administradores (rol <code>admin</code>) y clientes (rol <code>cliente</code>). Los técnicos no crean órdenes directamente.</td>
+      <td>100 % de admins + 100 % de clientes (N/A técnicos)</td>
+    </tr>
+    <tr>
+      <td class="bold">Probabilidad diaria de colisión</td>
+      <td>Por el principio del cumpleaños, con 900 valores posibles y <em>n</em> órdenes por día, la probabilidad de al menos una colisión es <em>P ≈ 1 − e^(−n²/1800)</em>. Para 30 órdenes/día: P ≈ 39 %. Para 60 órdenes/día: P ≈ 86 %.</td>
+      <td>Alta a partir de 30 órdenes/día</td>
+    </tr>
+    <tr>
+      <td class="bold">Impacto en la operación</td>
+      <td>Al fallar la creación de una orden, el cliente o técnico no recibe la notificación esperada. El flujo de negocio se interrumpe y requiere intervención manual del administrador para reintentar la operación.</td>
+      <td>Alto — flujo de negocio principal</td>
+    </tr>
+    <tr>
+      <td class="bold">Riesgo de seguridad</td>
+      <td>El HTTP 500 no controlado puede revelar el stack trace de PDO con el nombre de la tabla, el campo UNIQUE infractor y posiblemente la cadena de conexión, dependiendo de la configuración de <code>display_errors</code> en PHP.</td>
+      <td>Medio-Alto (información sensible expuesta)</td>
+    </tr>
+    <tr>
+      <td class="bold">Esfuerzo de corrección (horas-persona)</td>
+      <td>Modificar 2 líneas en <code>work_orders.php</code> (generador de ID + try-catch). Aplicar el mismo patrón en <code>incidents.php</code> por consistencia. Pruebas manuales de verificación.</td>
+      <td>3–5 horas (1 desarrollador)</td>
+    </tr>
+    <tr>
+      <td class="bold">Esfuerzo de pruebas (horas-persona)</td>
+      <td>Prueba manual de escenario de colisión + prueba de regresión en escenario normal. Redacción del caso de prueba unitario.</td>
+      <td>2–3 horas (1 desarrollador/tester)</td>
+    </tr>
+    <tr>
+      <td class="bold">Esfuerzo total estimado</td>
+      <td colspan="2" class="center bold">5–8 horas-persona. Relación costo-beneficio: muy favorable. Se recomienda corrección inmediata antes del primer despliegue en producción.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>4.5 Ciclo de Vida del Defecto DEF-SGMOT-001</h2>
+<table>
+  <thead>
+    <tr><th>Estado</th><th>Fecha</th><th>Responsable</th><th>Descripción de la Acción</th></tr>
+  </thead>
+  <tbody>
+    <tr><td class="bold">Nuevo</td><td>09/06/2026</td><td>Equipo Dev (code review)</td><td>Defecto identificado durante revisión estática de código del módulo work_orders.</td></tr>
+    <tr><td class="bold">Asignado</td><td>09/06/2026</td><td>Líder de Proyecto</td><td>Defecto asignado al desarrollador responsable del módulo backend de órdenes. Prioridad: Alta.</td></tr>
+    <tr><td class="bold">En Análisis</td><td>09/06/2026</td><td>Desarrollador Backend</td><td>Análisis de causa raíz con método 5 Porqués. Diseño de la solución correctiva.</td></tr>
+    <tr><td class="bold">En Corrección</td><td>10/06/2026</td><td>Desarrollador Backend</td><td>Implementación: reemplazo de rand() por random_bytes(), adición de try-catch con detección SQLSTATE 23000.</td></tr>
+    <tr><td class="bold">En Verificación</td><td>11/06/2026</td><td>Tester / Desarrollador</td><td>Prueba de escenario de colisión forzada. Verificación de respuesta HTTP 409 con mensaje amigable. Prueba de regresión en escenario normal.</td></tr>
+    <tr><td class="bold">Cerrado</td><td>12/06/2026</td><td>Líder de Proyecto</td><td>Corrección verificada. Defecto cerrado. Caso de prueba agregado al backlog de pruebas unitarias.</td></tr>
+  </tbody>
+</table>
+
+<!-- ============================================================ -->
+<!--                      CONCLUSIONES                            -->
+<!-- ============================================================ -->
+<div class="page-break"></div>
+<h2 style="text-align:center; font-size:16pt;">CONCLUSIONES GENERALES</h2>
+
+<p>
+El desarrollo de las cuatro actividades prácticas permitió aplicar de manera integral el modelo ISO/IEC 25010:2011 al sistema SGMOT, revelando tanto las fortalezas del proyecto como las brechas que deben ser abordadas antes de su despliegue en un entorno de producción real.
+</p>
+
+<p>
+En términos de <strong>adecuación funcional</strong>, el sistema cubre de manera efectiva el 95 % de los requisitos operativos definidos para la gestión de órdenes de trabajo, incidencias técnicas y seguimiento de clientes en una empresa de telecomunicaciones. Las características de seguridad demuestran un nivel maduro: el uso de JWT firmado con HS256, contraseñas bcrypt, rate limiting y consultas preparadas reflejan buenas prácticas de desarrollo seguro, con una cobertura del 100 % de endpoints protegidos y ausencia comprobada de inyección SQL.
+</p>
+
+<p>
+Sin embargo, la <strong>mantenibilidad</strong> constituye la brecha más crítica identificada: la cobertura de pruebas unitarias es del 0 %, lo que expone al proyecto a regresiones no detectadas ante cualquier cambio futuro. Complementariamente, la complejidad ciclomática elevada en <code>register.php</code> (CC = 13) y la ausencia de manejo de excepciones robusto en el módulo de órdenes de trabajo representan riesgos de fiabilidad y mantenibilidad que deben ser abordados de inmediato.
+</p>
+
+<p>
+El defecto DEF-SGMOT-001 identificado en la Actividad 4 —generación no idempotente de números de orden mediante <code>rand(100, 999)</code>— constituye el hallazgo de mayor impacto potencial, dado que su probabilidad de manifestación supera el 86 % con tan solo 60 órdenes diarias, y su ocurrencia produce un error no controlado con posible exposición de información sensible. La corrección propuesta —basada en <code>random_bytes()</code> con 16 millones de combinaciones posibles por día— resuelve el problema con un esfuerzo mínimo de 5 a 8 horas-persona.
+</p>
+
+<p>
+Las tres acciones prioritarias propuestas en la Actividad 1 (implementación de suite de pruebas automatizadas, refactorización del manejo de errores y ejecución de pruebas de carga con encuesta de satisfacción) conforman una hoja de ruta coherente y viable para elevar el nivel de calidad del sistema SGMOT a los estándares requeridos por un proyecto de software de nivel productivo.
+</p>
+
+<p class="center" style="margin-top:30pt; font-size:10pt; color:#555;">
+  — Fin del documento —<br>
+  Taller de Proyectos I &nbsp;·&nbsp; Actividades Prácticas &nbsp;·&nbsp; SGMOT &nbsp;·&nbsp; Junio 2026
+</p>
+
+</body>
+</html>

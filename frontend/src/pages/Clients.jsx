@@ -91,48 +91,34 @@ export default function Clients() {
         ) : filtered.length === 0 ? (
           <EmptyState icon={Users} title="Sin clientes" description="No hay clientes que coincidan con tu búsqueda." />
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead className="border-b border-matrix-primary/15">
-                <tr className="text-[11px] uppercase text-matrix-muted tracking-wider">
-                  <th className="text-left px-4 py-3 font-semibold">Nombre</th>
-                  <th className="text-left px-4 py-3 font-semibold">DNI</th>
-                  <th className="text-left px-4 py-3 font-semibold">Teléfono</th>
-                  <th className="text-left px-4 py-3 font-semibold">Dirección</th>
-                  <th className="text-left px-4 py-3 font-semibold">Plan</th>
-                  <th className="text-left px-4 py-3 font-semibold">Estado</th>
-                  <th className="text-right px-4 py-3 font-semibold w-24">Acciones</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-matrix-primary/[0.08]">
-                {filtered.map((c) => (
-                  <tr key={c.id} className="hover:bg-matrix-primary/[0.03] transition">
-                    <td className="px-4 py-3 font-medium text-matrix-text">{c.full_name}</td>
-                    <td className="px-4 py-3 text-matrix-muted font-mono text-xs">{c.dni}</td>
-                    <td className="px-4 py-3 text-matrix-muted">{c.phone}</td>
-                    <td className="px-4 py-3 text-matrix-muted max-w-[200px] truncate text-xs">{c.address}</td>
-                    <td className="px-4 py-3 text-xs text-matrix-text/80">{planLabels[c.plan] || c.plan}</td>
-                    <td className="px-4 py-3"><StatusBadge status={c.status} /></td>
-                    <td className="px-4 py-3">
-                      <div className="flex justify-end gap-1">
-                        {perms.canEdit && (
-                          <button onClick={() => { setEditing(c); setModalOpen(true); }}
-                            className="p-1.5 rounded-md hover:bg-matrix-primary/10 text-matrix-muted hover:text-matrix-primary transition" title="Editar">
-                            <Pencil className="w-3.5 h-3.5" />
-                          </button>
-                        )}
-                        {perms.canDelete && (
-                          <button onClick={() => setConfirm(c)}
-                            className="p-1.5 rounded-md hover:bg-red-500/10 text-matrix-muted hover:text-red-400 transition" title="Eliminar">
-                            <Trash2 className="w-3.5 h-3.5" />
-                          </button>
-                        )}
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="space-y-2 p-3">
+            {filtered.map((c) => (
+              <div key={c.id} className="grid grid-cols-1 items-center gap-3 rounded-xl border border-matrix-primary/20 bg-black/55 px-4 py-3 transition hover:border-matrix-primary/45 hover:bg-matrix-primary/[0.035] lg:grid-cols-[minmax(220px,1.4fr)_120px_130px_minmax(220px,1.4fr)_170px_110px_80px]">
+                <div className="min-w-0">
+                  <p className="truncate font-semibold text-matrix-text">{c.full_name}</p>
+                  <p className="mt-1 truncate text-xs text-matrix-muted">{c.email || 'Sin email'}</p>
+                </div>
+                <p className="font-mono text-xs text-matrix-muted">{c.dni}</p>
+                <p className="text-xs text-matrix-text">{c.phone}</p>
+                <p className="truncate text-xs text-matrix-muted">{c.address}</p>
+                <p className="text-xs font-medium text-matrix-text">{planLabels[c.plan] || c.plan}</p>
+                <StatusBadge status={c.status} />
+                <div className="flex justify-end gap-1">
+                  {perms.canEdit && (
+                    <button onClick={() => { setEditing(c); setModalOpen(true); }}
+                      className="rounded-md p-2 text-matrix-muted transition hover:bg-matrix-primary/10 hover:text-matrix-primary" title="Editar">
+                      <Pencil className="h-4 w-4" />
+                    </button>
+                  )}
+                  {perms.canDelete && (
+                    <button onClick={() => setConfirm(c)}
+                      className="rounded-md p-2 text-matrix-muted transition hover:bg-red-500/10 hover:text-red-400" title="Eliminar">
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  )}
+                </div>
+              </div>
+            ))}
           </div>
         )}
       </div>

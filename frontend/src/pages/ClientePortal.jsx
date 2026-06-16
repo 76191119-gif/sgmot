@@ -9,7 +9,15 @@ import { useAuth } from '@/lib/AuthContext';
 import StatusBadge from '@/components/shared/StatusBadge';
 import EmptyState from '@/components/shared/EmptyState';
 import Modal from '@/components/shared/Modal';
-import { typeLabels, categoryLabels, planLabels, formatDate, formatDateTime } from '@/lib/utils';
+import {
+  typeLabels,
+  categoryLabels,
+  planLabels,
+  formatDate,
+  formatDateTime,
+  orderTypeOptions,
+  incidentCategoryOptions,
+} from '@/lib/utils';
 
 const PLAN_COLORS = {
   basico_30mbps:       'bg-slate-500/20 text-slate-300 border-slate-500/40',
@@ -83,7 +91,7 @@ export default function ClientePortal() {
           </div>
           <div>
             <p className="font-semibold text-sm text-matrix-text">Solicitar Servicio</p>
-            <p className="text-xs text-matrix-muted">Instalación, soporte o mantenimiento</p>
+            <p className="text-xs text-matrix-muted">Nueva instalación, instalación, soporte, mantenimiento o retiro</p>
           </div>
         </button>
         <button
@@ -212,30 +220,19 @@ function OrdersList({ orders, onNew }) {
       {orders.length === 0 ? (
         <EmptyState icon={ClipboardList} title="Sin órdenes" description="No tienes órdenes registradas." />
       ) : (
-        <div className="space-y-3">
+        <div className="space-y-2 rounded-xl border border-matrix-primary/20 bg-black/60 p-3">
           {orders.map((o) => (
-            <div key={o.id} className="bg-black/60 border border-matrix-primary/20 rounded-xl p-4 hover:border-matrix-primary/35 transition">
-              <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
-                <div className="min-w-0 flex-1">
-                  <p className="text-xs font-mono text-matrix-muted">{o.order_number}</p>
-                  <p className="font-semibold text-sm mt-0.5 text-matrix-text">{typeLabels[o.type] || o.type}</p>
-                  {o.description && <p className="text-xs text-matrix-muted mt-1">{o.description}</p>}
-                  <div className="flex flex-wrap items-center gap-3 mt-2 text-xs text-matrix-muted">
-                    {o.technician_name && <span className="inline-flex items-center gap-1"><Wrench className="w-3 h-3" /> {o.technician_name}</span>}
-                    {o.scheduled_date && <span>📅 {formatDate(o.scheduled_date)}</span>}
-                  </div>
-                </div>
-                <div className="flex flex-row sm:flex-col gap-1 items-end">
-                  <StatusBadge status={o.priority} />
-                  <StatusBadge status={o.status} />
-                </div>
+            <div key={o.id} className="grid grid-cols-1 items-center gap-3 rounded-xl border border-matrix-primary/20 bg-black/55 px-4 py-3 transition hover:border-matrix-primary/45 hover:bg-matrix-primary/[0.035] lg:grid-cols-[minmax(260px,1.7fr)_minmax(150px,1fr)_90px_110px_120px_minmax(180px,1fr)]">
+              <div className="min-w-0">
+                <p className="font-mono text-[11px] text-matrix-muted">{o.order_number}</p>
+                <p className="font-semibold text-matrix-text">{typeLabels[o.type] || o.type}</p>
+                {o.description && <p className="mt-1 truncate text-xs text-matrix-muted">{o.description}</p>}
               </div>
-              {o.resolution_notes && (
-                <div className="mt-3 bg-matrix-primary/10 border border-matrix-primary/30 rounded-md p-3">
-                  <p className="text-xs font-semibold text-matrix-primary mb-1">Resolución del técnico</p>
-                  <p className="text-xs text-matrix-text">{o.resolution_notes}</p>
-                </div>
-              )}
+              <p className="truncate text-xs text-matrix-muted">{o.technician_name || 'Sin asignar'}</p>
+              <StatusBadge status={o.priority} />
+              <StatusBadge status={o.status} />
+              <p className="text-xs text-matrix-muted">{formatDate(o.scheduled_date) || formatDate(o.created_date) || '-'}</p>
+              <p className="truncate text-xs text-matrix-muted">{o.resolution_notes || '-'}</p>
             </div>
           ))}
         </div>
@@ -256,27 +253,18 @@ function IncidentsList({ incidents, onNew }) {
       {incidents.length === 0 ? (
         <EmptyState icon={AlertTriangle} title="Sin incidencias" description="No tienes incidencias reportadas." />
       ) : (
-        <div className="space-y-3">
+        <div className="space-y-2 rounded-xl border border-matrix-primary/20 bg-black/60 p-3">
           {incidents.map((i) => (
-            <div key={i.id} className="bg-black/60 border border-matrix-primary/20 rounded-xl p-4 hover:border-matrix-primary/35 transition">
-              <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
-                <div className="min-w-0 flex-1">
-                  <p className="font-semibold text-sm text-matrix-text">{i.title}</p>
-                  <p className="text-xs text-matrix-muted mt-0.5">{categoryLabels[i.category]}</p>
-                  {i.description && <p className="text-xs text-matrix-muted mt-1">{i.description}</p>}
-                  <p className="text-xs text-matrix-muted/60 mt-2">{formatDateTime(i.created_date)}</p>
-                </div>
-                <div className="flex flex-row sm:flex-col gap-1 items-end">
-                  <StatusBadge status={i.priority} />
-                  <StatusBadge status={i.status} />
-                </div>
+            <div key={i.id} className="grid grid-cols-1 items-center gap-3 rounded-xl border border-matrix-primary/20 bg-black/55 px-4 py-3 transition hover:border-matrix-primary/45 hover:bg-matrix-primary/[0.035] lg:grid-cols-[minmax(260px,1.7fr)_150px_90px_110px_140px_minmax(180px,1fr)]">
+              <div className="min-w-0">
+                <p className="truncate font-semibold text-matrix-text">{i.title}</p>
+                {i.description && <p className="mt-1 truncate text-xs text-matrix-muted">{i.description}</p>}
               </div>
-              {i.resolution && (
-                <div className="mt-3 bg-matrix-primary/10 border border-matrix-primary/30 rounded-md p-3">
-                  <p className="text-xs font-semibold text-matrix-primary mb-1">Resolución aplicada</p>
-                  <p className="text-xs text-matrix-text">{i.resolution}</p>
-                </div>
-              )}
+              <p className="text-xs text-matrix-muted">{categoryLabels[i.category]}</p>
+              <StatusBadge status={i.priority} />
+              <StatusBadge status={i.status} />
+              <p className="text-xs text-matrix-muted">{formatDateTime(i.created_date)}</p>
+              <p className="truncate text-xs text-matrix-muted">{i.resolution || '-'}</p>
             </div>
           ))}
         </div>
@@ -289,13 +277,16 @@ function IncidentsList({ incidents, onNew }) {
 
 function RequestServiceModal({ client, onClose }) {
   const qc = useQueryClient();
+  const [title, setTitle] = useState('');
   const [type, setType] = useState('soporte');
   const [priority, setPriority] = useState('media');
   const [description, setDescription] = useState('');
 
   const mut = useMutation({
     mutationFn: () => api.workOrders.create({
-      type, priority, description,
+      type,
+      priority,
+      description: [title.trim(), description.trim()].filter(Boolean).join('\n\n'),
       client_id: client?.id,
       client_name: client?.full_name,
       client_address: client?.address,
@@ -313,15 +304,25 @@ function RequestServiceModal({ client, onClose }) {
   }
 
   return (
-    <Modal open={true} onClose={onClose} title="Solicitar Servicio">
+    <Modal open={true} onClose={onClose} title="Crear Orden">
       <form onSubmit={(e) => { e.preventDefault(); mut.mutate(); }} className="space-y-4">
+        <div>
+          <label className="block text-[11px] font-medium mb-1.5 text-matrix-muted uppercase tracking-wider">Título *</label>
+          <input
+            required
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="Ej: Necesito soporte para mi servicio"
+            className="w-full bg-black/60 border border-matrix-primary/30 rounded-md px-3 py-2.5 text-sm focus:outline-none focus:border-matrix-primary transition text-matrix-text placeholder:text-matrix-muted/40"
+          />
+        </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label className="block text-[11px] font-medium mb-1.5 text-matrix-muted uppercase tracking-wider">Tipo de servicio</label>
             <select value={type} onChange={(e) => setType(e.target.value)} className="w-full bg-black/60 border border-matrix-primary/30 rounded-md px-3 py-2.5 text-sm focus:outline-none focus:border-matrix-primary transition text-matrix-text cursor-pointer">
-              <option value="soporte">Soporte Técnico</option>
-              <option value="mantenimiento">Mantenimiento</option>
-              <option value="retiro">Retiro de Equipo</option>
+              {orderTypeOptions.map((option) => (
+                <option key={option.value} value={option.value}>{option.label}</option>
+              ))}
             </select>
           </div>
           <div>
@@ -393,12 +394,9 @@ function ReportProblemModal({ client, onClose }) {
           <div>
             <label className="block text-[11px] font-medium mb-1.5 text-matrix-muted uppercase tracking-wider">Categoría</label>
             <select value={category} onChange={(e) => setCategory(e.target.value)} className="w-full bg-black/60 border border-matrix-primary/30 rounded-md px-3 py-2.5 text-sm focus:outline-none focus:border-matrix-primary transition text-matrix-text cursor-pointer">
-              <option value="sin_servicio">Sin Servicio</option>
-              <option value="lentitud">Lentitud</option>
-              <option value="corte_fibra">Corte de Fibra</option>
-              <option value="equipo_danado">Equipo Dañado</option>
-              <option value="configuracion">Configuración</option>
-              <option value="otro">Otro</option>
+              {incidentCategoryOptions.map((option) => (
+                <option key={option.value} value={option.value}>{option.label}</option>
+              ))}
             </select>
           </div>
           <div>

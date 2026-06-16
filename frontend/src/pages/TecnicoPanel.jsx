@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   ClipboardList, AlertTriangle, History, CheckCircle2,
-  Clock, Loader, MapPin, Calendar, User as UserIcon,
+  Clock, Loader, MapPin, Calendar,
 } from 'lucide-react';
 import { api } from '@/api/localClient';
 import { useAuth } from '@/lib/AuthContext';
@@ -122,33 +122,26 @@ function Section({ title, accentCls, borderCls, orders, onClick, actionLabel }) 
         <h3 className="font-semibold text-matrix-text">{title}</h3>
         <span className="text-xs text-matrix-muted">({orders.length})</span>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+      <div className="space-y-2 rounded-xl border border-matrix-primary/20 bg-black/60 p-3">
         {orders.map((o) => (
-          <button
-            key={o.id}
-            onClick={() => onClick(o)}
-            className={`text-left bg-black/60 border-l-4 ${borderCls} border border-matrix-primary/20 rounded-xl p-4 hover:border-matrix-primary/40 hover:bg-black/70 transition-all`}
-          >
-            <div className="flex items-start justify-between gap-2 mb-2">
-              <div className="min-w-0">
-                <p className="text-xs font-mono text-matrix-muted">{o.order_number}</p>
-                <p className="font-semibold text-sm mt-0.5 text-matrix-text">{typeLabels[o.type] || o.type}</p>
-              </div>
-              <div className="flex flex-wrap gap-1">
-                <StatusBadge status={o.priority} />
-                <StatusBadge status={o.status} />
-              </div>
+          <div key={o.id} className={`grid grid-cols-1 items-center gap-3 rounded-xl border border-matrix-primary/20 bg-black/55 px-4 py-3 transition hover:border-matrix-primary/45 hover:bg-matrix-primary/[0.035] lg:grid-cols-[minmax(260px,1.6fr)_minmax(170px,1fr)_minmax(210px,1fr)_90px_110px_120px_150px] ${borderCls}`}>
+            <div className="min-w-0">
+              <p className="font-mono text-[11px] text-matrix-muted">{o.order_number}</p>
+              <p className="font-semibold text-matrix-text">{typeLabels[o.type] || o.type}</p>
+              {o.description && <p className="mt-1 truncate text-xs text-matrix-muted">{o.description}</p>}
             </div>
-            <div className="space-y-1.5 text-xs">
-              <div className="flex items-center gap-2 text-matrix-text/80"><UserIcon className="w-3 h-3 text-matrix-muted" /> {o.client_name}</div>
-              <div className="flex items-center gap-2 text-matrix-text/70"><MapPin className="w-3 h-3 text-matrix-muted" /> <span className="truncate">{o.client_address}</span></div>
-              <div className="flex items-center gap-2 text-matrix-text/60"><Calendar className="w-3 h-3 text-matrix-muted" /> {formatDate(o.scheduled_date) || '—'}</div>
+            <p className="truncate text-sm text-matrix-text">{o.client_name}</p>
+            <div className="flex min-w-0 items-center gap-1.5 text-xs text-matrix-muted">
+              <MapPin className="h-3.5 w-3.5 shrink-0" />
+              <span className="truncate">{o.client_address || '-'}</span>
             </div>
-            {o.description && <p className="text-xs text-matrix-muted mt-3 line-clamp-2">{o.description}</p>}
-            <div className="mt-3 pt-3 border-t border-matrix-primary/15">
-              <span className="text-xs font-medium text-matrix-primary">{actionLabel} →</span>
-            </div>
-          </button>
+            <StatusBadge status={o.priority} />
+            <StatusBadge status={o.status} />
+            <p className="text-xs text-matrix-muted">{formatDate(o.scheduled_date) || '-'}</p>
+            <button onClick={() => onClick(o)} className="rounded-md border border-matrix-primary/25 px-3 py-1.5 text-xs font-medium text-matrix-primary transition hover:bg-matrix-primary/10">
+              {actionLabel}
+            </button>
+          </div>
         ))}
       </div>
     </div>
@@ -227,24 +220,22 @@ function IncidentsBoard({ incidents }) {
 
   return (
     <div>
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+      <div className="space-y-2 rounded-xl border border-matrix-primary/20 bg-black/60 p-3">
         {incidents.map((i) => (
-          <button
-            key={i.id} onClick={() => setSelected(i)}
-            className="text-left bg-black/60 border border-matrix-primary/20 rounded-xl p-4 hover:border-matrix-primary/40 hover:bg-black/70 transition-all"
-          >
-            <div className="flex items-start justify-between gap-2 mb-2">
-              <p className="font-semibold text-sm flex-1 text-matrix-text">{i.title}</p>
-              <StatusBadge status={i.priority} />
+          <div key={i.id} className="grid grid-cols-1 items-center gap-3 rounded-xl border border-matrix-primary/20 bg-black/55 px-4 py-3 transition hover:border-matrix-primary/45 hover:bg-matrix-primary/[0.035] lg:grid-cols-[minmax(260px,1.6fr)_minmax(170px,1fr)_150px_90px_110px_140px_110px]">
+            <div className="min-w-0">
+              <p className="truncate font-semibold text-matrix-text">{i.title}</p>
+              {i.description && <p className="mt-1 truncate text-xs text-matrix-muted">{i.description}</p>}
             </div>
-            <p className="text-xs text-matrix-muted mb-1">{i.client_name}</p>
-            <p className="text-xs text-matrix-text/70">{categoryLabels[i.category] || i.category}</p>
-            {i.description && <p className="text-xs text-matrix-muted mt-2 line-clamp-2">{i.description}</p>}
-            <div className="flex items-center justify-between mt-3 pt-3 border-t border-matrix-primary/15">
-              <StatusBadge status={i.status} />
-              <span className="text-xs text-matrix-muted">{formatDateTime(i.created_date)}</span>
-            </div>
-          </button>
+            <p className="truncate text-sm text-matrix-text">{i.client_name}</p>
+            <p className="text-xs text-matrix-muted">{categoryLabels[i.category] || i.category}</p>
+            <StatusBadge status={i.priority} />
+            <StatusBadge status={i.status} />
+            <p className="text-xs text-matrix-muted">{formatDateTime(i.created_date)}</p>
+            <button onClick={() => setSelected(i)} className="rounded-md border border-matrix-primary/25 px-3 py-1.5 text-xs font-medium text-matrix-primary transition hover:bg-matrix-primary/10">
+              Atender
+            </button>
+          </div>
         ))}
       </div>
       {selected && <IncidentAttendModal incident={selected} onClose={() => setSelected(null)} />}
@@ -311,25 +302,17 @@ function HistoryBoard({ completed }) {
     return <EmptyState icon={History} title="Sin historial" description="Aún no has completado órdenes." />;
   }
   return (
-    <div className="space-y-3">
+    <div className="space-y-2 rounded-xl border border-matrix-primary/20 bg-black/60 p-3">
       {completed.map((o) => (
-        <div key={o.id} className="bg-black/60 border border-matrix-primary/20 rounded-xl p-4">
-          <div className="flex items-start justify-between gap-3 mb-2">
-            <div>
-              <p className="text-xs font-mono text-matrix-muted">{o.order_number}</p>
-              <p className="font-semibold text-sm text-matrix-text">{o.client_name} — {typeLabels[o.type] || o.type}</p>
-            </div>
-            <div className="text-right">
-              <StatusBadge status={o.status} />
-              <p className="text-xs text-matrix-muted mt-1">{formatDate(o.completed_date)}</p>
-            </div>
+        <div key={o.id} className="grid grid-cols-1 items-center gap-3 rounded-xl border border-matrix-primary/20 bg-black/55 px-4 py-3 transition hover:border-matrix-primary/45 hover:bg-matrix-primary/[0.035] lg:grid-cols-[minmax(260px,1.6fr)_minmax(170px,1fr)_110px_120px_minmax(260px,1.4fr)]">
+          <div className="min-w-0">
+            <p className="font-mono text-[11px] text-matrix-muted">{o.order_number}</p>
+            <p className="font-semibold text-matrix-text">{typeLabels[o.type] || o.type}</p>
           </div>
-          {o.resolution_notes && (
-            <div className="mt-2 bg-matrix-primary/10 border border-matrix-primary/30 rounded-md p-3">
-              <p className="text-xs font-semibold text-matrix-primary mb-1">Notas de resolución</p>
-              <p className="text-xs text-matrix-text">{o.resolution_notes}</p>
-            </div>
-          )}
+          <p className="truncate text-sm text-matrix-text">{o.client_name}</p>
+          <StatusBadge status={o.status} />
+          <p className="text-xs text-matrix-muted">{formatDate(o.completed_date)}</p>
+          <p className="truncate text-xs text-matrix-muted">{o.resolution_notes || '-'}</p>
         </div>
       ))}
     </div>

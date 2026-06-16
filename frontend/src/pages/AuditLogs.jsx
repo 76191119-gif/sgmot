@@ -179,63 +179,49 @@ export default function AuditLogs() {
         ) : logs.length === 0 ? (
           <EmptyState icon={Shield} title="Sin registros" description="No hay eventos que coincidan con los filtros." />
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead className="border-b border-matrix-primary/20">
-                <tr className="text-[11px] uppercase tracking-wider text-matrix-muted">
-                  <th className="px-4 py-3 text-left font-semibold">Fecha</th>
-                  <th className="px-4 py-3 text-left font-semibold">Usuario</th>
-                  <th className="px-4 py-3 text-left font-semibold">Accion</th>
-                  <th className="px-4 py-3 text-left font-semibold">Descripcion</th>
-                  <th className="px-4 py-3 text-left font-semibold">IP</th>
-                  <th className="px-4 py-3 text-left font-semibold">Dispositivo</th>
-                  <th className="px-4 py-3 text-left font-semibold">Estado</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-matrix-primary/[0.08]">
-                {logs.map((log) => {
-                  const sCfg = STATUS_CFG[log.status] || STATUS_CFG.success;
-                  const SIcon = sCfg.Icon;
-                  const Device = isMobile(log.os) ? Smartphone : Monitor;
-                  return (
-                    <tr key={log.id} className="transition hover:bg-matrix-primary/[0.03]">
-                      <td className="whitespace-nowrap px-4 py-3 text-xs text-matrix-muted">{formatDateTime(log.created_date)}</td>
-                      <td className="px-4 py-3">
-                        {log.user_email ? (
-                          <div className="flex min-w-0 items-center gap-2">
-                            <span className="truncate text-xs font-medium text-matrix-text">{log.user_email}</span>
-                            {log.user_role && (
-                              <span className={`rounded px-1.5 py-0.5 text-[10px] font-semibold uppercase ${ROLE_CFG[log.user_role] || ''}`}>
-                                {log.user_role}
-                              </span>
-                            )}
-                          </div>
-                        ) : (
-                          <span className="text-xs italic text-matrix-muted">anonimo</span>
-                        )}
-                      </td>
-                      <td className="px-4 py-3 text-xs font-medium text-matrix-text">{ACTION_LABELS[log.action] || log.action}</td>
-                      <td className="max-w-[300px] truncate px-4 py-3 text-xs text-matrix-muted" title={log.description}>{log.description}</td>
-                      <td className="px-4 py-3 font-mono text-xs text-matrix-muted">{log.ip_address}</td>
-                      <td className="px-4 py-3">
-                        <div className="flex items-center gap-1.5 text-xs text-matrix-muted">
-                          <Device className="h-3.5 w-3.5" />
-                          <div>
-                            <p>{log.browser}</p>
-                            <p className="text-[10px]">{log.os}</p>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-4 py-3">
-                        <span className={`inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-[11px] font-medium uppercase tracking-wider ${sCfg.cls2} ${sCfg.cls}`}>
-                          <SIcon className="h-3 w-3" /> {sCfg.label}
+          <div className="space-y-2 p-3">
+            {logs.map((log) => {
+              const sCfg = STATUS_CFG[log.status] || STATUS_CFG.success;
+              const SIcon = sCfg.Icon;
+              const Device = isMobile(log.os) ? Smartphone : Monitor;
+              return (
+                <div
+                  key={log.id}
+                  className="grid grid-cols-1 items-center gap-3 rounded-xl border border-matrix-primary/20 bg-black/55 px-4 py-3 transition hover:border-matrix-primary/45 hover:bg-matrix-primary/[0.035] lg:grid-cols-[150px_minmax(220px,1.3fr)_150px_minmax(260px,1.6fr)_120px_minmax(150px,0.9fr)_110px]"
+                >
+                  <p className="whitespace-nowrap text-xs text-matrix-muted">{formatDateTime(log.created_date)}</p>
+
+                  {log.user_email ? (
+                    <div className="flex min-w-0 items-center gap-2">
+                      <span className="truncate text-xs font-medium text-matrix-text">{log.user_email}</span>
+                      {log.user_role && (
+                        <span className={`rounded px-1.5 py-0.5 text-[10px] font-semibold uppercase ${ROLE_CFG[log.user_role] || ''}`}>
+                          {log.user_role}
                         </span>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+                      )}
+                    </div>
+                  ) : (
+                    <span className="text-xs italic text-matrix-muted">anonimo</span>
+                  )}
+
+                  <p className="text-xs font-medium text-matrix-text">{ACTION_LABELS[log.action] || log.action}</p>
+                  <p className="truncate text-xs text-matrix-muted" title={log.description}>{log.description}</p>
+                  <p className="font-mono text-xs text-matrix-muted">{log.ip_address}</p>
+
+                  <div className="flex items-center gap-1.5 text-xs text-matrix-muted">
+                    <Device className="h-3.5 w-3.5 shrink-0" />
+                    <div className="min-w-0">
+                      <p className="truncate">{log.browser}</p>
+                      <p className="truncate text-[10px]">{log.os}</p>
+                    </div>
+                  </div>
+
+                  <span className={`inline-flex w-fit items-center gap-1 rounded-md border px-2 py-0.5 text-[11px] font-medium uppercase tracking-wider ${sCfg.cls2} ${sCfg.cls}`}>
+                    <SIcon className="h-3 w-3" /> {sCfg.label}
+                  </span>
+                </div>
+              );
+            })}
           </div>
         )}
       </div>
