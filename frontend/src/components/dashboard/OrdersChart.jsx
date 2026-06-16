@@ -27,18 +27,19 @@ export default function OrdersChart({ orders = [] }) {
       <div className="h-64">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={data}>
-            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(0,255,65,0.1)" />
-            <XAxis dataKey="day" tick={{ fontSize: 12, fill: '#4a7c59' }} />
-            <YAxis tick={{ fontSize: 12, fill: '#4a7c59' }} allowDecimals={false} />
+            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(203,213,225,0.12)" />
+            <XAxis dataKey="day" tick={{ fontSize: 12, fill: '#CBD5E1' }} />
+            <YAxis tick={{ fontSize: 12, fill: '#CBD5E1' }} allowDecimals={false} />
             <Tooltip
-              contentStyle={{ background: '#0a0a0a', border: '1px solid #00FF41', borderRadius: 8, fontSize: 12, color: '#CCFFCC' }}
+              contentStyle={{ background: '#111827', border: '1px solid #22304A', borderRadius: 8, fontSize: 12, color: '#F8FAFC' }}
             />
             <Legend wrapperStyle={{ fontSize: 12 }} />
-            <Bar dataKey="Total" fill="#00FFFF" radius={[6, 6, 0, 0]} />
-            <Bar dataKey="Completadas" fill="#00FF41" radius={[6, 6, 0, 0]} />
+            <Bar dataKey="Total" fill="#2F6BFF" radius={[6, 6, 0, 0]} />
+            <Bar dataKey="Completadas" fill="#39FF14" radius={[6, 6, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
       </div>
     </div>
   );
 }
+

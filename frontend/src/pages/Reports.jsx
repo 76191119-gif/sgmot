@@ -22,9 +22,9 @@ const PRESETS = [
   { id: '12m', label: 'Ultimos 12 meses' },
   { id: 'custom', label: 'Personalizado' },
 ];
-const COLORS = ['#00FF41', '#00D1FF', '#FFC857', '#FF4D6D', '#8B5CF6', '#39FF14'];
+const COLORS = ['#39FF14', '#2F6BFF', '#F59E0B', '#EF4444', '#8B5CF6', '#38BDF8'];
 const INPUT = 'px-3 py-2 text-sm border border-matrix-primary/30 rounded-md bg-black/55 text-matrix-text focus:outline-none focus:border-matrix-primary transition';
-const CARD = 'rounded-xl border border-matrix-primary/25 bg-[#06110a]/90 p-5 shadow-[0_18px_50px_rgba(0,0,0,0.28),0_0_24px_rgba(0,255,65,0.08)]';
+const CARD = 'cyber-surface rounded-xl border border-[#22304A] p-5';
 
 let highchartsPromise;
 
@@ -231,7 +231,7 @@ function HighchartsBox({ options, height = 340, emptyText = 'Sin datos' }) {
       chartRef.current?.destroy();
       chartRef.current = Highcharts.chart(ref.current, options);
     }).catch(() => {
-      if (ref.current) ref.current.innerHTML = '<div style="color:#7ca889;text-align:center;padding:80px 0">No se pudo cargar Highcharts</div>';
+      if (ref.current) ref.current.innerHTML = '<div style="color:#CBD5E1;text-align:center;padding:80px 0">No se pudo cargar Highcharts</div>';
     });
 
     return () => {
@@ -243,27 +243,27 @@ function HighchartsBox({ options, height = 340, emptyText = 'Sin datos' }) {
 
   if (!hasData) return <EmptyChart text={emptyText} height={height} />;
 
-  return <div ref={ref} className="w-full overflow-hidden rounded-xl border border-matrix-primary/15 bg-[#031107]" style={{ height }} />;
+  return <div ref={ref} className="w-full overflow-hidden rounded-xl border border-[#22304A] bg-[#0B1220]/70 backdrop-blur-xl" style={{ height }} />;
 }
 
 function baseOptions(extra) {
   return {
     chart: {
-      backgroundColor: '#031107',
-      style: { fontFamily: 'Rajdhani, Arial, sans-serif' },
+      backgroundColor: '#0B1220',
+      style: { fontFamily: 'Inter, Arial, sans-serif' },
     },
     credits: { enabled: false },
     title: { text: null },
     colors: COLORS,
     legend: {
-      itemStyle: { color: '#CCFFCC', fontWeight: '600' },
-      itemHoverStyle: { color: '#00FF41' },
+      itemStyle: { color: '#F8FAFC', fontWeight: '600' },
+      itemHoverStyle: { color: '#39FF14' },
     },
     tooltip: {
-      backgroundColor: 'rgba(0,0,0,0.88)',
-      borderColor: '#00FF41',
+      backgroundColor: '#0B1220',
+      borderColor: '#22304A',
       borderRadius: 8,
-      style: { color: '#CCFFCC', fontSize: '12px' },
+      style: { color: '#F8FAFC', fontSize: '12px' },
     },
     ...extra,
   };
@@ -283,23 +283,23 @@ function TimelineChart({ ordersData, incidentsData }) {
 
   const options = useMemo(() => baseOptions({
     chart: {
-      backgroundColor: '#031107',
+      backgroundColor: '#0B1220',
       type: 'column',
       spacing: [18, 18, 18, 18],
-      style: { fontFamily: 'Rajdhani, Arial, sans-serif' },
+      style: { fontFamily: 'Inter, Arial, sans-serif' },
     },
     xAxis: {
       categories: data.map((d) => d.label),
-      lineColor: 'rgba(0,255,65,0.25)',
-      tickColor: 'rgba(0,255,65,0.25)',
-      labels: { style: { color: '#8ddf9c', fontSize: '11px' } },
+      lineColor: '#22304A',
+      tickColor: '#22304A',
+      labels: { style: { color: '#CBD5E1', fontSize: '11px' } },
     },
     yAxis: {
       allowDecimals: false,
       min: 0,
       title: { text: null },
-      gridLineColor: 'rgba(0,255,65,0.10)',
-      labels: { style: { color: '#6ea978', fontSize: '11px' } },
+      gridLineColor: 'rgba(203,213,225,0.12)',
+      labels: { style: { color: '#CBD5E1', fontSize: '11px' } },
     },
     plotOptions: {
       column: { borderRadius: 6, pointPadding: 0.14, groupPadding: 0.16, borderWidth: 0 },
@@ -307,9 +307,9 @@ function TimelineChart({ ordersData, incidentsData }) {
       series: { animation: { duration: 450 } },
     },
     series: [
-      { type: 'areaspline', name: 'Ordenes tendencia', data: data.map((d) => d.orders), color: '#00FF41', fillColor: 'rgba(0,255,65,0.18)', zIndex: 2 },
-      { type: 'column', name: 'Ordenes', data: data.map((d) => d.orders), color: '#00FF41' },
-      { type: 'column', name: 'Incidencias', data: data.map((d) => d.incidents), color: '#FF4D6D' },
+      { type: 'areaspline', name: 'Ordenes tendencia', data: data.map((d) => d.orders), color: '#39FF14', fillColor: 'rgba(57,255,20,0.14)', zIndex: 2 },
+      { type: 'column', name: 'Ordenes', data: data.map((d) => d.orders), color: '#39FF14' },
+      { type: 'column', name: 'Incidencias', data: data.map((d) => d.incidents), color: '#EF4444' },
     ],
   }), [data]);
 
@@ -319,21 +319,21 @@ function TimelineChart({ ordersData, incidentsData }) {
 function PieReport({ data }) {
   const options = useMemo(() => baseOptions({
     chart: {
-      backgroundColor: '#031107',
+      backgroundColor: '#0B1220',
       type: 'pie',
       spacing: [12, 12, 12, 12],
-      style: { fontFamily: 'Rajdhani, Arial, sans-serif' },
+      style: { fontFamily: 'Inter, Arial, sans-serif' },
     },
     tooltip: { pointFormat: '<b>{point.y}</b> ({point.percentage:.0f}%)' },
     plotOptions: {
       pie: {
         innerSize: '58%',
-        borderColor: '#031107',
+        borderColor: '#0B1220',
         borderWidth: 4,
         dataLabels: {
           enabled: true,
           distance: 18,
-          style: { color: '#CCFFCC', fontSize: '11px', textOutline: 'none' },
+          style: { color: '#F8FAFC', fontSize: '11px', textOutline: 'none' },
           format: '{point.name}: {point.y}',
         },
         showInLegend: true,
@@ -348,7 +348,7 @@ function PieReport({ data }) {
 
 function EmptyChart({ text, height = 220 }) {
   return (
-    <div className="flex items-center justify-center rounded-xl border border-dashed border-matrix-primary/20 bg-[#031107] text-sm text-matrix-muted" style={{ minHeight: height }}>
+    <div className="flex items-center justify-center rounded-xl border border-dashed border-[#22304A] bg-[#111827] text-sm text-matrix-muted" style={{ minHeight: height }}>
       {text}
     </div>
   );
@@ -376,3 +376,4 @@ function TechnicianList({ data }) {
     </ul>
   );
 }
+

@@ -214,10 +214,10 @@ export default function Profile() {
     <div className="mx-auto max-w-6xl">
       <div className="grid gap-5 lg:grid-cols-[320px_1fr]">
         <aside className="space-y-5 lg:sticky lg:top-20 lg:self-start">
-          <section className="relative overflow-hidden rounded-2xl border border-matrix-primary/30 bg-[linear-gradient(165deg,rgba(0,255,65,0.10),rgba(0,0,0,0.88)_58%)] p-5 text-center">
+          <section className="cyber-glass rounded-2xl p-5 text-center shadow-2xl">
             <div className="absolute -right-12 -top-12 h-36 w-36 rounded-full bg-matrix-primary/10 blur-3xl" />
             <div className="relative">
-              <div className="mx-auto flex h-32 w-32 items-center justify-center overflow-hidden rounded-2xl border border-matrix-primary/35 bg-black/60 text-3xl font-bold text-matrix-primary shadow-[0_0_28px_rgba(0,255,65,0.16)]">
+              <div className="mx-auto flex h-32 w-32 items-center justify-center overflow-hidden rounded-2xl border border-matrix-primary/35 bg-[#111827] text-3xl font-bold text-matrix-primary glow-green-sm">
                 {photoUrl ? <img src={photoUrl} alt={fullName} className="h-full w-full object-cover" /> : getInitials(fullName || profileUser.full_name || 'Usuario')}
               </div>
 

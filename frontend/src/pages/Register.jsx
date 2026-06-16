@@ -142,19 +142,15 @@ export default function Register() {
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center p-4 relative"
-      style={{
-        backgroundImage: "url('/login-bg.png')",
-        backgroundSize: 'cover', backgroundPosition: 'center', backgroundAttachment: 'fixed',
-      }}
+      className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-[#05070D]"
     >
-      <div className="absolute inset-0 bg-black/70 backdrop-blur-[2px]" />
+      <div className="absolute inset-0 bg-matrix-grid opacity-50" />
 
       <div className="relative w-full max-w-2xl py-6">
         {/* Logo */}
         <div className="text-center mb-5">
           <img src="/logo.png" alt="SGMOT" className="w-20 h-20 mx-auto rounded-full animate-glow-pulse mb-3" />
-          <p className="text-matrix-muted text-xs uppercase tracking-[0.3em]">SGMOT · INPE CABLE</p>
+          <p className="text-matrix-primary text-xs font-bold uppercase tracking-[0.3em]">SGMOT · INPE CABLE</p>
           <p className="text-matrix-text/60 text-xs mt-1">Registro de nuevo cliente</p>
         </div>
 
@@ -164,7 +160,7 @@ export default function Register() {
             <div key={n} className="flex items-center gap-2">
               <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold border-2 transition-all duration-300
                 ${n < step  ? 'bg-matrix-primary text-black border-matrix-primary'
-                : n === step ? 'bg-black text-matrix-primary border-matrix-primary shadow-[0_0_10px_rgba(0,255,65,0.5)]'
+                : n === step ? 'bg-black text-matrix-primary border-matrix-primary shadow-[0_0_10px_rgba(37,99,235,0.22)]'
                              : 'bg-black text-matrix-muted border-matrix-primary/30'}`}>
                 {n < step ? <CheckCircle2 className="w-4 h-4" /> : n}
               </div>
@@ -175,13 +171,13 @@ export default function Register() {
 
         {/* Card principal */}
         <div
-          className="bg-black/88 backdrop-blur-md border border-matrix-primary/40 rounded-2xl p-6 sm:p-8"
-          style={{ boxShadow: '0 0 40px rgba(0,255,65,0.12), inset 0 0 40px rgba(0,255,65,0.02)' }}
+          className="cyber-glass rounded-2xl p-6 sm:p-8 shadow-2xl"
+          style={{ boxShadow: '0 25px 70px rgba(0,0,0,0.55), 0 0 0 1px rgba(57,255,20,0.08)' }}
         >
           {/* Header del paso */}
           <div className="mb-5">
             <div className="flex items-center gap-2 mb-1">
-              <div className="w-1 h-5 rounded-full bg-matrix-primary" style={{ boxShadow: '0 0 8px #00ff41' }} />
+              <div className="w-1 h-5 rounded-full bg-matrix-primary" style={{ boxShadow: 'none' }} />
               <h2 className="text-lg font-bold text-matrix-primary tracking-wider">
                 ▶ {STEP_LABELS[step - 1].title}
               </h2>
@@ -276,7 +272,7 @@ export default function Register() {
 
               <button type="button" onClick={geo.locate} disabled={geo.loading}
                 className="w-full inline-flex items-center justify-center gap-2 bg-matrix-primary text-black rounded-md py-3 text-sm font-bold hover:bg-matrix-hover transition disabled:opacity-50 uppercase tracking-wider"
-                style={{ boxShadow: geo.coords ? '0 0 15px rgba(0,255,65,0.3)' : 'none' }}>
+                style={{ boxShadow: geo.coords ? '0 8px 20px rgba(37,99,235,0.16)' : 'none' }}>
                 {geo.loading
                   ? <><Loader2 className="w-4 h-4 animate-spin" /> Obteniendo ubicación...</>
                   : geo.coords
@@ -381,7 +377,7 @@ export default function Register() {
                     key={p.value}
                     className={`flex cursor-pointer rounded-xl border-2 p-4 transition-all duration-200 items-center gap-4 ${
                       data.plan === p.value
-                        ? 'border-matrix-primary bg-matrix-primary/8 shadow-[0_0_15px_rgba(0,255,65,0.1)]'
+                        ? 'border-matrix-primary bg-matrix-primary/8 shadow-[0_8px_24px_rgba(37,99,235,0.10)]'
                         : 'border-matrix-primary/15 hover:border-matrix-primary/40 hover:bg-matrix-primary/3'
                     }`}
                   >
@@ -394,7 +390,7 @@ export default function Register() {
                       data.plan === p.value ? 'border-matrix-primary' : 'border-matrix-primary/30'
                     }`}>
                       {data.plan === p.value && (
-                        <div className="w-2 h-2 rounded-full bg-matrix-primary" style={{ boxShadow: '0 0 6px #00ff41' }} />
+                        <div className="w-2 h-2 rounded-full bg-matrix-primary" style={{ boxShadow: 'none' }} />
                       )}
                     </div>
                     <Wifi className={`w-5 h-5 shrink-0 transition ${data.plan === p.value ? 'text-matrix-primary' : 'text-matrix-muted/50'}`} />
@@ -470,13 +466,13 @@ export default function Register() {
             {step < 3 ? (
               <button onClick={handleNext}
                 className="px-5 py-2 rounded-md bg-matrix-primary text-black text-sm font-bold hover:bg-matrix-hover transition uppercase tracking-wider"
-                style={{ boxShadow: '0 0 12px rgba(0,255,65,0.3)' }}>
+                style={{ boxShadow: '0 8px 20px rgba(37,99,235,0.16)' }}>
                 Siguiente ▶
               </button>
             ) : (
               <button onClick={handleSubmit} disabled={loading}
                 className="inline-flex items-center gap-2 px-5 py-2 rounded-md bg-matrix-primary text-black text-sm font-bold hover:bg-matrix-hover transition disabled:opacity-50 uppercase tracking-wider"
-                style={{ boxShadow: '0 0 15px rgba(0,255,65,0.4)' }}>
+                style={{ boxShadow: '0 8px 24px rgba(37,99,235,0.20)' }}>
                 {loading
                   ? <><Loader2 className="w-4 h-4 animate-spin" /> Creando cuenta...</>
                   : <><CheckCircle2 className="w-4 h-4" /> Crear mi cuenta</>}
@@ -493,3 +489,5 @@ export default function Register() {
     </div>
   );
 }
+
+

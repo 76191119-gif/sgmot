@@ -97,15 +97,9 @@ export default function CompleteProfile() {
 
   return (
     <div
-      className="min-h-screen p-4 relative"
-      style={{
-        backgroundImage: "url('/login-bg.png')",
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundAttachment: 'fixed',
-      }}
+      className="min-h-screen p-4 relative overflow-hidden bg-[#05070D]"
     >
-      <div className="absolute inset-0 bg-black/75 backdrop-blur-[2px]" />
+      <div className="absolute inset-0 bg-matrix-grid opacity-50" />
 
       <div className="relative max-w-3xl mx-auto py-6">
         {/* Header */}
@@ -113,7 +107,7 @@ export default function CompleteProfile() {
           <div className="flex items-center gap-3">
             <img src="/logo.png" alt="SGMOT" className="w-12 h-12 rounded-full" />
             <div>
-              <p className="text-matrix-muted text-[10px] uppercase tracking-[0.3em]">SGMOT</p>
+              <p className="text-matrix-primary text-[10px] font-bold uppercase tracking-[0.3em]">SGMOT</p>
               <p className="text-matrix-text text-sm">Hola, {user?.full_name}</p>
             </div>
           </div>
@@ -126,8 +120,8 @@ export default function CompleteProfile() {
         </div>
 
         <div
-          className="bg-black/85 backdrop-blur-md border border-matrix-primary/40 rounded-2xl p-6 sm:p-8"
-          style={{ boxShadow: '0 0 30px rgba(0,255,65,0.15), inset 0 0 30px rgba(0,255,65,0.03)' }}
+          className="cyber-glass rounded-2xl p-6 sm:p-8 shadow-2xl"
+          style={{ boxShadow: '0 25px 70px rgba(0,0,0,0.55), 0 0 0 1px rgba(57,255,20,0.08)' }}
         >
           <h1 className="text-xl font-brand font-bold text-matrix-primary text-glow-green tracking-wider">
             ▶ COMPLETA TU PERFIL
@@ -260,3 +254,4 @@ export default function CompleteProfile() {
     </div>
   );
 }
+

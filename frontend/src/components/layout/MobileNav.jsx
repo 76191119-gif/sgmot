@@ -41,7 +41,7 @@ export default function MobileNav() {
       {/* Drawer */}
       {open && (
         <div className="fixed inset-0 z-50">
-          <div className="absolute inset-0 bg-black/60" onClick={() => setOpen(false)} />
+          <div className="absolute inset-0 bg-black/70" onClick={() => setOpen(false)} />
           <div className="absolute inset-y-0 right-0 w-72 bg-sidebar text-sidebar-foreground flex flex-col">
             <div className="flex items-center justify-between px-4 py-4 border-b border-sidebar-border">
               <p className="font-semibold">{user?.full_name}</p>

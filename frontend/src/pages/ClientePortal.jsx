@@ -52,8 +52,8 @@ export default function ClientePortal() {
   return (
     <div>
       {/* Header Matrix */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-black via-[#001a05] to-black border border-matrix-primary/30 rounded-2xl p-6 mb-6 bg-matrix-grid">
-        <div className="absolute inset-0 opacity-30" style={{ background: 'radial-gradient(circle at 80% 20%, rgba(0,255,255,0.15) 0%, transparent 50%)' }} />
+      <div className="cyber-glass relative overflow-hidden rounded-2xl border border-[#22304A] p-6 mb-6 bg-matrix-grid shadow-2xl">
+        <div className="absolute inset-0 opacity-60" style={{ background: 'radial-gradient(circle at 80% 20%, rgba(57,255,20,0.10) 0%, transparent 50%)' }} />
         <div className="relative flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
             <p className="text-[10px] text-matrix-muted uppercase tracking-[0.3em] font-mono mb-1">▶ PORTAL CLIENTE</p>
@@ -66,7 +66,7 @@ export default function ClientePortal() {
                   </span>
                   <StatusBadge status={myClient.status} />
                 </div>
-                <p className="text-sm text-matrix-text/70 mt-2 flex items-center gap-1.5">
+                <p className="text-sm text-matrix-muted mt-2 flex items-center gap-1.5">
                   <MapPin className="w-3.5 h-3.5" /> {myClient.address}
                 </p>
               </>
@@ -427,3 +427,4 @@ function ReportProblemModal({ client, onClose }) {
     </Modal>
   );
 }
+

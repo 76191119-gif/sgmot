@@ -5,10 +5,10 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        brand: ['Orbitron', 'sans-serif'],
+        brand: ['Inter', 'Rajdhani', 'sans-serif'],
         rajdhani: ['Rajdhani', 'sans-serif'],
         mono: ['JetBrains Mono', 'Share Tech Mono', 'monospace'],
-        inter: ['Rajdhani', 'Inter', 'sans-serif'],
+        inter: ['Inter', 'Rajdhani', 'sans-serif'],
       },
       colors: {
         border: 'hsl(var(--border))',
@@ -55,16 +55,16 @@ export default {
           ring: 'hsl(var(--sidebar-ring))',
         },
         matrix: {
-          bg:        '#000000',
-          surface:   '#111111',
-          panel:     '#0D0D0D',
-          primary:   '#00FF41',
-          hover:     '#39FF14',
-          secondary: '#00FFFF',
-          text:      '#CCFFCC',
-          muted:     '#7C9A7C',
-          danger:    '#FF4444',
-          warning:   '#FFC857',
+          bg:        '#05070D',
+          surface:   '#0B1220',
+          panel:     '#111827',
+          primary:   '#39FF14',
+          hover:     '#1ED760',
+          secondary: '#2F6BFF',
+          text:      '#F8FAFC',
+          muted:     '#CBD5E1',
+          danger:    '#EF4444',
+          warning:   '#F59E0B',
         },
       },
       borderRadius: {

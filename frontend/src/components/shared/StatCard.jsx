@@ -10,7 +10,7 @@ const COLOR_MAP = {
 export default function StatCard({ label, value, subtitle, icon: Icon, color = 'primary' }) {
   const colors = COLOR_MAP[color] || COLOR_MAP.primary;
   return (
-    <div className="bg-black/60 border border-matrix-primary/20 rounded-xl p-5 hover:border-matrix-primary/50 transition-all">
+    <div className="cyber-surface border border-matrix-primary/20 rounded-xl p-5 transition-all hover:border-matrix-primary/50 hover:-translate-y-0.5">
       <div className="flex items-start justify-between gap-3">
         <div className="flex-1 min-w-0">
           <p className="text-xs font-medium text-matrix-muted uppercase tracking-widest">{label}</p>

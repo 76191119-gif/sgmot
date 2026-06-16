@@ -14,7 +14,7 @@ export default function AppLayout() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen bg-background">
       {isMobile ? <MobileNav /> : <Sidebar />}
       <div className={isMobile ? 'pt-16' : 'ml-[250px]'}>
         <TopBar />

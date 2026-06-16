@@ -47,15 +47,22 @@ export default function Login() {
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center p-4 relative"
-      style={{
-        backgroundImage: "url('/login-bg.png')",
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundAttachment: 'fixed',
-      }}
+      className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-[#05070D]"
     >
-      <div className="absolute inset-0 bg-black/65 backdrop-blur-[2px]" />
+      <video
+        className="absolute inset-0 h-full w-full object-cover opacity-75"
+        src="/cyberpunk.mp4"
+        autoPlay
+        loop
+        muted
+        playsInline
+        preload="auto"
+        aria-hidden="true"
+      />
+      <div className="absolute inset-0 bg-[#05070D]/24" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(5,7,13,0.08)_42%,rgba(5,7,13,0.58)_100%)]" />
+      <div className="absolute inset-0 bg-matrix-grid opacity-35 mix-blend-screen" />
+      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(57,255,20,0.05),transparent_24%,rgba(47,107,255,0.06)_100%)]" />
 
       <div className="relative w-full max-w-md">
         {/* Logo + título */}
@@ -65,14 +72,13 @@ export default function Login() {
             alt="SGMOT"
             className="w-28 h-28 mx-auto animate-glow-pulse rounded-full"
           />
-          <p className="text-matrix-muted text-xs uppercase tracking-[0.3em] mt-3">SGMOT</p>
+          <p className="text-matrix-primary text-xs font-bold uppercase tracking-[0.3em] mt-3">SGMOT</p>
           <p className="text-matrix-text/70 text-xs mt-1">Sistema de Gestión y Monitoreo de Órdenes de Trabajo</p>
         </div>
 
         {/* Card */}
         <div
-          className="bg-black/80 backdrop-blur-md border border-matrix-primary/40 rounded-2xl p-7 shadow-2xl"
-          style={{ boxShadow: '0 0 30px rgba(0,255,65,0.15), inset 0 0 30px rgba(0,255,65,0.03)' }}
+          className="login-glass rounded-2xl p-7 shadow-2xl"
         >
           <h2 className="text-lg font-brand font-bold mb-1 text-matrix-primary text-glow-green text-center tracking-wider">
             ACCESO AL SISTEMA
@@ -162,3 +168,4 @@ export default function Login() {
     </div>
   );
 }
+

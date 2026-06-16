@@ -84,7 +84,7 @@ const TYPE_CONFIG = {
     color: 'text-matrix-primary',
     bg: 'bg-matrix-primary/10',
     border: 'border-matrix-primary/35',
-    ring: 'shadow-[0_0_18px_rgba(0,255,65,0.16)]',
+    ring: 'shadow-[0_0_18px_rgba(37,99,235,0.16)]',
     label: 'Sistema',
   },
   info: {
