@@ -189,13 +189,6 @@ http://localhost:5173
 http://127.0.0.1:5173
 ```
 
-El modo demo esta desactivado por defecto. Para pruebas locales:
-
-```env
-VITE_ALLOW_GOOGLE_DEMO=true
-SGMOT_ALLOW_GOOGLE_DEMO=true
-```
-
 ---
 
 ## Configuracion Backend
@@ -212,7 +205,6 @@ DB_NAME=sgmot
 DB_USER=root
 DB_PASSWORD=
 
-SGMOT_ALLOW_GOOGLE_DEMO=false
 ```
 
 En desarrollo local, los valores por defecto funcionan con XAMPP.

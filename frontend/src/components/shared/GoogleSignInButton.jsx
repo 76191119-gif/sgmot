@@ -1,9 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '';
-const DEMO_GOOGLE_CLIENT_ID = '1234567890-abcdefghijklmnopqrstuvwxyz123456.apps.googleusercontent.com';
-const ALLOW_GOOGLE_DEMO = import.meta.env.VITE_ALLOW_GOOGLE_DEMO === 'true';
-const GOOGLE_ENABLED = Boolean(GOOGLE_CLIENT_ID) && (GOOGLE_CLIENT_ID !== DEMO_GOOGLE_CLIENT_ID || ALLOW_GOOGLE_DEMO);
+const GOOGLE_ENABLED = Boolean(GOOGLE_CLIENT_ID);
 
 export default function GoogleSignInButton({ onCredential, onError, text = 'signin_with' }) {
   const ref = useRef(null);
@@ -14,20 +12,6 @@ export default function GoogleSignInButton({ onCredential, onError, text = 'sign
     if (!GOOGLE_ENABLED) return;
     setReady(false);
     setLoadError('');
-
-    if (GOOGLE_CLIENT_ID === DEMO_GOOGLE_CLIENT_ID && ALLOW_GOOGLE_DEMO) {
-      window.handleGoogleSignIn = () => onCredential(generateMockGoogleToken());
-      if (ref.current) {
-        ref.current.innerHTML = `
-          <button type="button" onclick="window.handleGoogleSignIn()"
-            style="width:320px;height:40px;background:#4285f4;color:white;border:0;border-radius:4px;font-family:Roboto,sans-serif;font-size:14px;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">
-            Continuar con Google (demo)
-          </button>
-        `;
-      }
-      setReady(true);
-      return;
-    }
 
     let script = document.getElementById('google-gsi-client');
     if (!script) {
@@ -85,21 +69,6 @@ export default function GoogleSignInButton({ onCredential, onError, text = 'sign
       }, { once: true });
     }
   }, [onCredential, text]);
-
-  const generateMockGoogleToken = () => {
-    const header = btoa(JSON.stringify({ alg: 'RS256', typ: 'JWT' }));
-    const payload = btoa(JSON.stringify({
-      iss: 'accounts.google.com',
-      aud: GOOGLE_CLIENT_ID,
-      sub: '1234567890',
-      email: 'usuario.demo@gmail.com',
-      email_verified: true,
-      name: 'Usuario Demo Google',
-      iat: Math.floor(Date.now() / 1000),
-      exp: Math.floor(Date.now() / 1000) + 3600,
-    }));
-    return `${header}.${payload}.${btoa('mock_signature_for_demo')}`;
-  };
 
   if (!GOOGLE_ENABLED) {
     return (

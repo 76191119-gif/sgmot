@@ -1,11 +1,13 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { api } from '@/api/localClient';
+import ConfirmDialog from '@/components/shared/ConfirmDialog';
 
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [isLoadingAuth, setIsLoadingAuth] = useState(true);
+  const [confirmLogoutOpen, setConfirmLogoutOpen] = useState(false);
 
   useEffect(() => {
     let alive = true;
@@ -76,11 +78,15 @@ export function AuthProvider({ children }) {
     setUser(updated);
   };
 
-  const logout = () => {
+  const finishLogout = () => {
     localStorage.removeItem('sgmot_token');
     localStorage.removeItem('sgmot_user');
     setUser(null);
     window.location.href = '/login';
+  };
+
+  const logout = () => {
+    setConfirmLogoutOpen(true);
   };
 
   return (
@@ -91,6 +97,14 @@ export function AuthProvider({ children }) {
       }}
     >
       {children}
+      <ConfirmDialog
+        open={confirmLogoutOpen}
+        onClose={() => setConfirmLogoutOpen(false)}
+        onConfirm={finishLogout}
+        title="Cerrar sesion"
+        message="¿Realmente quieres cerrar sesion? Tendras que iniciar sesion nuevamente para volver al sistema."
+        confirmText="Cerrar sesion"
+      />
     </AuthContext.Provider>
   );
 }

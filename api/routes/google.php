@@ -14,83 +14,12 @@ if (!$idToken) {
     sendResponse(['error' => 'Falta id_token'], 400);
 }
 
-$allowDemoGoogle = sgmot_env_value('SGMOT_ALLOW_GOOGLE_DEMO', 'false') === 'true';
-
-// Detectar si es un token simulado (para desarrollo)
-if ($allowDemoGoogle && strpos($idToken, '.') !== false) {
-    $parts = explode('.', $idToken);
-    if (count($parts) === 3) {
-        try {
-            $payload = json_decode(base64_decode($parts[1]), true);
-            if ($payload && isset($payload['email']) && $payload['email'] === 'usuario.demo@gmail.com') {
-                // Es un token simulado, procesarlo directamente
-                $email = 'usuario.demo@gmail.com';
-                $fullName = 'Usuario Demo Google';
-                $googleSub = 'demo_google_sub_123456';
-                
-                // Buscar usuario existente
-                $stmt = $db->prepare("SELECT * FROM users WHERE email = ?");
-                $stmt->execute([$email]);
-                $user = $stmt->fetch(PDO::FETCH_ASSOC);
-
-                $isNewUser = false;
-                if (!$user) {
-                    // Crear nuevo usuario como cliente, profile_complete=0
-                    $randomPwd = bin2hex(random_bytes(16));
-                    $hash = password_hash($randomPwd, PASSWORD_BCRYPT);
-                    $ins = $db->prepare("INSERT INTO users (full_name, email, password, role, provider, google_sub, profile_complete)
-                                         VALUES (?, ?, ?, 'cliente', 'google', ?, 0)");
-                    $ins->execute([$fullName, $email, $hash, $googleSub]);
-                    $userId = (int)$db->lastInsertId();
-
-                    $stmt = $db->prepare("SELECT * FROM users WHERE id = ?");
-                    $stmt->execute([$userId]);
-                    $user = $stmt->fetch(PDO::FETCH_ASSOC);
-                    $isNewUser = true;
-
-                    audit_log($db, 'register', 'user', $userId, "Registro con Google (DEMO): $email", 'success', $user);
-                    // Notificar a admins
-                    notify_role($db, 'admin', 'order_new',
-                        '🎯 Nuevo cliente registrado (Google Demo)',
-                        "$fullName ($email) inició sesión con Google en modo demo. Debe completar su perfil.",
-                        '/clients', 'user', $userId);
-                    notify_user($db, $userId, 'system',
-                        "¡Bienvenido, $fullName!",
-                        "Tu cuenta fue creada con Google. Completa tus datos para empezar.",
-                        '/complete-profile');
-                } else {
-                    audit_log($db, 'login', 'user', $user['id'], "Login con Google (DEMO): $email", 'success', $user);
-                }
-
-                // Verificar si su perfil de cliente está completo
-                $profileComplete = (int)$user['profile_complete'] === 1;
-                if ($user['role'] === 'cliente' && $profileComplete) {
-                    // Asegurar que también tiene ficha en clients
-                    if (!findCurrentClient($db, $user)) {
-                        // Tiene profile_complete=1 pero no hay ficha → marcar incompleto
-                        $db->prepare("UPDATE users SET profile_complete=0 WHERE id=?")->execute([$user['id']]);
-                        $profileComplete = false;
-                    }
-                }
-
-                sendResponse([
-                    'token'            => generateToken($user),
-                    'user'             => [
-                        'id'        => (int)$user['id'],
-                        'full_name' => $user['full_name'],
-                        'email'     => $user['email'],
-                        'role'      => $user['role'],
-                        'provider'  => $user['provider'] ?? 'local',
-                    ],
-                    'is_new_user'      => $isNewUser,
-                    'profile_complete' => $profileComplete,
-                ]);
-                return;
-            }
-        } catch (Exception $e) {
-            // Si falla el parsing, continuar con verificación normal
-        }
-    }
+function isLocalRequest() {
+    $ip = $_SERVER['REMOTE_ADDR'] ?? '';
+    $host = $_SERVER['HTTP_HOST'] ?? '';
+    return in_array($ip, ['127.0.0.1', '::1', 'localhost'], true)
+        || str_starts_with($host, 'localhost')
+        || str_starts_with($host, '127.0.0.1');
 }
 
 // Verificar token con Google (modo producción)
@@ -101,6 +30,7 @@ if (!defined('GOOGLE_CLIENT_ID') || !GOOGLE_CLIENT_ID) {
 
 function fetchGoogleTokenInfo($idToken) {
     $url = "https://oauth2.googleapis.com/tokeninfo?id_token=" . urlencode($idToken);
+    $allowLocalSslFallback = isLocalRequest();
 
     if (function_exists('curl_init')) {
         $ch = curl_init($url);
@@ -114,6 +44,21 @@ function fetchGoogleTokenInfo($idToken) {
         curl_close($ch);
         if ($body !== false && $body !== '') return $body;
         error_log('google tokeninfo curl error: ' . $err);
+
+        if ($allowLocalSslFallback) {
+            $ch = curl_init($url);
+            curl_setopt_array($ch, [
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_TIMEOUT => 8,
+                CURLOPT_SSL_VERIFYPEER => false,
+                CURLOPT_SSL_VERIFYHOST => false,
+            ]);
+            $body = curl_exec($ch);
+            $fallbackErr = curl_error($ch);
+            curl_close($ch);
+            if ($body !== false && $body !== '') return $body;
+            error_log('google tokeninfo local curl fallback error: ' . $fallbackErr);
+        }
     }
 
     $ctx = stream_context_create([
