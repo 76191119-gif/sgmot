@@ -1,0 +1,100 @@
+# ============================================
+# SGMOT ROOT - Apache Configuration
+# ============================================
+
+# Seguridad: Deshabilitar índice
+Options -Indexes
+
+# Habilitar reescrituras
+RewriteEngine On
+
+# ============================================
+# HTTPS en Producción
+# ============================================
+# Descomenta con SSL válido
+# RewriteCond %{HTTPS} off
+# RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# ============================================
+# Headers de Seguridad
+# ============================================
+<IfModule mod_headers.c>
+    # Prevenir clickjacking
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-XSS-Protection "1; mode=block"
+
+    # HSTS
+    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+
+    # Referrer policy
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+
+    # CSP (ajustar según necesidad)
+    Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' oauth2.googleapis.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self'; connect-src 'self' oauth2.googleapis.com"
+
+    # Permissions
+    Header always set Permissions-Policy "geolocation=self, microphone=(), camera=()"
+</IfModule>
+
+# ============================================
+# Compresión GZIP
+# ============================================
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html
+    AddOutputFilterByType DEFLATE text/plain
+    AddOutputFilterByType DEFLATE text/css
+    AddOutputFilterByType DEFLATE application/javascript
+    AddOutputFilterByType DEFLATE application/json
+    AddOutputFilterByType DEFLATE image/svg+xml
+</IfModule>
+
+# ============================================
+# Cache Control
+# ============================================
+<IfModule mod_expires.c>
+    ExpiresActive On
+
+    # HTML - no cachear
+    ExpiresByType text/html "now"
+
+    # Assets - 1 año
+    ExpiresByType image/jpg "access plus 1 year"
+    ExpiresByType image/png "access plus 1 year"
+    ExpiresByType image/webp "access plus 1 year"
+    ExpiresByType application/javascript "access plus 1 year"
+    ExpiresByType text/css "access plus 1 year"
+    ExpiresByType font/woff2 "access plus 1 year"
+</IfModule>
+
+# ============================================
+# Prevenir acceso a archivos sensibles
+# ============================================
+<FilesMatch "^\.|\.env|\.git|\.htaccess|package\.json|\.md$|security-check">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# ============================================
+# Bloquear acceso a directorios sensibles
+# ============================================
+RewriteRule ^\.env - [F,L]
+RewriteRule ^\.git - [F,L]
+RewriteRule ^node_modules - [F,L]
+RewriteRule ^\.gitignore - [F,L]
+
+# ============================================
+# Prevenir acceso a archivos de configuración
+# ============================================
+<DirectoryMatch "^\.|database|logs">
+    Order allow,deny
+    Deny from all
+</DirectoryMatch>
+
+# ============================================
+# Permitir acceso a archivos estáticos
+# ============================================
+<FilesMatch "\.(jpg|jpeg|png|gif|ico|css|js|svg|webp|woff|woff2|ttf|eot|mp4|webm)$">
+    Order allow,deny
+    Allow from all
+</FilesMatch>

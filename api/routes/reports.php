@@ -18,7 +18,11 @@ $dateFormats = [
     'month' => '%Y-%m',
     'year'  => '%Y',
 ];
-$fmt = $dateFormats[$group] ?? $dateFormats['day'];
+
+// Validar $group contra whitelist
+if (!isset($dateFormats[$group])) {
+    sendResponse(['error' => 'Agrupacion invalida. Use: day, month o year'], 400);
+}
 
 // GET /reports/summary  → KPIs filtrados por rango
 if ($action === 'summary') {
@@ -55,8 +59,13 @@ if ($action === 'summary') {
 
 // GET /reports/orders-timeline  → órdenes agrupadas por día/mes/año
 if ($action === 'orders-timeline') {
+    $dateGroup = match($group) {
+        'month' => "DATE_FORMAT(created_date, '%Y-%m')",
+        'year' => "DATE_FORMAT(created_date, '%Y')",
+        default => "DATE_FORMAT(created_date, '%Y-%m-%d')",
+    };
     $sql = "SELECT
-        DATE_FORMAT(created_date, '$fmt') AS period,
+        $dateGroup AS period,
         COUNT(*) AS total,
         SUM(CASE WHEN status='completado' THEN 1 ELSE 0 END) AS completed,
         SUM(CASE WHEN status='cancelado'  THEN 1 ELSE 0 END) AS cancelled
@@ -69,8 +78,13 @@ if ($action === 'orders-timeline') {
 
 // GET /reports/incidents-timeline
 if ($action === 'incidents-timeline') {
+    $dateGroup = match($group) {
+        'month' => "DATE_FORMAT(created_date, '%Y-%m')",
+        'year' => "DATE_FORMAT(created_date, '%Y')",
+        default => "DATE_FORMAT(created_date, '%Y-%m-%d')",
+    };
     $sql = "SELECT
-        DATE_FORMAT(created_date, '$fmt') AS period,
+        $dateGroup AS period,
         COUNT(*) AS total,
         SUM(CASE WHEN status='resuelta' THEN 1 ELSE 0 END) AS resolved
         FROM incidents $whereDate

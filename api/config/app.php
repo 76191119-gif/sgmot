@@ -35,8 +35,21 @@ define('APP_TIMEZONE', sgmot_env_value('APP_TIMEZONE', 'America/Lima'));
 date_default_timezone_set(APP_TIMEZONE);
 
 define('GOOGLE_CLIENT_ID', sgmot_env_value('GOOGLE_CLIENT_ID'));
-define('JWT_SECRET', sgmot_env_value('JWT_SECRET', 'SGMOT_CHANGE_THIS_SECRET_IN_ENV'));
-define('CORS_ALLOWED_ORIGIN', sgmot_env_value('CORS_ALLOWED_ORIGIN', '*'));
+
+// JWT_SECRET DEBE estar configurado
+$jwtSecret = sgmot_env_value('JWT_SECRET');
+if (!$jwtSecret || $jwtSecret === 'SGMOT_CHANGE_THIS_SECRET_IN_ENV' || strlen($jwtSecret) < 32) {
+    error_log('CRITICAL: JWT_SECRET no está configurado o es débil. Debe tener al menos 32 caracteres aleatorios.');
+    die('Error de configuración del servidor: JWT_SECRET inválido.');
+}
+define('JWT_SECRET', $jwtSecret);
+
+// CORS DEBE restringirse en producción
+$corsOrigin = sgmot_env_value('CORS_ALLOWED_ORIGIN', 'http://localhost:5173');
+if ($corsOrigin === '*') {
+    error_log('WARNING: CORS_ALLOWED_ORIGIN está abierto a todos. En producción debe ser específico.');
+}
+define('CORS_ALLOWED_ORIGIN', $corsOrigin);
 define('DB_HOST', sgmot_env_value('DB_HOST', 'localhost'));
 define('DB_NAME', sgmot_env_value('DB_NAME', 'sgmot'));
 define('DB_USER', sgmot_env_value('DB_USER', 'root'));

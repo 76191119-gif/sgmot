@@ -26,12 +26,14 @@ $stmt->execute([$email]);
 $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if (!$user) {
-    audit_log($db, 'login_failed', null, null, "Email no registrado: $email", 'failed', ['email' => $email]);
+    // NO revelar si el email existe (información disclosure)
+    audit_log($db, 'login_failed', null, null, 'Email o contraseña inválidos', 'failed', ['email' => $email]);
     sendResponse(['error' => 'Credenciales incorrectas'], 401);
 }
 
 if (!password_verify($password, $user['password'])) {
-    audit_log($db, 'login_failed', null, null, "Contrasena incorrecta para $email", 'failed', $user);
+    // NO revelar datos sensibles en logs públicos
+    audit_log($db, 'login_failed', null, null, 'Email o contraseña inválidos', 'failed', ['email' => $email]);
     sendResponse(['error' => 'Credenciales incorrectas'], 401);
 }
 

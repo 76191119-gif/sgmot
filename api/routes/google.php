@@ -30,41 +30,41 @@ if (!defined('GOOGLE_CLIENT_ID') || !GOOGLE_CLIENT_ID) {
 
 function fetchGoogleTokenInfo($idToken) {
     $url = "https://oauth2.googleapis.com/tokeninfo?id_token=" . urlencode($idToken);
-    $allowLocalSslFallback = isLocalRequest();
+    $isLocal = isLocalRequest();
 
     if (function_exists('curl_init')) {
         $ch = curl_init($url);
         curl_setopt_array($ch, [
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_TIMEOUT => 8,
+            CURLOPT_CONNECTTIMEOUT => 5,
             CURLOPT_SSL_VERIFYPEER => true,
+            CURLOPT_SSL_VERIFYHOST => 2,
+            CURLOPT_CAINFO => $isLocal ? null : '/etc/ssl/certs/ca-certificates.crt', // Path estándar Linux
         ]);
         $body = curl_exec($ch);
         $err = curl_error($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
-        if ($body !== false && $body !== '') return $body;
-        error_log('google tokeninfo curl error: ' . $err);
 
-        if ($allowLocalSslFallback) {
-            $ch = curl_init($url);
-            curl_setopt_array($ch, [
-                CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_TIMEOUT => 8,
-                CURLOPT_SSL_VERIFYPEER => false,
-                CURLOPT_SSL_VERIFYHOST => false,
-            ]);
-            $body = curl_exec($ch);
-            $fallbackErr = curl_error($ch);
-            curl_close($ch);
-            if ($body !== false && $body !== '') return $body;
-            error_log('google tokeninfo local curl fallback error: ' . $fallbackErr);
+        if ($body !== false && $body !== '' && $httpCode == 200) {
+            return $body;
         }
+
+        error_log('google tokeninfo curl error: ' . $err . ' (HTTP ' . $httpCode . ')');
     }
 
-    $ctx = stream_context_create([
-        'http' => ['timeout' => 8, 'ignore_errors' => true],
-    ]);
-    return @file_get_contents($url, false, $ctx);
+    // NO desactivar SSL verification en fallback. En local, permitir pero registrar
+    if ($isLocal) {
+        error_log('WARNING: Usando fallback sin SSL verification en desarrollo local');
+        $ctx = stream_context_create([
+            'ssl' => ['verify_peer' => false, 'verify_peer_name' => false],
+            'http' => ['timeout' => 8, 'ignore_errors' => true],
+        ]);
+        return @file_get_contents($url, false, $ctx);
+    }
+
+    return null;
 }
 
 $resp = fetchGoogleTokenInfo($idToken);

@@ -7,9 +7,33 @@ function validateProfilePhoto($photo) {
     if (!is_string($photo) || !preg_match('/^data:image\/(png|jpe?g|webp);base64,/i', $photo)) {
         sendResponse(['error' => 'Foto no valida. Usa PNG, JPG o WEBP.'], 400);
     }
-    if (strlen($photo) > 700000) {
+
+    // Extraer datos base64
+    if (!preg_match('/^data:image\/[^;]+;base64,(.+)$/i', $photo, $matches)) {
+        sendResponse(['error' => 'Formato base64 inválido'], 400);
+    }
+
+    $photoData = $matches[1];
+
+    // Decodificar y validar tamaño REAL (no solo base64)
+    $binary = base64_decode($photoData, true);
+    if ($binary === false) {
+        sendResponse(['error' => 'Base64 inválido'], 400);
+    }
+
+    if (strlen($binary) > 500000) {  // 500 KB límite real
         sendResponse(['error' => 'La foto es muy pesada. Usa una imagen menor a 500 KB.'], 400);
     }
+
+    // Validar que sea realmente una imagen
+    $finfo = finfo_open(FILEINFO_MIME_TYPE);
+    $mime = finfo_buffer($finfo, $binary);
+    finfo_close($finfo);
+
+    if (!in_array($mime, ['image/png', 'image/jpeg', 'image/webp'], true)) {
+        sendResponse(['error' => 'Tipo de imagen no soportado. Usa PNG, JPG o WEBP.'], 400);
+    }
+
     return $photo;
 }
 

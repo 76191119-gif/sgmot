@@ -38,8 +38,9 @@ if ($method === 'GET' && !$id) {
     $where = $filters ? 'WHERE ' . implode(' AND ', $filters) : '';
     $limit = min(max((int)($_GET['limit'] ?? 200), 1), 500);
 
-    $stmt = $db->prepare("SELECT * FROM audit_logs $where ORDER BY created_date DESC LIMIT $limit");
-    $stmt->execute($params);
+    // Usar LIMIT con placeholder para evitar SQL injection
+    $stmt = $db->prepare("SELECT * FROM audit_logs $where ORDER BY created_date DESC LIMIT ?");
+    $stmt->execute(array_merge($params, [$limit]));
     $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     $statsStmt = $db->prepare("SELECT

@@ -1,10 +1,82 @@
+# ============================================
+# SGMOT API - Apache Configuration
+# ============================================
+
+# Seguridad: Deshabilitar índice de directorios
 Options -Indexes
+
+# Habilitar reescrituras
 RewriteEngine On
 
-# Permitir paso del header Authorization a PHP
+# ============================================
+# HTTPS en Producción
+# ============================================
+# Descomenta en producción con SSL válido
+# RewriteCond %{HTTPS} off
+# RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# ============================================
+# Headers de Seguridad (Apache mod_headers)
+# ============================================
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-Frame-Options "DENY"
+    Header always set X-XSS-Protection "1; mode=block"
+    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+</IfModule>
+
+# ============================================
+# Compresión GZIP (rendimiento)
+# ============================================
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE application/json
+    AddOutputFilterByType DEFLATE application/javascript
+    AddOutputFilterByType DEFLATE text/javascript
+    AddOutputFilterByType DEFLATE text/css
+    AddOutputFilterByType DEFLATE text/plain
+    AddOutputFilterByType DEFLATE text/xml
+</IfModule>
+
+# ============================================
+# Cache Control (navegador)
+# ============================================
+<IfModule mod_expires.c>
+    ExpiresActive On
+    # API responses - no cachear
+    ExpiresByType application/json "now"
+    # 1 año para assets inmutables
+    ExpiresByType image/jpg "access plus 1 year"
+    ExpiresByType image/png "access plus 1 year"
+    ExpiresByType image/gif "access plus 1 year"
+</IfModule>
+
+# ============================================
+# Router - Pasar Authorization header a PHP
+# ============================================
 RewriteCond %{HTTP:Authorization} ^(.*)
 RewriteRule .* - [E=HTTP_AUTHORIZATION:%1]
 
+# ============================================
+# Router - Reescribir todas las solicitudes a index.php
+# ============================================
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^(.*)$ index.php [QSA,L]
+
+# ============================================
+# Prevenir acceso a archivos sensibles
+# ============================================
+<FilesMatch "^\.env|\.env\.production|\.git|security-check\.php|config">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# ============================================
+# Permitir acceso a archivos públicos
+# ============================================
+<FilesMatch "\.(json|js|css|png|jpg|gif|svg|woff|woff2|ttf)$">
+    Order allow,deny
+    Allow from all
+</FilesMatch>

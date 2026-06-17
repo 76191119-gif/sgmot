@@ -4,22 +4,38 @@ require_once __DIR__ . '/helpers/response.php';
 require_once __DIR__ . '/helpers/auth.php';
 require_once __DIR__ . '/helpers/audit.php';
 require_once __DIR__ . '/helpers/identity.php';
+require_once __DIR__ . '/helpers/validators.php';
+require_once __DIR__ . '/helpers/csrf.php';
 require_once __DIR__ . '/config/database.php';
 
+// Validación básica de solicitud
+$method = $_SERVER['REQUEST_METHOD'];
+$uri    = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+$uri    = preg_replace('#^/sgmot/api#', '', $uri);
+
 // CORS preflight
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+if ($method === 'OPTIONS') {
     header('Access-Control-Allow-Origin: ' . CORS_ALLOWED_ORIGIN);
     header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
-    header('Access-Control-Allow-Headers: Content-Type, Authorization');
+    header('Access-Control-Allow-Headers: Content-Type, Authorization, X-CSRF-Token');
     http_response_code(204);
     exit(0);
 }
 
-$uri    = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-$uri    = preg_replace('#^/sgmot/api#', '', $uri);
-$method = $_SERVER['REQUEST_METHOD'];
-
+// Conexión a BD
 $db = (new Database())->getConnection();
+
+// Validar CSRF para mutaciones (POST/PUT/DELETE)
+// Las rutas públicas (/auth/*) usan rate limiting en lugar de CSRF
+$isPublicRoute = (
+    ($uri === '/auth/login' && $method === 'POST') ||
+    ($uri === '/auth/register' && $method === 'POST') ||
+    ($uri === '/auth/google' && $method === 'POST')
+);
+
+if (!$isPublicRoute && !verifyCSRFIfNeeded()) {
+    sendResponse(['error' => 'CSRF token inválido'], 403);
+}
 
 // Endpoints públicos de autenticación
 if ($uri === '/auth/login' && $method === 'POST') {
