@@ -47,10 +47,10 @@ export default function Login() {
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-[#05070D]"
+      className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-[#03060A]"
     >
       <video
-        className="absolute inset-0 h-full w-full object-cover opacity-75"
+        className="absolute inset-0 h-full w-full object-cover opacity-85"
         src="/cyberpunk.mp4"
         autoPlay
         loop
@@ -59,10 +59,10 @@ export default function Login() {
         preload="auto"
         aria-hidden="true"
       />
-      <div className="absolute inset-0 bg-[#05070D]/24" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(5,7,13,0.08)_42%,rgba(5,7,13,0.58)_100%)]" />
-      <div className="absolute inset-0 bg-matrix-grid opacity-35 mix-blend-screen" />
-      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(57,255,20,0.05),transparent_24%,rgba(47,107,255,0.06)_100%)]" />
+      <div className="absolute inset-0 bg-[#03060A]/18" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(3,6,10,0.12)_42%,rgba(3,6,10,0.62)_100%)]" />
+      <div className="absolute inset-0 bg-matrix-grid opacity-45 mix-blend-screen" />
+      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(57,255,20,0.07),transparent_24%,rgba(0,229,255,0.09)_100%)]" />
 
       <div className="relative w-full max-w-md">
         {/* Logo + título */}
