@@ -77,7 +77,34 @@ npm run dev
 URL:
 
 ```text
-http://127.0.0.1:5173/login
+http://localhost:5173/login
+```
+
+---
+
+## Identidad Visual Final
+
+SGMOT usa una interfaz cyberpunk futurista orientada a operacion tecnica:
+
+- Fondo oscuro profesional con video animado en login: `frontend/public/cyberpunk.mp4`.
+- Paleta principal: verde neon `#39FF14`, verde hover `#1ED760`, azul acento `#2F6BFF`.
+- Superficies glassmorphism con transparencia, blur, bordes HUD y profundidad visual.
+- Animaciones de scanlines, auroras, barridos de luz, botones neon y tarjetas flotantes.
+- Graficos y reportes con colores contrastados sobre fondo oscuro.
+- Formularios oscuros translcidos con texto claro para mantener legibilidad.
+- Login con panel transparente para integrar el video de fondo sin perder contraste.
+
+Archivos principales de estilo:
+
+```text
+frontend/src/index.css
+frontend/tailwind.config.js
+frontend/src/pages/Login.jsx
+frontend/src/components/shared/StatCard.jsx
+frontend/src/components/shared/Modal.jsx
+frontend/src/components/shared/PageHeader.jsx
+frontend/src/pages/Reports.jsx
+frontend/src/components/dashboard/OrdersChart.jsx
 ```
 
 ---
@@ -208,6 +235,50 @@ DB_PASSWORD=
 ```
 
 En desarrollo local, los valores por defecto funcionan con XAMPP.
+
+---
+
+## Produccion Final
+
+### Build del frontend
+
+```bash
+cd frontend
+npm install
+npm run build
+```
+
+La salida de produccion queda en:
+
+```text
+frontend/dist
+```
+
+### Checklist antes de publicar
+
+- Importar `database/sgmot.sql` en MySQL.
+- Configurar `api/.env` con datos reales de base de datos y `JWT_SECRET` fuerte.
+- Configurar `frontend/.env.local` con `VITE_API_URL` y `VITE_GOOGLE_CLIENT_ID`.
+- Autorizar en Google Cloud el origen real del frontend.
+- Verificar que `frontend/public/cyberpunk.mp4` este disponible si se usa el login animado.
+- Ejecutar `npm run build` sin errores.
+- Probar login local y Google OAuth.
+- Probar roles admin, tecnico y cliente.
+- Verificar que Apache/PHP pueda acceder a MySQL.
+
+### Verificacion rapida
+
+```powershell
+$body = @{ email='admin@sgmot.com'; password='admin2026' } | ConvertTo-Json
+Invoke-RestMethod -Method Post -Uri 'http://localhost/sgmot/api/auth/login' -Body $body -ContentType 'application/json'
+```
+
+### Despliegue recomendado
+
+- Backend PHP dentro del servidor Apache.
+- Frontend compilado desde `frontend/dist`.
+- MySQL con charset `utf8mb4`.
+- HTTPS en produccion para OAuth, geolocalizacion y seguridad del token.
 
 ---
 
@@ -351,6 +422,6 @@ Verifica que Apache y MySQL esten activos en XAMPP y que el proyecto este en `C:
 
 | Servicio | URL |
 |---|---|
-| Frontend | `http://127.0.0.1:5173/login` |
+| Frontend | `http://localhost:5173/login` |
 | API | `http://localhost/sgmot/api` |
 | phpMyAdmin | `http://localhost/phpmyadmin` |
