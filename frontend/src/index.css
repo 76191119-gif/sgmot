@@ -205,6 +205,35 @@
   a:hover {
     transform: translateY(-1px);
   }
+
+  body:not(:has(.login-screen)),
+  body:not(:has(.login-screen))::before,
+  body:not(:has(.login-screen))::after,
+  body:not(:has(.login-screen)) *,
+  body:not(:has(.login-screen)) *::before,
+  body:not(:has(.login-screen)) *::after {
+    animation: none !important;
+  }
+
+  body:not(:has(.login-screen)) *,
+  body:not(:has(.login-screen)) *::before,
+  body:not(:has(.login-screen)) *::after {
+    transition-duration: 80ms !important;
+  }
+
+  body:not(:has(.login-screen)) .cyber-glass,
+  body:not(:has(.login-screen)) .cyber-surface {
+    transform: none !important;
+  }
+
+  body:not(:has(.login-screen)) .cyber-glass::after,
+  body:not(:has(.login-screen)) .cyber-surface::after,
+  body:not(:has(.login-screen)) .bg-sidebar::before,
+  body:not(:has(.login-screen)) .bg-sidebar-primary::after,
+  body:not(:has(.login-screen)) .bg-matrix-primary::before,
+  body:not(:has(.login-screen)) .bg-matrix-hover::before {
+    display: none !important;
+  }
 }
 
 @layer utilities {
