@@ -142,7 +142,7 @@ export default function Register() {
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-[#05070D]"
+      className="relative flex min-h-[100dvh] w-full items-center justify-center overflow-hidden bg-[#03060A] p-4"
     >
       <div className="absolute inset-0 bg-matrix-grid opacity-50" />
 

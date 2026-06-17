@@ -6,6 +6,7 @@ import TopBar from './TopBar';
 
 export default function AppLayout() {
   const [isMobile, setIsMobile] = useState(() => typeof window !== 'undefined' && window.innerWidth < 768);
+  const [collapsed, setCollapsed] = useState(false);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
@@ -14,11 +15,20 @@ export default function AppLayout() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background">
-      {isMobile ? <MobileNav /> : <Sidebar />}
-      <div className={isMobile ? 'pt-16' : 'ml-[250px]'}>
-        <TopBar />
-        <main className={isMobile ? 'px-4 pb-6 pt-4' : 'p-6'}>
+    <div className="h-[100dvh] w-full overflow-hidden bg-background">
+      {isMobile ? (
+        <MobileNav />
+      ) : (
+        <Sidebar collapsed={collapsed} setCollapsed={setCollapsed} />
+      )}
+
+      <div
+        className={`flex h-full min-w-0 flex-col transition-[margin] duration-300 ${
+          isMobile ? 'pt-16' : collapsed ? 'ml-[68px]' : 'ml-[250px]'
+        }`}
+      >
+        {!isMobile && <TopBar />}
+        <main className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden px-4 pb-6 pt-4 sm:px-5 lg:px-6">
           <Outlet />
         </main>
       </div>

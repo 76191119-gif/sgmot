@@ -97,7 +97,7 @@ export default function CompleteProfile() {
 
   return (
     <div
-      className="min-h-screen p-4 relative overflow-hidden bg-[#05070D]"
+      className="relative min-h-[100dvh] w-full overflow-hidden bg-[#03060A] p-4"
     >
       <div className="absolute inset-0 bg-matrix-grid opacity-50" />
 

@@ -47,7 +47,7 @@ export default function Login() {
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-[#03060A]"
+      className="relative flex min-h-[100dvh] w-full items-center justify-center overflow-hidden bg-[#03060A] p-4"
     >
       <video
         className="absolute inset-0 h-full w-full object-cover opacity-85"

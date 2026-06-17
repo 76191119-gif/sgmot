@@ -10,11 +10,13 @@ const ROLE_BADGES = {
   cliente: { label: 'Cliente',  cls: 'bg-cyan-500/15 text-cyan-300 border border-cyan-500/40' },
 };
 
-export default function Sidebar() {
+export default function Sidebar({ collapsed: controlledCollapsed, setCollapsed: setControlledCollapsed }) {
   const { user, logout } = useAuth();
   const perms = usePermissions();
   const { pathname } = useLocation();
-  const [collapsed, setCollapsed] = useState(false);
+  const [localCollapsed, setLocalCollapsed] = useState(false);
+  const collapsed = controlledCollapsed ?? localCollapsed;
+  const setCollapsed = setControlledCollapsed ?? setLocalCollapsed;
 
   const allItems = [
     { to: '/',             label: 'Panel Principal', icon: LayoutDashboard, show: true },
