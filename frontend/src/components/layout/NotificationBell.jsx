@@ -120,7 +120,7 @@ function NotificationItem({ item, onRead, onDelete, onNavigate }) {
         unread ? cfg.ring : 'opacity-80'
       } hover:border-matrix-primary/45`}
     >
-      {unread && <div className="absolute left-0 top-0 h-full w-1 bg-matrix-primary" />}
+      {unread && <div className="absolute left-0 top-0 h-full w-1 bg-[#39FF14]" />}
       <div className="flex items-start gap-4">
         <div className={`h-11 w-11 shrink-0 rounded-lg border ${cfg.border} ${cfg.bg} flex items-center justify-center`}>
           <Icon className={`h-5 w-5 ${cfg.color}`} />
