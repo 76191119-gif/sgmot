@@ -119,7 +119,10 @@ if ($action === 'technician-performance') {
         SUM(CASE WHEN o.status='pendiente'  THEN 1 ELSE 0 END) AS pending
         FROM technicians t
         LEFT JOIN work_orders o ON o.technician_id = t.id";
-    if ($whereDate) $sql .= " AND " . str_replace('WHERE ', '', $whereDate);
+    if ($whereDate) {
+        $orderDateFilter = str_replace('created_date', 'o.created_date', str_replace('WHERE ', '', $whereDate));
+        $sql .= " AND " . $orderDateFilter;
+    }
     $sql .= " GROUP BY t.id ORDER BY completed DESC";
     $stmt = $db->prepare($sql);
     $stmt->execute($params);
