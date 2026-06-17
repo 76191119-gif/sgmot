@@ -16,7 +16,7 @@ export default function TopBar() {
   const badge = ROLE_BADGES[perms.role];
 
   return (
-    <header className="sticky top-0 z-30 flex h-14 items-center justify-between border-b border-matrix-primary/15 bg-[#0B1220]/68 px-4 shadow-[0_10px_35px_rgba(0,0,0,0.18)] backdrop-blur-xl sm:px-6">
+    <header className="sticky top-0 z-30 flex h-14 items-center justify-between border-b border-matrix-primary/15 bg-[#07111D]/68 px-4 shadow-[0_10px_35px_rgba(0,0,0,0.18)] backdrop-blur-xl sm:px-6">
       <div className="hidden items-center gap-2 text-sm text-matrix-muted sm:flex">
         <span>Sesion activa:</span>
         <span className="font-medium text-matrix-text">{user?.full_name}</span>

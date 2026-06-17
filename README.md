@@ -87,12 +87,41 @@ http://localhost:5173/login
 SGMOT usa una interfaz cyberpunk futurista orientada a operacion tecnica:
 
 - Fondo oscuro profesional con video animado en login: `frontend/public/cyberpunk.mp4`.
-- Paleta principal: verde neon `#39FF14`, verde hover `#1ED760`, azul acento `#2F6BFF`.
+- Paleta premium: fondo base `#03060A`, paneles `#07111D`, superficies `#0B1A26`.
+- Verde neon principal `#39FF14`, hover `#00FF66`, HUD `#19E35A`, glow `#66FF99`.
+- Apoyos visuales: cian tecnologico `#00E5FF`, azul electrico `#1E90FF`, advertencia `#FFD83D`, alerta `#FF4D57`.
+- Texto principal `#EAFEF0`, secundario `#A7C7B2`, tenue `#6D8B78`.
 - Superficies glassmorphism con transparencia, blur, bordes HUD y profundidad visual.
 - Animaciones de scanlines, auroras, barridos de luz, botones neon y tarjetas flotantes.
 - Graficos y reportes con colores contrastados sobre fondo oscuro.
 - Formularios oscuros translcidos con texto claro para mantener legibilidad.
 - Login con panel transparente para integrar el video de fondo sin perder contraste.
+
+Variables CSS base:
+
+```css
+:root{
+  --bg-main: #03060A;
+  --bg-panel: #07111D;
+  --bg-card: #0B1A26;
+  --neon-primary: #39FF14;
+  --neon-secondary: #00FF66;
+  --neon-glow: #66FF99;
+  --neon-border: #19E35A;
+  --info: #00E5FF;
+  --warning: #FFD83D;
+  --danger: #FF4D57;
+  --text-main: #EAFEF0;
+  --text-secondary: #A7C7B2;
+  --text-muted: #6D8B78;
+}
+```
+
+Uso de estados:
+- Pendiente: `#FFD83D`
+- En proceso: `#00E5FF`
+- Completado: `#39FF14`
+- Cancelado/error: `#FF4D57`
 
 Archivos principales de estilo:
 

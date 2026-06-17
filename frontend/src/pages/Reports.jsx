@@ -22,9 +22,9 @@ const PRESETS = [
   { id: '12m', label: 'Ultimos 12 meses' },
   { id: 'custom', label: 'Personalizado' },
 ];
-const COLORS = ['#39FF14', '#2F6BFF', '#F59E0B', '#EF4444', '#8B5CF6', '#38BDF8'];
+const COLORS = ['#39FF14', '#00E5FF', '#FFD83D', '#FF4D57', '#1E90FF', '#00E5FF'];
 const INPUT = 'px-3 py-2 text-sm border border-matrix-primary/30 rounded-md bg-black/55 text-matrix-text focus:outline-none focus:border-matrix-primary transition';
-const CARD = 'cyber-surface rounded-xl border border-[#22304A] p-5';
+const CARD = 'cyber-surface rounded-xl border border-[#19E35A] p-5';
 
 let highchartsPromise;
 
@@ -231,7 +231,7 @@ function HighchartsBox({ options, height = 340, emptyText = 'Sin datos' }) {
       chartRef.current?.destroy();
       chartRef.current = Highcharts.chart(ref.current, options);
     }).catch(() => {
-      if (ref.current) ref.current.innerHTML = '<div style="color:#CBD5E1;text-align:center;padding:80px 0">No se pudo cargar Highcharts</div>';
+      if (ref.current) ref.current.innerHTML = '<div style="color:#A7C7B2;text-align:center;padding:80px 0">No se pudo cargar Highcharts</div>';
     });
 
     return () => {
@@ -243,27 +243,27 @@ function HighchartsBox({ options, height = 340, emptyText = 'Sin datos' }) {
 
   if (!hasData) return <EmptyChart text={emptyText} height={height} />;
 
-  return <div ref={ref} className="w-full overflow-hidden rounded-xl border border-[#22304A] bg-[#0B1220]/70 backdrop-blur-xl" style={{ height }} />;
+  return <div ref={ref} className="w-full overflow-hidden rounded-xl border border-[#19E35A] bg-[#07111D]/70 backdrop-blur-xl" style={{ height }} />;
 }
 
 function baseOptions(extra) {
   return {
     chart: {
-      backgroundColor: '#0B1220',
+      backgroundColor: '#07111D',
       style: { fontFamily: 'Inter, Arial, sans-serif' },
     },
     credits: { enabled: false },
     title: { text: null },
     colors: COLORS,
     legend: {
-      itemStyle: { color: '#F8FAFC', fontWeight: '600' },
+      itemStyle: { color: '#EAFEF0', fontWeight: '600' },
       itemHoverStyle: { color: '#39FF14' },
     },
     tooltip: {
-      backgroundColor: '#0B1220',
-      borderColor: '#22304A',
+      backgroundColor: '#07111D',
+      borderColor: '#19E35A',
       borderRadius: 8,
-      style: { color: '#F8FAFC', fontSize: '12px' },
+      style: { color: '#EAFEF0', fontSize: '12px' },
     },
     ...extra,
   };
@@ -283,23 +283,23 @@ function TimelineChart({ ordersData, incidentsData }) {
 
   const options = useMemo(() => baseOptions({
     chart: {
-      backgroundColor: '#0B1220',
+      backgroundColor: '#07111D',
       type: 'column',
       spacing: [18, 18, 18, 18],
       style: { fontFamily: 'Inter, Arial, sans-serif' },
     },
     xAxis: {
       categories: data.map((d) => d.label),
-      lineColor: '#22304A',
-      tickColor: '#22304A',
-      labels: { style: { color: '#CBD5E1', fontSize: '11px' } },
+      lineColor: '#19E35A',
+      tickColor: '#19E35A',
+      labels: { style: { color: '#A7C7B2', fontSize: '11px' } },
     },
     yAxis: {
       allowDecimals: false,
       min: 0,
       title: { text: null },
-      gridLineColor: 'rgba(203,213,225,0.12)',
-      labels: { style: { color: '#CBD5E1', fontSize: '11px' } },
+      gridLineColor: 'rgba(167,199,178,0.12)',
+      labels: { style: { color: '#A7C7B2', fontSize: '11px' } },
     },
     plotOptions: {
       column: { borderRadius: 6, pointPadding: 0.14, groupPadding: 0.16, borderWidth: 0 },
@@ -309,7 +309,7 @@ function TimelineChart({ ordersData, incidentsData }) {
     series: [
       { type: 'areaspline', name: 'Ordenes tendencia', data: data.map((d) => d.orders), color: '#39FF14', fillColor: 'rgba(57,255,20,0.14)', zIndex: 2 },
       { type: 'column', name: 'Ordenes', data: data.map((d) => d.orders), color: '#39FF14' },
-      { type: 'column', name: 'Incidencias', data: data.map((d) => d.incidents), color: '#EF4444' },
+      { type: 'column', name: 'Incidencias', data: data.map((d) => d.incidents), color: '#FF4D57' },
     ],
   }), [data]);
 
@@ -319,7 +319,7 @@ function TimelineChart({ ordersData, incidentsData }) {
 function PieReport({ data }) {
   const options = useMemo(() => baseOptions({
     chart: {
-      backgroundColor: '#0B1220',
+      backgroundColor: '#07111D',
       type: 'pie',
       spacing: [12, 12, 12, 12],
       style: { fontFamily: 'Inter, Arial, sans-serif' },
@@ -328,12 +328,12 @@ function PieReport({ data }) {
     plotOptions: {
       pie: {
         innerSize: '58%',
-        borderColor: '#0B1220',
+        borderColor: '#07111D',
         borderWidth: 4,
         dataLabels: {
           enabled: true,
           distance: 18,
-          style: { color: '#F8FAFC', fontSize: '11px', textOutline: 'none' },
+          style: { color: '#EAFEF0', fontSize: '11px', textOutline: 'none' },
           format: '{point.name}: {point.y}',
         },
         showInLegend: true,
@@ -348,7 +348,7 @@ function PieReport({ data }) {
 
 function EmptyChart({ text, height = 220 }) {
   return (
-    <div className="flex items-center justify-center rounded-xl border border-dashed border-[#22304A] bg-[#111827] text-sm text-matrix-muted" style={{ minHeight: height }}>
+    <div className="flex items-center justify-center rounded-xl border border-dashed border-[#19E35A] bg-[#0B1A26] text-sm text-matrix-muted" style={{ minHeight: height }}>
       {text}
     </div>
   );
