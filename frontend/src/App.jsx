@@ -1,25 +1,27 @@
+import { lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate, useLocation } from 'react-router-dom';
 import { QueryClientProvider, QueryClient, useQuery } from '@tanstack/react-query';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import { ToastProvider } from '@/lib/ToastContext';
 import { api } from '@/api/localClient';
 import AppLayout from '@/components/layout/AppLayout';
-import Dashboard from './pages/Dashboard';
-import Clients from './pages/Clients';
-import Technicians from './pages/Technicians';
-import WorkOrders from './pages/WorkOrders';
-import Incidents from './pages/Incidents';
-import Reports from './pages/Reports';
-import Users from './pages/Users';
-import Profile from './pages/Profile';
-import AuditLogs from './pages/AuditLogs';
-import Login from './pages/Login';
-import Register from './pages/Register';
-import CompleteProfile from './pages/CompleteProfile';
+
+const Dashboard = lazy(() => import('./pages/Dashboard'));
+const Clients = lazy(() => import('./pages/Clients'));
+const Technicians = lazy(() => import('./pages/Technicians'));
+const WorkOrders = lazy(() => import('./pages/WorkOrders'));
+const Incidents = lazy(() => import('./pages/Incidents'));
+const Reports = lazy(() => import('./pages/Reports'));
+const Users = lazy(() => import('./pages/Users'));
+const Profile = lazy(() => import('./pages/Profile'));
+const AuditLogs = lazy(() => import('./pages/AuditLogs'));
+const Login = lazy(() => import('./pages/Login'));
+const Register = lazy(() => import('./pages/Register'));
+const CompleteProfile = lazy(() => import('./pages/CompleteProfile'));
 
 const queryClient = new QueryClient({
   defaultOptions: {
-    queries: { retry: 1, refetchOnWindowFocus: false, staleTime: 30_000 },
+    queries: { retry: 1, refetchOnWindowFocus: false, staleTime: 60_000 },
   },
 });
 
@@ -114,7 +116,9 @@ export default function App() {
       <QueryClientProvider client={queryClient}>
         <ToastProvider>
           <Router>
-            <AuthenticatedApp />
+            <Suspense fallback={<LoadingScreen />}>
+              <AuthenticatedApp />
+            </Suspense>
           </Router>
         </ToastProvider>
       </QueryClientProvider>

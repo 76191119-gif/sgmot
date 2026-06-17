@@ -190,7 +190,8 @@ export default function NotificationBell() {
   const { data, isFetching } = useQuery({
     queryKey: ['notifications'],
     queryFn: () => api.notifications.list(),
-    refetchInterval: 30000,
+    refetchInterval: open ? 30000 : 60000,
+    refetchIntervalInBackground: false,
   });
 
   const notifications = Array.isArray(data)
