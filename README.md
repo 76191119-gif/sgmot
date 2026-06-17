@@ -1,4 +1,4 @@
-# SGMOT - Sistema de Gestion y Monitoreo de Ordenes de Trabajo
+﻿# SGMOT - Sistema de Gestion y Monitoreo de Ordenes de Trabajo
 
 SGMOT es un sistema web para gestionar clientes, tecnicos, ordenes de trabajo, incidencias, notificaciones, auditoria y reportes.
 
@@ -264,59 +264,6 @@ DB_PASSWORD=
 ```
 
 En desarrollo local, los valores por defecto funcionan con XAMPP.
-
----
-
-## Seguridad
-
-### Verificación de Configuración
-
-Ejecutar antes de producción:
-
-```bash
-cd api
-php security-check.php
-```
-
-Verifica:
-- JWT_SECRET configurado y fuerte (32+ caracteres)
-- CORS restringido
-- Extensiones PHP requeridas
-- Conectividad BD
-- Permisos de archivos
-
-### Guía de Seguridad Completa
-
-Ver `SECURITY.md` para:
-- Vulnerabilidades corregidas (SQL injection, CSRF, base64 bomb, etc.)
-- Configuración de producción
-- Headers de seguridad
-- Validaciones implementadas
-- Checklist pre-producción
-
-### Puntos Críticos
-
-**Antes de producción, DEBE:**
-
-1. Generar JWT_SECRET aleatorio:
-   ```bash
-   openssl rand -base64 32
-   ```
-   Guardar en `api/.env`:
-   ```env
-   JWT_SECRET=resultado_del_comando_anterior
-   ```
-
-2. Restringir CORS al dominio real:
-   ```env
-   CORS_ALLOWED_ORIGIN=https://tudominio.com
-   ```
-
-3. Cambiar contraseña BD (no usar `root` sin password)
-
-4. Habilitar HTTPS con certificado SSL/TLS válido
-
-5. Revisar logs regularmente
 
 ---
 
