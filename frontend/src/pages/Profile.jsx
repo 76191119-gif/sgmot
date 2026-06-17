@@ -136,6 +136,30 @@ export default function Profile() {
     onError: (e) => toast.error(e.error || 'Error al actualizar perfil'),
   });
 
+  const photoMut = useMutation({
+    mutationFn: (nextPhotoUrl) => api.auth.updateProfile({
+      full_name: (fullName || profileUser.full_name || '').trim(),
+      email: (email || profileUser.email || '').trim(),
+      photo_url: nextPhotoUrl,
+    }),
+    onSuccess: (res, nextPhotoUrl) => {
+      const next = res.user || {
+        ...profileUser,
+        full_name: fullName || profileUser.full_name,
+        email: email || profileUser.email,
+        photo_url: nextPhotoUrl,
+      };
+      refreshUser(next);
+      qc.invalidateQueries({ queryKey: ['me-profile'] });
+      toast.success(nextPhotoUrl ? 'Foto guardada' : 'Foto eliminada');
+    },
+    onError: (e) => {
+      setPhotoUrl(profileUser.photo_url || '');
+      qc.invalidateQueries({ queryKey: ['me-profile'] });
+      toast.error(e.error || 'No se pudo guardar la foto');
+    },
+  });
+
   const pwdMut = useMutation({
     mutationFn: () => api.auth.changePassword(currentPwd, newPwd),
     onSuccess: () => {
@@ -178,7 +202,9 @@ export default function Profile() {
       return;
     }
     try {
-      setPhotoUrl(await fileToDataUrl(file));
+      const nextPhotoUrl = await fileToDataUrl(file);
+      setPhotoUrl(nextPhotoUrl);
+      photoMut.mutate(nextPhotoUrl);
     } catch {
       setPhotoError('No se pudo procesar la imagen.');
     }
@@ -224,11 +250,29 @@ export default function Profile() {
               {canEditAccount && (
                 <div className="mt-3 flex flex-wrap justify-center gap-2">
                   <label className="inline-flex cursor-pointer items-center gap-2 rounded-md border border-matrix-primary/30 px-3 py-2 text-xs font-semibold text-matrix-primary transition hover:bg-matrix-primary/10">
-                    <Camera className="h-4 w-4" /> Cambiar foto
-                    <input type="file" accept="image/png,image/jpeg,image/webp" className="hidden" onChange={(e) => handlePhoto(e.target.files?.[0])} />
+                    {photoMut.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Camera className="h-4 w-4" />}
+                    {photoMut.isPending ? 'Guardando...' : 'Cambiar foto'}
+                    <input
+                      type="file"
+                      accept="image/png,image/jpeg,image/webp"
+                      className="hidden"
+                      disabled={photoMut.isPending}
+                      onChange={(e) => {
+                        handlePhoto(e.target.files?.[0]);
+                        e.target.value = '';
+                      }}
+                    />
                   </label>
                   {photoUrl && (
-                    <button type="button" onClick={() => setPhotoUrl('')} className="inline-flex items-center gap-1 rounded-md border border-red-400/25 px-3 py-2 text-xs text-red-300 hover:bg-red-500/10">
+                    <button
+                      type="button"
+                      disabled={photoMut.isPending}
+                      onClick={() => {
+                        setPhotoUrl('');
+                        photoMut.mutate('');
+                      }}
+                      className="inline-flex items-center gap-1 rounded-md border border-red-400/25 px-3 py-2 text-xs text-red-300 hover:bg-red-500/10 disabled:cursor-not-allowed disabled:opacity-50"
+                    >
                       <Trash2 className="h-3 w-3" /> Quitar
                     </button>
                   )}
