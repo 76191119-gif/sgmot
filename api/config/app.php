@@ -29,27 +29,30 @@ function sgmot_env_value($key, $default = '') {
     return $default;
 }
 
-// Client ID de Google para verificar ID tokens.
-// En XAMPP local toma VITE_GOOGLE_CLIENT_ID desde frontend/.env.local si no existe GOOGLE_CLIENT_ID.
+define('APP_ENV', strtolower(sgmot_env_value('APP_ENV', 'development')));
+define('IS_PRODUCTION', APP_ENV === 'production');
+
 define('APP_TIMEZONE', sgmot_env_value('APP_TIMEZONE', 'America/Lima'));
 date_default_timezone_set(APP_TIMEZONE);
 
 define('GOOGLE_CLIENT_ID', sgmot_env_value('GOOGLE_CLIENT_ID'));
 
-// JWT_SECRET DEBE estar configurado
 $jwtSecret = sgmot_env_value('JWT_SECRET');
 if (!$jwtSecret || $jwtSecret === 'SGMOT_CHANGE_THIS_SECRET_IN_ENV' || strlen($jwtSecret) < 32) {
-    error_log('CRITICAL: JWT_SECRET no está configurado o es débil. Debe tener al menos 32 caracteres aleatorios.');
-    die('Error de configuración del servidor: JWT_SECRET inválido.');
+    error_log('CRITICAL: JWT_SECRET no esta configurado o es debil. Debe tener al menos 32 caracteres aleatorios.');
+    die('Error de configuracion del servidor: JWT_SECRET invalido.');
 }
 define('JWT_SECRET', $jwtSecret);
 
-// CORS DEBE restringirse en producción
 $corsOrigin = sgmot_env_value('CORS_ALLOWED_ORIGIN', 'http://localhost:5173');
 if ($corsOrigin === '*') {
-    error_log('WARNING: CORS_ALLOWED_ORIGIN está abierto a todos. En producción debe ser específico.');
+    error_log('WARNING: CORS_ALLOWED_ORIGIN abierto. En produccion debe ser especifico.');
+    if (IS_PRODUCTION) {
+        die('Error de configuracion del servidor: CORS_ALLOWED_ORIGIN invalido.');
+    }
 }
 define('CORS_ALLOWED_ORIGIN', $corsOrigin);
+
 define('DB_HOST', sgmot_env_value('DB_HOST', 'localhost'));
 define('DB_NAME', sgmot_env_value('DB_NAME', 'sgmot'));
 define('DB_USER', sgmot_env_value('DB_USER', 'root'));

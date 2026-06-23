@@ -283,14 +283,47 @@ La salida de produccion queda en:
 frontend/dist
 ```
 
+El build copia automaticamente `frontend/public/.htaccess` hacia `frontend/dist/.htaccess` para que Apache sirva rutas internas de React como `/audit-logs`, `/profile` o `/work-orders` sin errores 404 al refrescar.
+
+### Variables obligatorias
+
+Backend `api/.env`:
+
+```env
+APP_ENV=production
+GOOGLE_CLIENT_ID=tu-client-id.apps.googleusercontent.com
+JWT_SECRET=secreto-aleatorio-generado-con-openssl-rand-base64-48
+CORS_ALLOWED_ORIGIN=https://tudominio.com
+APP_TIMEZONE=America/Lima
+DB_HOST=localhost
+DB_NAME=sgmot
+DB_USER=sgmot_user
+DB_PASSWORD=password-fuerte
+DB_TIME_ZONE=-05:00
+```
+
+Frontend `frontend/.env.local` antes del build:
+
+```env
+VITE_API_URL=https://tudominio.com/api
+VITE_GOOGLE_CLIENT_ID=tu-client-id.apps.googleusercontent.com
+```
+
+En `APP_ENV=production`, el backend rechaza `CORS_ALLOWED_ORIGIN=*` y `JWT_SECRET` debil.
+
 ### Checklist antes de publicar
 
 - Importar `database/sgmot.sql` en MySQL.
 - Configurar `api/.env` con datos reales de base de datos y `JWT_SECRET` fuerte.
 - Configurar `frontend/.env.local` con `VITE_API_URL` y `VITE_GOOGLE_CLIENT_ID`.
 - Autorizar en Google Cloud el origen real del frontend.
+- Cambiar contrasenas iniciales del admin y tecnicos.
+- Usar usuario MySQL propio, no `root`.
+- Configurar Apache para servir `frontend/dist` como frontend publico y `api/` como backend.
+- Desactivar `display_errors` en PHP y dejar `log_errors` activo.
 - Verificar que `frontend/public/cyberpunk.mp4` este disponible si se usa el login animado.
 - Ejecutar `npm run build` sin errores.
+- Ejecutar `npm audit` y confirmar `found 0 vulnerabilities`.
 - Probar login local y Google OAuth.
 - Probar roles admin, tecnico y cliente.
 - Verificar que Apache/PHP pueda acceder a MySQL.
