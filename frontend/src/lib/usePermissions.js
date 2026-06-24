@@ -15,7 +15,7 @@ export function usePermissions() {
     canViewTechnicians:  role === 'admin',
     canViewWorkOrders:   true,
     canViewIncidents:    true,
-    canViewReports:      role === 'admin',
+    canViewReports:      role === 'admin' || role === 'cliente',
     canManageUsers:      role === 'admin',
     canViewAuditLogs:    role === 'admin',
     canViewProfile:      true,

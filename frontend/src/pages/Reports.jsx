@@ -96,8 +96,8 @@ export default function Reports() {
   const incTime = useQuery({ queryKey: ['rep-inctl', params], queryFn: () => api.reports.incidentsTimeline(params), enabled: perms.canViewReports });
   const ordType = useQuery({ queryKey: ['rep-otype', params], queryFn: () => api.reports.ordersByType(params), enabled: perms.canViewReports });
   const incCat = useQuery({ queryKey: ['rep-icat', params], queryFn: () => api.reports.incidentsByCategory(params), enabled: perms.canViewReports });
-  const techPerf = useQuery({ queryKey: ['rep-tech', params], queryFn: () => api.reports.technicianPerformance(params), enabled: perms.canViewReports });
-  const cliPlan = useQuery({ queryKey: ['rep-cli'], queryFn: () => api.reports.clientsByPlan(), enabled: perms.canViewReports });
+  const techPerf = useQuery({ queryKey: ['rep-tech', params], queryFn: () => api.reports.technicianPerformance(params), enabled: perms.isAdmin });
+  const cliPlan = useQuery({ queryKey: ['rep-cli'], queryFn: () => api.reports.clientsByPlan(), enabled: perms.isAdmin });
 
   if (!perms.canViewReports) return <AccessDenied />;
 
@@ -109,7 +109,10 @@ export default function Reports() {
 
   return (
     <div className="relative">
-      <PageHeader title="Reportes y Estadisticas" subtitle="Analisis temporal del desempeno operativo" />
+      <PageHeader
+        title={perms.isCliente ? 'Mis Reportes' : 'Reportes y Estadisticas'}
+        subtitle={perms.isCliente ? 'Analisis de tus ordenes e incidencias' : 'Analisis temporal del desempeno operativo'}
+      />
 
       <div className={`${CARD} mb-5`}>
         <div className="mb-3 flex items-center gap-2 text-sm font-medium text-matrix-text">
@@ -181,12 +184,16 @@ export default function Reports() {
         <ChartCard title="Incidencias por Categoria">
           <PieReport data={(incCat.data || []).map((d) => ({ name: categoryLabels[d.category] || d.category, y: Number(d.value) }))} />
         </ChartCard>
-        <ChartCard title="Clientes por Plan">
-          <PieReport data={(cliPlan.data || []).map((d) => ({ name: planLabels[d.plan] || d.plan, y: Number(d.value) }))} />
-        </ChartCard>
-        <ChartCard title="Rendimiento de Tecnicos">
-          <TechnicianList data={techPerf.data || []} />
-        </ChartCard>
+        {perms.isAdmin && (
+          <>
+            <ChartCard title="Clientes por Plan">
+              <PieReport data={(cliPlan.data || []).map((d) => ({ name: planLabels[d.plan] || d.plan, y: Number(d.value) }))} />
+            </ChartCard>
+            <ChartCard title="Rendimiento de Tecnicos">
+              <TechnicianList data={techPerf.data || []} />
+            </ChartCard>
+          </>
+        )}
       </div>
     </div>
   );
@@ -376,4 +383,3 @@ function TechnicianList({ data }) {
     </ul>
   );
 }
-

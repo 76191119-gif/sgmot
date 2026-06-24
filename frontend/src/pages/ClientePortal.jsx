@@ -42,8 +42,8 @@ export default function ClientePortal() {
   const { data: orders = [] }    = useQuery({ queryKey: ['work_orders'], queryFn: api.workOrders.list });
   const { data: incidents = [] } = useQuery({ queryKey: ['incidents'],   queryFn: api.incidents.list });
 
-  // Buscar el cliente que corresponde al usuario logueado
-  const myClient = clients.find((c) => c.email === user?.email);
+  // El API ya devuelve solo la ficha propia para rol cliente; el fallback evita bloqueos por email normalizado.
+  const myClient = clients.find((c) => String(c.email || '').toLowerCase() === String(user?.email || '').toLowerCase()) || clients[0] || null;
 
   const activeOrders   = orders.filter((o) => ['pendiente', 'en_proceso'].includes(o.status)).length;
   const completed      = orders.filter((o) => o.status === 'completado').length;
@@ -293,6 +293,7 @@ function RequestServiceModal({ client, onClose }) {
       status: 'pendiente',
     }),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['work_orders'] }); onClose(); },
+    onError: (err) => alert(err?.error || 'No se pudo enviar la solicitud. Revisa tus datos e intenta nuevamente.'),
   });
 
   if (!client) {
@@ -369,6 +370,7 @@ function ReportProblemModal({ client, onClose }) {
       status: 'abierta',
     }),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['incidents'] }); onClose(); },
+    onError: (err) => alert(err?.error || 'No se pudo reportar la incidencia. Revisa tus datos e intenta nuevamente.'),
   });
 
   if (!client) {

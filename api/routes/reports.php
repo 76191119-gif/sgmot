@@ -1,136 +1,176 @@
 <?php
-$user   = requireRole('admin');
+$user = requireRole(['admin', 'cliente']);
 $action = $segments[1] ?? 'summary';
 
-// Filtros de rango: from, to en formato YYYY-MM-DD (ambos opcionales)
 $from = $_GET['from'] ?? null;
-$to   = $_GET['to']   ?? null;
-$group = $_GET['group'] ?? 'day';  // day | month | year
+$to = $_GET['to'] ?? null;
+$group = $_GET['group'] ?? 'day';
 
-$dateRange = [];
-$params = [];
-if ($from) { $dateRange[] = 'created_date >= ?'; $params[] = $from . ' 00:00:00'; }
-if ($to)   { $dateRange[] = 'created_date <= ?'; $params[] = $to   . ' 23:59:59'; }
-$whereDate = $dateRange ? 'WHERE ' . implode(' AND ', $dateRange) : '';
+$currentClient = null;
+$currentClientId = null;
+if ($user['role'] === 'cliente') {
+    $currentClient = findCurrentClient($db, $user);
+    $currentClientId = $currentClient ? (int)$currentClient['id'] : 0;
+}
 
-$dateFormats = [
-    'day'   => '%Y-%m-%d',
-    'month' => '%Y-%m',
-    'year'  => '%Y',
+function report_where($dateColumn = 'created_date', $clientColumn = null) {
+    global $from, $to, $currentClientId;
+
+    $filters = [];
+    $params = [];
+
+    if ($from) {
+        $filters[] = "$dateColumn >= ?";
+        $params[] = $from . ' 00:00:00';
+    }
+
+    if ($to) {
+        $filters[] = "$dateColumn <= ?";
+        $params[] = $to . ' 23:59:59';
+    }
+
+    if ($currentClientId !== null && $clientColumn) {
+        $filters[] = "$clientColumn = ?";
+        $params[] = $currentClientId;
+    }
+
+    return [
+        'sql' => $filters ? 'WHERE ' . implode(' AND ', $filters) : '',
+        'params' => $params,
+    ];
+}
+
+$dateGroups = [
+    'day' => "DATE_FORMAT(created_date, '%Y-%m-%d')",
+    'month' => "DATE_FORMAT(created_date, '%Y-%m')",
+    'year' => "DATE_FORMAT(created_date, '%Y')",
 ];
 
-// Validar $group contra whitelist
-if (!isset($dateFormats[$group])) {
+if (!isset($dateGroups[$group])) {
     sendResponse(['error' => 'Agrupacion invalida. Use: day, month o year'], 400);
 }
 
-// GET /reports/summary  → KPIs filtrados por rango
 if ($action === 'summary') {
+    $ordersWhere = report_where('created_date', 'client_id');
     $stmt = $db->prepare("SELECT
         COUNT(*) AS total,
-        SUM(CASE WHEN status='completado' THEN 1 ELSE 0 END) AS completed,
-        SUM(CASE WHEN status='en_proceso' THEN 1 ELSE 0 END) AS in_progress,
-        SUM(CASE WHEN status='pendiente'  THEN 1 ELSE 0 END) AS pending,
-        SUM(CASE WHEN status='cancelado'  THEN 1 ELSE 0 END) AS cancelled
-        FROM work_orders $whereDate");
-    $stmt->execute($params);
+        COALESCE(SUM(CASE WHEN status='completado' THEN 1 ELSE 0 END), 0) AS completed,
+        COALESCE(SUM(CASE WHEN status='en_proceso' THEN 1 ELSE 0 END), 0) AS in_progress,
+        COALESCE(SUM(CASE WHEN status='pendiente' THEN 1 ELSE 0 END), 0) AS pending,
+        COALESCE(SUM(CASE WHEN status='cancelado' THEN 1 ELSE 0 END), 0) AS cancelled
+        FROM work_orders {$ordersWhere['sql']}");
+    $stmt->execute($ordersWhere['params']);
     $orders = $stmt->fetch(PDO::FETCH_ASSOC);
 
+    $incidentsWhere = report_where('created_date', 'client_id');
     $stmt2 = $db->prepare("SELECT
         COUNT(*) AS total,
-        SUM(CASE WHEN status='resuelta' THEN 1 ELSE 0 END) AS resolved,
-        SUM(CASE WHEN status='cerrada'  THEN 1 ELSE 0 END) AS closed,
-        SUM(CASE WHEN status='abierta'  THEN 1 ELSE 0 END) AS open,
-        SUM(CASE WHEN status='en_atencion' THEN 1 ELSE 0 END) AS in_attention
-        FROM incidents $whereDate");
-    $stmt2->execute($params);
+        COALESCE(SUM(CASE WHEN status='resuelta' THEN 1 ELSE 0 END), 0) AS resolved,
+        COALESCE(SUM(CASE WHEN status='cerrada' THEN 1 ELSE 0 END), 0) AS closed,
+        COALESCE(SUM(CASE WHEN status='abierta' THEN 1 ELSE 0 END), 0) AS open,
+        COALESCE(SUM(CASE WHEN status='en_atencion' THEN 1 ELSE 0 END), 0) AS in_attention
+        FROM incidents {$incidentsWhere['sql']}");
+    $stmt2->execute($incidentsWhere['params']);
     $incidents = $stmt2->fetch(PDO::FETCH_ASSOC);
 
-    $cl = $db->query("SELECT COUNT(*) FROM clients WHERE status='activo'")->fetchColumn();
-    $tc = $db->query("SELECT COUNT(*) FROM technicians WHERE status IN ('disponible','en_campo')")->fetchColumn();
+    if ($user['role'] === 'cliente') {
+        $activeClients = $currentClient && ($currentClient['status'] ?? '') === 'activo' ? 1 : 0;
+        $techStmt = $db->prepare("
+            SELECT COUNT(DISTINCT technician_id) FROM (
+                SELECT technician_id FROM work_orders WHERE client_id = ? AND technician_id IS NOT NULL
+                UNION
+                SELECT technician_id FROM incidents WHERE client_id = ? AND technician_id IS NOT NULL
+            ) assigned
+        ");
+        $techStmt->execute([$currentClientId, $currentClientId]);
+        $activeTechnicians = (int)$techStmt->fetchColumn();
+    } else {
+        $activeClients = (int)$db->query("SELECT COUNT(*) FROM clients WHERE status='activo'")->fetchColumn();
+        $activeTechnicians = (int)$db->query("SELECT COUNT(*) FROM technicians WHERE status IN ('disponible','en_campo')")->fetchColumn();
+    }
 
     sendResponse([
-        'orders'    => $orders,
+        'orders' => $orders,
         'incidents' => $incidents,
-        'active_clients'      => (int)$cl,
-        'active_technicians'  => (int)$tc,
+        'active_clients' => $activeClients,
+        'active_technicians' => $activeTechnicians,
     ]);
 }
 
-// GET /reports/orders-timeline  → órdenes agrupadas por día/mes/año
 if ($action === 'orders-timeline') {
-    $dateGroup = match($group) {
-        'month' => "DATE_FORMAT(created_date, '%Y-%m')",
-        'year' => "DATE_FORMAT(created_date, '%Y')",
-        default => "DATE_FORMAT(created_date, '%Y-%m-%d')",
-    };
+    $ordersWhere = report_where('created_date', 'client_id');
     $sql = "SELECT
-        $dateGroup AS period,
+        {$dateGroups[$group]} AS period,
         COUNT(*) AS total,
-        SUM(CASE WHEN status='completado' THEN 1 ELSE 0 END) AS completed,
-        SUM(CASE WHEN status='cancelado'  THEN 1 ELSE 0 END) AS cancelled
-        FROM work_orders $whereDate
+        COALESCE(SUM(CASE WHEN status='completado' THEN 1 ELSE 0 END), 0) AS completed,
+        COALESCE(SUM(CASE WHEN status='cancelado' THEN 1 ELSE 0 END), 0) AS cancelled
+        FROM work_orders {$ordersWhere['sql']}
         GROUP BY period ORDER BY period ASC";
     $stmt = $db->prepare($sql);
-    $stmt->execute($params);
+    $stmt->execute($ordersWhere['params']);
     sendResponse($stmt->fetchAll(PDO::FETCH_ASSOC));
 }
 
-// GET /reports/incidents-timeline
 if ($action === 'incidents-timeline') {
-    $dateGroup = match($group) {
-        'month' => "DATE_FORMAT(created_date, '%Y-%m')",
-        'year' => "DATE_FORMAT(created_date, '%Y')",
-        default => "DATE_FORMAT(created_date, '%Y-%m-%d')",
-    };
+    $incidentsWhere = report_where('created_date', 'client_id');
     $sql = "SELECT
-        $dateGroup AS period,
+        {$dateGroups[$group]} AS period,
         COUNT(*) AS total,
-        SUM(CASE WHEN status='resuelta' THEN 1 ELSE 0 END) AS resolved
-        FROM incidents $whereDate
+        COALESCE(SUM(CASE WHEN status='resuelta' THEN 1 ELSE 0 END), 0) AS resolved
+        FROM incidents {$incidentsWhere['sql']}
         GROUP BY period ORDER BY period ASC";
     $stmt = $db->prepare($sql);
-    $stmt->execute($params);
+    $stmt->execute($incidentsWhere['params']);
     sendResponse($stmt->fetchAll(PDO::FETCH_ASSOC));
 }
 
-// GET /reports/orders-by-type
 if ($action === 'orders-by-type') {
-    $stmt = $db->prepare("SELECT type, COUNT(*) AS value FROM work_orders $whereDate GROUP BY type");
-    $stmt->execute($params);
+    $ordersWhere = report_where('created_date', 'client_id');
+    $stmt = $db->prepare("SELECT type, COUNT(*) AS value FROM work_orders {$ordersWhere['sql']} GROUP BY type");
+    $stmt->execute($ordersWhere['params']);
     sendResponse($stmt->fetchAll(PDO::FETCH_ASSOC));
 }
 
-// GET /reports/incidents-by-category
 if ($action === 'incidents-by-category') {
-    $stmt = $db->prepare("SELECT category, COUNT(*) AS value FROM incidents $whereDate GROUP BY category");
-    $stmt->execute($params);
+    $incidentsWhere = report_where('created_date', 'client_id');
+    $stmt = $db->prepare("SELECT category, COUNT(*) AS value FROM incidents {$incidentsWhere['sql']} GROUP BY category");
+    $stmt->execute($incidentsWhere['params']);
     sendResponse($stmt->fetchAll(PDO::FETCH_ASSOC));
 }
 
-// GET /reports/technician-performance
 if ($action === 'technician-performance') {
-    // No filtramos por fecha aquí porque queremos toda la performance
+    if ($user['role'] !== 'admin') {
+        sendResponse([]);
+    }
+
+    $ordersWhere = report_where('o.created_date', null);
     $sql = "SELECT
         t.id, t.full_name, t.specialty, t.zone,
         COUNT(o.id) AS total,
-        SUM(CASE WHEN o.status='completado' THEN 1 ELSE 0 END) AS completed,
-        SUM(CASE WHEN o.status='en_proceso' THEN 1 ELSE 0 END) AS in_progress,
-        SUM(CASE WHEN o.status='pendiente'  THEN 1 ELSE 0 END) AS pending
+        COALESCE(SUM(CASE WHEN o.status='completado' THEN 1 ELSE 0 END), 0) AS completed,
+        COALESCE(SUM(CASE WHEN o.status='en_proceso' THEN 1 ELSE 0 END), 0) AS in_progress,
+        COALESCE(SUM(CASE WHEN o.status='pendiente' THEN 1 ELSE 0 END), 0) AS pending
         FROM technicians t
         LEFT JOIN work_orders o ON o.technician_id = t.id";
-    if ($whereDate) {
-        $orderDateFilter = str_replace('created_date', 'o.created_date', str_replace('WHERE ', '', $whereDate));
-        $sql .= " AND " . $orderDateFilter;
+    if ($ordersWhere['sql']) {
+        $sql .= ' AND ' . preg_replace('/^WHERE\s+/i', '', $ordersWhere['sql']);
     }
-    $sql .= " GROUP BY t.id ORDER BY completed DESC";
+    $sql .= ' GROUP BY t.id ORDER BY completed DESC';
+
     $stmt = $db->prepare($sql);
-    $stmt->execute($params);
+    $stmt->execute($ordersWhere['params']);
     sendResponse($stmt->fetchAll(PDO::FETCH_ASSOC));
 }
 
-// GET /reports/clients-by-plan
 if ($action === 'clients-by-plan') {
+    if ($user['role'] === 'cliente') {
+        if (!$currentClient) sendResponse([]);
+        sendResponse([[
+            'plan' => $currentClient['plan'] ?? 'basico_30mbps',
+            'value' => 1,
+        ]]);
+    }
+
     $stmt = $db->query("SELECT plan, COUNT(*) AS value FROM clients GROUP BY plan");
     sendResponse($stmt->fetchAll(PDO::FETCH_ASSOC));
 }
