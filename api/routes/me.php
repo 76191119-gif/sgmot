@@ -173,6 +173,12 @@ if ($method === 'POST' && $action === 'complete-profile') {
     if (!in_array($plan, ['basico_30mbps', 'estandar_60mbps', 'premium_100mbps', 'empresarial_200mbps'], true)) {
         sendResponse(['error' => 'Plan invalido'], 400);
     }
+    if ($latitude !== null && ($latitude < -90 || $latitude > 90)) {
+        sendResponse(['error' => 'Latitud fuera de rango'], 400);
+    }
+    if ($longitude !== null && ($longitude < -180 || $longitude > 180)) {
+        sendResponse(['error' => 'Longitud fuera de rango'], 400);
+    }
 
     $ck = $db->prepare("SELECT id, user_id, email FROM clients WHERE dni = ?");
     $ck->execute([$dni]);
