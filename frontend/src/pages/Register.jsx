@@ -8,7 +8,6 @@ import {
 import { useAuth } from '@/lib/AuthContext';
 import { useGeolocation } from '@/lib/useGeolocation';
 import MapPreview from '@/components/shared/MapPreview';
-import { api } from '@/api/localClient';
 
 const PLANS = [
   { value: 'basico_30mbps',       label: 'Básico',      speed: '30 Mbps',  price: 'S/ 59',  desc: 'Para uso ligero' },
@@ -116,7 +115,7 @@ export default function Register() {
     setLoading(true);
     setError('');
     try {
-      const res = await api.auth.register({
+      await register({
         full_name: data.full_name,
         dni:       data.dni,
         phone:     data.phone,
@@ -128,9 +127,6 @@ export default function Register() {
         latitude:  geo.coords?.latitude  ?? null,
         longitude: geo.coords?.longitude ?? null,
       });
-      // Guardar token y usuario en contexto
-      localStorage.setItem('sgmot_token', res.token);
-      localStorage.setItem('sgmot_user',  JSON.stringify(res.user));
       navigate('/');
     } catch (err) {
       setError(err.error || 'Error al crear la cuenta. Intenta nuevamente.');
