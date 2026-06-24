@@ -22,8 +22,9 @@ export function usePermissions() {
     canViewNotifications:true,
 
     canCreate: role === 'admin',
-    canEdit:   role === 'admin' || role === 'tecnico',
+    canEdit:   role === 'admin',
     canDelete: role === 'admin',
     canChangeOrderStatus: role === 'admin' || role === 'tecnico',
+    canChangeIncidentStatus: role === 'admin' || role === 'tecnico',
   };
 }

@@ -102,12 +102,14 @@ export default function Incidents() {
         title="Incidencias"
         subtitle={`${incidents.length} incidencia${incidents.length !== 1 ? 's' : ''} registrada${incidents.length !== 1 ? 's' : ''}`}
         actions={
-          <button
-            onClick={openCreate}
-            className="inline-flex items-center gap-2 bg-matrix-primary text-black rounded-md px-3 py-2 text-sm font-bold hover:bg-matrix-hover transition uppercase tracking-wider"
-          >
-            <Plus className="w-4 h-4" /> Nueva Incidencia
-          </button>
+          (perms.isAdmin || perms.isCliente) && (
+            <button
+              onClick={openCreate}
+              className="inline-flex items-center gap-2 bg-matrix-primary text-black rounded-md px-3 py-2 text-sm font-bold hover:bg-matrix-hover transition uppercase tracking-wider"
+            >
+              <Plus className="w-4 h-4" /> Nueva Incidencia
+            </button>
+          )
         }
       />
 
@@ -157,7 +159,7 @@ export default function Incidents() {
               incident={incident}
               canEdit={perms.canEdit}
               canDelete={perms.canDelete}
-              canChangeStatus={perms.canEdit}
+              canChangeStatus={perms.canChangeIncidentStatus}
               onEdit={() => openEdit(incident)}
               onDelete={() => setConfirm(incident)}
               onChangeStatus={(newStatus) => statusMut.mutate({
